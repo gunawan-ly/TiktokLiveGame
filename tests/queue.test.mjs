@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { setTimeout as wait } from "node:timers/promises";
 
 import { PrintQueue } from "../overlay/js/queue.js";
 
-function gift(id) {
-  return { eventId: id };
+function gift(id, extra = {}) {
+  return { eventId: id, ...extra };
 }
 
 test("queue is FIFO and ignores duplicates", () => {
@@ -47,4 +48,69 @@ test("invalid items are rejected", () => {
   const queue = new PrintQueue();
   assert.equal(queue.push(null).reason, "invalid");
   assert.equal(queue.push({}).reason, "invalid");
+});
+
+test("queue enforces capacity limit", () => {
+  const queue = new PrintQueue(2);
+  assert.equal(queue.push(gift("a")).ok, true);
+  assert.equal(queue.push(gift("b")).ok, true);
+  const third = queue.push(gift("c"));
+  assert.equal(third.ok, false);
+  assert.equal(third.reason, "full");
+  assert.equal(queue.length, 2);
+});
+
+test("skip-ahead prints other senders while one sender cools down", () => {
+  const queue = new PrintQueue(100, 60_000);
+  queue.push(gift("a", { username: "awan" }));
+  queue.push(gift("b", { username: "lyra" }));
+  queue.push(gift("c", { username: "awan" }));
+
+  assert.equal(queue.beginNext().eventId, "a");
+  queue.finishPrint();
+  queue.markIdle();
+  assert.equal(queue.beginNext().eventId, "b");
+  queue.finishPrint();
+  queue.markIdle();
+  // "awan" masih dalam jeda, jadi item kedua milik awan ditahan.
+  assert.equal(queue.beginNext(), null);
+  assert.equal(queue.length, 1);
+});
+
+test("queue waits instead of printing when all items cool down", async () => {
+  const queue = new PrintQueue(100, 20);
+  queue.push(gift("a", { username: "satu" }));
+  queue.push(gift("b", { username: "satu" }));
+  assert.equal(queue.beginNext().eventId, "a");
+  queue.finishPrint();
+  queue.markIdle();
+  assert.equal(queue.beginNext(), null);
+
+  const waitMs = queue.nextReadyIn();
+  assert.ok(waitMs > 0 && waitMs <= 20);
+  await wait(40);
+  assert.equal(queue.beginNext().eventId, "b");
+});
+
+test("nextReadyIn is zero when a queued sender is ready now", () => {
+  const queue = new PrintQueue(100, 5_000);
+  queue.push(gift("a", { username: "awan" }));
+  assert.equal(queue.nextReadyIn(), 0);
+});
+
+test("zero gap keeps strict FIFO even for repeated senders", () => {
+  const queue = new PrintQueue(100, 0);
+  queue.push(gift("a", { username: "satu" }));
+  queue.push(gift("b", { username: "satu" }));
+  assert.equal(queue.beginNext().eventId, "a");
+  queue.finishPrint();
+  queue.markIdle();
+  assert.equal(queue.beginNext().eventId, "b");
+});
+
+test("cooldown does not cause dedupe collisions between items", () => {
+  const queue = new PrintQueue(100, 5_000);
+  assert.equal(queue.push(gift("a", { username: "satu" })).ok, true);
+  assert.equal(queue.push(gift("b", { username: "satu" })).ok, true);
+  assert.equal(queue.length, 2);
 });

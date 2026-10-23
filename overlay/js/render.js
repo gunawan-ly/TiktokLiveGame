@@ -1,50 +1,6 @@
-import {
-  avatarHueFor,
-  initialsFor,
-} from "./normalize.js";
+import { avatarHueFor, initialsFor } from "./normalize.js";
 import { tierAccent, tierLabel } from "./tiers.js";
-
-const sleep = (milliseconds) =>
-  new Promise((resolve) => window.setTimeout(resolve, milliseconds));
-
-const GALLERY_ITEMS = [
-  {
-    displayName: "Ayunia ",
-    totalCoins: 1,
-    tier: "standard",
-    avatarUrl: "../assets/avatars/avatar-1.svg",
-  },
-  {
-    displayName: "Perunggu",
-    totalCoins: 50,
-    tier: "bronze",
-    avatarUrl: "../assets/avatars/avatar-2.svg",
-  },
-  {
-    displayName: "Perak",
-    totalCoins: 250,
-    tier: "silver",
-    avatarUrl: "../assets/avatars/avatar-3.svg",
-  },
-  {
-    displayName: "Emas",
-    totalCoins: 1000,
-    tier: "gold",
-    avatarUrl: "../assets/avatars/avatar-4.svg",
-  },
-  {
-    displayName: "Berlian",
-    totalCoins: 29999,
-    tier: "diamond",
-    avatarUrl: "../assets/avatars/avatar-5.svg",
-  },
-  {
-    displayName: "Ayunia ",
-    totalCoins: 1,
-    tier: "standard",
-    avatarUrl: "../assets/avatars/avatar-6.svg",
-  },
-];
+import { PrintMachine } from "./machine.js";
 
 const CONNECTION_LABELS = {
   connecting: "MENYAMBUNG",
@@ -60,41 +16,25 @@ export class OverlayRenderer {
     this.tiers = tiers;
     this.el = elements;
     this.sound = sound;
-    this.slots = [];
-    this.active = [];
-    this.rolled = [];
     this.printedPhotos = 0;
     this.sessionCoins = 0;
     this.queueLength = 0;
     this.snapshotApplied = false;
     this.toastTimers = new Map();
+    this._avatarPrefetch = new Map();
+    this._avatarPrefetchLimit = 500;
+    this._queueFullTimer = null;
 
-    this._buildGrid();
-    this._buildRoll();
+    this.machine = new PrintMachine({
+      root: this.el.machine,
+      config,
+      tiers,
+      avatarKnownBad: (url) => this._avatarKnownBad(url),
+    });
+
     this.setTitle(config.title, config.subtitle);
     this.setSimulationBadge(Boolean(config.simulate));
     this.updateHud();
-  }
-
-  _buildGrid() {
-    const total = Math.max(1, Math.min(9, Number(this.config.maxActivePhotos) || 9));
-    this.el.photoGrid.replaceChildren();
-    for (let index = 0; index < total; index += 1) {
-      const slot = document.createElement("div");
-      slot.className = "photo-slot";
-      slot.dataset.slot = String(index);
-      this.el.photoGrid.append(slot);
-      this.slots.push(slot);
-    }
-  }
-
-  _buildRoll() {
-    this.el.rollStrip.replaceChildren();
-    const empty = document.createElement("span");
-    empty.className = "roll-empty";
-    empty.textContent = "Belum ada foto di gulungan";
-    this.el.rollStrip.append(empty);
-    this.el.rollCount.textContent = `0/${this.config.maxRollPhotos}`;
   }
 
   setTitle(title, subtitle) {
@@ -143,6 +83,48 @@ export class OverlayRenderer {
     this.updateHud();
   }
 
+  prefetchAvatar(url) {
+    const source = String(url || "");
+    if (!source || this._avatarPrefetch.has(source)) {
+      return;
+    }
+    if (this._avatarPrefetch.size >= this._avatarPrefetchLimit) {
+      const oldest = this._avatarPrefetch.keys().next().value;
+      this._avatarPrefetch.delete(oldest);
+    }
+    this._avatarPrefetch.set(source, "loading");
+    const probe = new Image();
+    probe.referrerPolicy = "no-referrer";
+    probe.decoding = "async";
+    probe.onload = () => {
+      if (this._avatarPrefetch.get(source) === "loading") {
+        this._avatarPrefetch.set(source, "ok");
+      }
+    };
+    probe.onerror = () => {
+      this._avatarPrefetch.set(source, "bad");
+    };
+    probe.src = source;
+  }
+
+  _avatarKnownBad(url) {
+    return this._avatarPrefetch.get(url) === "bad";
+  }
+
+  flashQueueFull() {
+    const stat = this.el.queueStat;
+    stat.dataset.full = "true";
+    this.el.queueLabel.textContent = "ANTREAN PENUH";
+    clearTimeout(this._queueFullTimer);
+    this._queueFullTimer = window.setTimeout(() => {
+      this._queueFullTimer = null;
+      if (stat.dataset.full === "true") {
+        this.el.queueLabel.textContent = "ANTREAN";
+        delete stat.dataset.full;
+      }
+    }, 3000);
+  }
+
   updateHud() {
     this.el.printedCount.textContent = this.printedPhotos.toLocaleString("id-ID");
     this.el.sheetCount.textContent = this.printedPhotos.toLocaleString("id-ID");
@@ -154,171 +136,14 @@ export class OverlayRenderer {
   }
 
   async printGift(item, tier) {
-    while (this.active.length >= this.slots.length) {
-      await this._rollOldest();
-    }
-
-    const slot = this.slots.find((candidate) => !candidate.classList.contains("is-filled"));
-    if (!slot) {
-      throw new Error("Tidak ada slot foto yang kosong");
-    }
-
-    const card = this._buildCard(item, tier);
-    slot.classList.add("is-filled");
-    slot.append(card);
-    this.active.push({ card, item, tier, slot });
-
-    this._startPrinter();
     if (this.sound) {
       this.sound.play(tier);
     }
-    card.classList.add("is-printing");
-    await sleep(this.config.printDurationMs);
-    card.classList.remove("is-printing");
-    card.classList.add("is-complete");
-    this._stopPrinter();
-
+    await this.machine.print(item, tier);
     this.printedPhotos += 1;
     this.sessionCoins += item.totalCoins;
     this.updateHud();
     this._showToast(item, tier);
-  }
-
-  _buildCard(item, tier) {
-    const card = document.createElement("article");
-    card.className = `photo-card tier-${tier}`;
-    card.style.setProperty("--print-duration", `${this.config.printDurationMs}ms`);
-
-    const excerpt = document.createElement("div");
-    excerpt.className = "card-print";
-
-    const photo = document.createElement("div");
-    photo.className = "card-photo";
-
-    const fallback = document.createElement("div");
-    fallback.className = "avatar-fallback";
-    fallback.style.setProperty("--avatar-hue", avatarHueFor(item.displayName));
-    fallback.textContent = initialsFor(item.displayName);
-    photo.append(fallback);
-
-    if (item.avatarUrl) {
-      const image = document.createElement("img");
-      image.className = "avatar-img";
-      image.alt = "";
-      image.referrerPolicy = "no-referrer";
-      image.decoding = "async";
-      image.addEventListener("error", () => image.remove(), { once: true });
-      image.src = item.avatarUrl;
-      photo.append(image);
-    }
-
-    excerpt.append(photo);
-
-    const shine = document.createElement("span");
-    shine.className = "card-shine";
-    shine.setAttribute("aria-hidden", "true");
-    excerpt.append(shine);
-
-    const sparkles = document.createElement("span");
-    sparkles.className = "card-sparkles";
-    sparkles.setAttribute("aria-hidden", "true");
-    const sparkleCount = tier === "diamond" ? 6 : tier === "gold" ? 4 : tier === "silver" ? 2 : 0;
-    for (let index = 0; index < sparkleCount; index += 1) {
-      const sparkle = document.createElement("i");
-      sparkle.className = "sparkle";
-      sparkle.style.left = `${10 + ((index * 31) % 78)}%`;
-      sparkle.style.top = `${10 + ((index * 27) % 70)}%`;
-      sparkle.style.setProperty("--sparkle-delay", `${index * 90}ms`);
-      sparkle.style.setProperty("--sparkle-size", index % 2 ? "0.36rem" : "0.5rem");
-      sparkles.append(sparkle);
-    }
-    excerpt.append(sparkles);
-
-    const username = document.createElement("span");
-    username.className = "card-name";
-    username.textContent = item.displayName;
-    excerpt.append(username);
-
-    if (tier !== "standard") {
-      const tierPill = document.createElement("span");
-      tierPill.className = "card-tier";
-      const gem = tier === "diamond" ? document.createElement("span") : null;
-      if (gem) {
-        gem.className = "card-tier-gem";
-        gem.setAttribute("aria-hidden", "true");
-        tierPill.append(gem);
-      }
-      tierPill.append(document.createTextNode(tierLabel(tier, this.tiers)));
-      excerpt.append(tierPill);
-    }
-
-    card.append(excerpt);
-    return card;
-  }
-
-  _startPrinter() {
-    const head = this.el.printerHead;
-    this.el.scene.style.setProperty("--print-duration", `${this.config.printDurationMs}ms`);
-    this.el.scene.classList.add("is-printing");
-    head.classList.remove("is-active");
-    void head.offsetWidth;
-    head.classList.add("is-active");
-  }
-
-  _stopPrinter() {
-    this.el.scene.classList.remove("is-printing");
-    this.el.printerHead.classList.remove("is-active");
-  }
-
-  async _rollOldest() {
-    const oldest = this.active.shift();
-    if (!oldest) {
-      return;
-    }
-    oldest.card.classList.add("is-rolling");
-    await sleep(320);
-    oldest.card.remove();
-    oldest.slot.classList.remove("is-filled");
-    this._addToRoll(oldest);
-  }
-
-  _addToRoll(entry) {
-    const mini = document.createElement("div");
-    mini.className = `roll-mini tier-${entry.tier}`;
-
-    const avatar = document.createElement("div");
-    avatar.className = "roll-mini-avatar";
-    const fallback = document.createElement("div");
-    fallback.className = "avatar-fallback";
-    fallback.style.setProperty("--avatar-hue", avatarHueFor(entry.item.displayName));
-    fallback.textContent = initialsFor(entry.item.displayName);
-    avatar.append(fallback);
-    if (entry.item.avatarUrl) {
-      const image = document.createElement("img");
-      image.alt = "";
-      image.referrerPolicy = "no-referrer";
-      image.decoding = "async";
-      image.addEventListener("error", () => image.remove(), { once: true });
-      image.src = entry.item.avatarUrl;
-      avatar.append(image);
-    }
-
-    const name = document.createElement("span");
-    name.className = "roll-mini-name";
-    name.textContent = entry.item.displayName;
-
-    const dot = document.createElement("span");
-    dot.className = "roll-mini-dot";
-    dot.style.setProperty("--mini-accent", tierAccent(entry.tier));
-
-    mini.append(avatar, name, dot);
-    this.el.rollStrip.querySelector(".roll-empty")?.remove();
-    this.el.rollStrip.append(mini);
-    this.rolled.push(mini);
-    while (this.rolled.length > this.config.maxRollPhotos) {
-      this.rolled.shift()?.remove();
-    }
-    this.el.rollCount.textContent = `${this.rolled.length}/${this.config.maxRollPhotos}`;
   }
 
   _showToast(item, tier) {
@@ -338,7 +163,7 @@ export class OverlayRenderer {
     fallback.style.setProperty("--avatar-hue", avatarHueFor(item.displayName));
     fallback.textContent = initialsFor(item.displayName);
     avatar.append(fallback);
-    if (item.avatarUrl) {
+    if (item.avatarUrl && !this._avatarKnownBad(item.avatarUrl)) {
       const image = document.createElement("img");
       image.alt = "";
       image.referrerPolicy = "no-referrer";

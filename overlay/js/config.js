@@ -5,6 +5,8 @@ export const DEFAULT_CONFIG = {
   wsUrl: "ws://127.0.0.1:8080",
   maxActivePhotos: 9,
   maxRollPhotos: 7,
+  maxQueueItems: 100,
+  senderGapMs: 4000,
   printDurationMs: 2000,
   toastDurationMs: 5000,
   diamondToastExtraMs: 2000,
@@ -66,6 +68,12 @@ export async function loadGameConfig() {
   if (params.get("subtitle")) {
     merged.subtitle = params.get("subtitle");
   }
+  if (params.get("queue")) {
+    merged.maxQueueItems = Number(params.get("queue"));
+  }
+  if (params.get("gap")) {
+    merged.senderGapMs = Number(params.get("gap"));
+  }
   if (params.get("target")) {
     merged.targetCoins = Number(params.get("target"));
   }
@@ -82,6 +90,8 @@ export async function loadGameConfig() {
   merged.targetCoins = Math.round(clamp(merged.targetCoins, 1, 1_000_000_000, 500));
   merged.maxActivePhotos = Math.round(clamp(merged.maxActivePhotos, 1, 9, 9));
   merged.maxRollPhotos = Math.round(clamp(merged.maxRollPhotos, 1, 12, 7));
+  merged.maxQueueItems = Math.round(clamp(merged.maxQueueItems, 1, 1000, 100));
+  merged.senderGapMs = Math.round(clamp(merged.senderGapMs, 0, 60000, 4000));
   merged.printDurationMs = Math.round(clamp(merged.printDurationMs, 1200, 4000, 2000));
   merged.toastDurationMs = Math.round(clamp(merged.toastDurationMs, 3000, 12000, 5000));
   merged.diamondToastExtraMs = Math.round(

@@ -26,6 +26,8 @@
       <span id="connectionLabel">MENYAMBUNG</span>
     </div>
 
+    <div class="sim-badge" id="simBadge" hidden>MODE SIMULASI</div>
+
     <main class="scene" id="scene" aria-label="Mesin cetak foto studio">
       <div class="scene-inner">
         <div class="room">
@@ -39,47 +41,72 @@
           </div>
         </div>
 
+        <div class="machine" id="machine">
+          <span class="machine-cast" aria-hidden="true"></span>
+
+          <header class="machine-crest">
+            <span class="crest-heading">
+              <span class="sheet-brand" id="sheetBrand">STUDIO PHOTO</span>
+            </span>
+            <span class="crest-chip">
+              <span class="crest-dot" aria-hidden="true"></span>
+              LIVE &middot; <span id="sheetCount">0</span>
+            </span>
+          </header>
+
+          <div class="machine-top" id="machineTop">
+            <div class="gantry" aria-hidden="true">
+              <span class="gantry-rail"></span>
+              <span class="gantry-edge"></span>
+              <div class="carriage" id="carriage">
+                <span class="carriage-shell">
+                  <span class="carriage-bolt"></span>
+                </span>
+                <span class="head-arm" id="headArm"></span>
+                <div class="print-head" id="printHead">
+                  <span class="head-shell"></span>
+                  <span class="head-lens"></span>
+                  <span class="head-aura"></span>
+                  <span class="head-shadow"></span>
+                </div>
+              </div>
+            </div>
+
+            <article class="paper-panel" id="paperPanel" aria-hidden="true">
+              <span class="paper-grain"></span>
+              <span class="paper-edge"></span>
+              <div class="paper-sheet" id="paperSheet"></div>
+              <span class="panel-glass"></span>
+              <div class="feed-shade" id="feedShade"></div>
+            </article>
+          </div>
+
+          <div class="machine-bottom">
+            <div class="front-roller" id="frontRoller" aria-hidden="true">
+              <span class="roller-shell"></span>
+              <span class="roller-cap roller-cap-left"></span>
+              <span class="roller-cap roller-cap-right"></span>
+            </div>
+
+            <section class="drum" id="drum" aria-label="Gulungan foto sebelumnya">
+              <div class="drum-shell">
+                <span class="drum-arc"></span>
+                <div class="drum-strip" id="rollStrip"></div>
+              </div>
+              <div class="roll-label">
+                <span>GULUNGAN</span>
+                <span id="rollCount">0/7</span>
+              </div>
+            </section>
+          </div>
+        </div>
+
         <div class="desk">
           <span class="desk-grain"></span>
           <span class="desk-shadow"></span>
           <span class="desk-prop prop-a"></span>
           <span class="desk-prop prop-b"></span>
           <span class="desk-prop prop-c"></span>
-        </div>
-
-        <div class="paper-wrap">
-          <div class="printer" aria-hidden="true">
-            <span class="printer-body"></span>
-            <span class="printer-rail"></span>
-            <span class="printer-post printer-post-left"></span>
-            <span class="printer-post printer-post-right"></span>
-            <span class="printer-head" id="printerHead">
-              <span class="printer-lens"></span>
-              <span class="printer-light"></span>
-            </span>
-          </div>
-
-          <article class="photo-sheet" id="photoSheet">
-            <div class="sheet-head">
-              <span class="sheet-brand" id="sheetBrand">STUDIO PHOTO</span>
-              <span class="sheet-serial">LIVE &middot; <span id="sheetCount">0</span></span>
-            </div>
-            <div class="photo-grid" id="photoGrid"></div>
-            <div class="sheet-foot">
-              <span>SETIAP FOTO ADALAH KENANGAN</span>
-              <span class="sheet-stamp" aria-hidden="true">SP</span>
-            </div>
-            <span class="sheet-curl" aria-hidden="true"></span>
-          </article>
-
-          <section class="roll" id="roll" aria-label="Gulungan foto sebelumnya">
-            <div class="roll-edge" aria-hidden="true"></div>
-            <div class="roll-label">
-              <span>GULUNGAN</span>
-              <span id="rollCount">0/7</span>
-            </div>
-            <div class="roll-strip" id="rollStrip"></div>
-          </section>
         </div>
       </div>
     </main>
@@ -99,14 +126,12 @@
         </div>
       </div>
       <div class="hud-stat hud-queue" id="queueStat" hidden>
-        <span class="hud-label">ANTREAN</span>
+        <span class="hud-label" id="queueLabel">ANTREAN</span>
         <strong class="hud-value" id="queueCount">0</strong>
       </div>
     </section>
 
     <aside class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></aside>
-
-    <div class="sim-badge" id="simBadge" hidden>MODE SIMULASI</div>
 
     <aside class="debug-panel" id="debugPanel" hidden aria-label="Panel pengujian">
       <div class="debug-head">

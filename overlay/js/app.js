@@ -11,6 +11,7 @@ import { StudioSocket } from "./ws.js";
 const elements = {
   studioTitle: document.getElementById("studioTitle"),
   studioSubtitle: document.getElementById("studioSubtitle"),
+  machine: document.getElementById("machine"),
   sheetBrand: document.getElementById("sheetBrand"),
   sheetCount: document.getElementById("sheetCount"),
   printedCount: document.getElementById("printedCount"),
@@ -18,14 +19,9 @@ const elements = {
   targetBar: document.getElementById("targetBar"),
   queueStat: document.getElementById("queueStat"),
   queueCount: document.getElementById("queueCount"),
+  queueLabel: document.getElementById("queueLabel"),
   connection: document.getElementById("connection"),
   connectionLabel: document.getElementById("connectionLabel"),
-  photoGrid: document.getElementById("photoGrid"),
-  roll: document.getElementById("roll"),
-  rollStrip: document.getElementById("rollStrip"),
-  rollCount: document.getElementById("rollCount"),
-  printerHead: document.getElementById("printerHead"),
-  scene: document.getElementById("scene"),
   toastStack: document.getElementById("toastStack"),
   simBadge: document.getElementById("simBadge"),
   debugPanel: document.getElementById("debugPanel"),
@@ -36,6 +32,7 @@ let renderer;
 let socket;
 let simulation;
 let pumping = false;
+let retryTimer = null;
 
 function clampNumber(value, fallback, minimum, maximum) {
   const number = Number(value);
@@ -91,7 +88,7 @@ async function bootstrap() {
   const tiers = normalizeTiers(config.tiers);
   const sound = new PrintSound(config.sound);
   renderer = new OverlayRenderer({ config, tiers, elements, sound });
-  queue = new PrintQueue();
+  queue = new PrintQueue(config.maxQueueItems, config.senderGapMs);
 
   const updateQueue = () => {
     renderer.setQueueLength(queue.length);
@@ -103,8 +100,13 @@ async function bootstrap() {
       console.warn("Gift diabaikan karena payload tidak valid.");
       return false;
     }
+    renderer.prefetchAvatar(item.avatarUrl);
     const result = queue.push(item);
     if (!result.ok) {
+      if (result.reason === "full") {
+        renderer.flashQueueFull();
+        console.warn("Gift ditolak karena antrean penuh.");
+      }
       return false;
     }
     updateQueue();
@@ -120,6 +122,20 @@ async function bootstrap() {
     return cleared;
   };
 
+  const clearRetryTimer = () => {
+    clearTimeout(retryTimer);
+    retryTimer = null;
+  };
+
+  const scheduleRetry = () => {
+    clearRetryTimer();
+    const delay = queue.nextReadyIn();
+    if (delay == null) {
+      return;
+    }
+    retryTimer = window.setTimeout(pump, Math.max(20, delay + 5));
+  };
+
   async function pump() {
     if (pumping) {
       return;
@@ -127,10 +143,12 @@ async function bootstrap() {
     const item = queue.beginNext();
     if (!item) {
       updateQueue();
+      scheduleRetry();
       return;
     }
 
     pumping = true;
+    clearRetryTimer();
     updateQueue();
     try {
       const tier = tierForCoins(item.totalCoins, tiers);
@@ -184,6 +202,7 @@ async function bootstrap() {
   };
 
   window.addEventListener("beforeunload", () => {
+    clearRetryTimer();
     socket?.close();
     simulation?.stop();
   });

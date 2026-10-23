@@ -1,12 +1,35 @@
 # Studio Photo Live TikTok
 
 Overlay photo booth pseudo-3D untuk OBS/TikTok LIVE Studio. Gift TikTok masuk lewat
-connector Python, dikirim ke overlay lewat WebSocket lokal, lalu dicetak menjadi kartu
-foto dengan bingkai tier, animasi printer, toast, dan gulungan foto.
+connector Python, dikirim ke overlay lewat WebSocket lokal, lalu dicetak oleh
+**mesin roller** milik sendiri.
+
+## Desain v3 — Roller Printer
+
+Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
+
+- **Kepala cetak** bergerak dua sumbu di atas rel atasnya, menekan dan menggambar
+  tiap pengiriman tiap: kolom 1 → 2 → 3, berpindah baris dengan kertas bergulir.
+- **Fase cetak** diturunkan dari `printDurationMs`: `move` (geser kolom) 26%,
+  `press` (tekanan) 10%, `draw` (menggambar) 44%, `lift` (hitung) 20%, `feed`
+  (kertas bergulir) 23%.
+- **Kertas cetak** bergaya vintage, 3 baris × 3 kolom. Baris yang turun ke roller
+  bawah, snapshot salinan mini ke **drum** di atas gulungan (maks 7, `maxRollPhotos`).
+- **Bingkai tier mewah** dalam bentuk **cincin perhiasan di keliling foto**:
+  - **Perunggu**: cincin copper dengan sheen facet.
+  - **Perak**: cincin satin putih-biru dan multitint.
+  - **Emas**: cincin kuning berkilau multi-stop + kilat.
+  - **Berlian**: cincin ice dengan rotasi perlahan + luster glow.
+  - Cincin menggambar setengah putaran mulai dari atas (`--draw`) setiap cetakan,
+    lalu sweep kilau sekali ketika selesai.
+- **Nama pengirim** digambar ketik per huruf mengikuti fase drawing; tier
+  muncul sebagai badge pill di pinggir bingkai.
+- **UI studio**: judul besar, crest mesin dengan counter LIVE, HUD (TERCETAK /
+  TARGET KOIN / ANTREAN), toast.
 
 - Target koin default: **500**
 - Tier: Perunggu 10+, Perak 100+, Emas 500+, Berlian 5.000+
-- Slot foto aktif: **9**, gulungan: **7**
+- Slot foto aktif: **9** (kertas mesin), gulungan: **7**
 - Overlay: `http://127.0.0.1:5173/overlay/`
 - WebSocket: `ws://127.0.0.1:8080`
 - Resolusi desain: **1080 × 1920**
@@ -108,6 +131,8 @@ Edit `config/game.json`:
   "title": "STUDIO PHOTO",
   "subtitle": "LIVE PHOTO BOOTH",
   "targetCoins": 500,
+  "maxQueueItems": 100,
+  "senderGapMs": 4000,
   "printDurationMs": 2000,
   "toastDurationMs": 5000,
   "tiers": {
@@ -123,6 +148,17 @@ Threshold harus naik berurutan. Nilai yang tidak valid akan dikoreksi atau diaba
 oleh overlay. Target yang tampil di HUD berasal dari `config/game.json` atau parameter
 `?target=`; `TARGET_COINS` di `.env` adalah metadata target sesi pada connector.
 
+### Jeda per pengirim dan batas antrean
+
+- `senderGapMs` (default 4000) adalah jeda minimum antar cetakan dari pengirim yang
+  sama. Overlay memakai strategi *skip-ahead*: langsung mengeksekusi antrean dari
+  pengirim lain, item pengirim yang sedang dalam jeda dita­han sampai jeda selesai.
+  Setel `0` untuk mematikan (urutan FIFO murni).
+- `maxQueueItems` (default 100, batas 1-1000) membatasi panjang antrean. Gift yang
+  datang saat antrean penuh ditolak dan HUD menampilkan **ANTREAN PENUH** selama
+  3 detik. Gift yang ditolak tidak dapat dikembalikan; besarkan `maxQueueItems`
+  atau jalankan sesi yang rapi jika volume gift sangat tinggi.
+
 ### Parameter URL
 
 | Parameter | Contoh | Fungsi |
@@ -131,6 +167,8 @@ oleh overlay. Target yang tampil di HUD berasal dari `config/game.json` atau par
 | `sim` | `?sim=1` | Simulasi lokal tanpa connector/WebSocket |
 | `ws` | `?ws=ws://127.0.0.1:8080` | Override alamat WebSocket |
 | `target` | `?target=1000` | Override target koin |
+| `gap` | `?gap=8000` | Jeda cetakan per pengirim (0-60.000 ms, 0 = nonaktif) |
+| `queue` | `?queue=50` | Batas antrean cetak (1-1000) |
 | `duration` | `?duration=1500` | Durasi cetak per kartu (1200–4000 ms) |
 | `toast` | `?toast=4000` | Durasi toast (3000–12000 ms) |
 | `title` | `?title=NAMA%20STUDIO` | Override judul |
@@ -165,16 +203,18 @@ akan dihitung dari `repeat × coinsPerItem` jika tidak dikirim.
 npm test
 ```
 
-Unit test mencakup normalisasi payload, keamanan URL avatar, queue FIFO, dedupe, dan
-batas tier. Test tidak memerlukan koneksi TikTok.
+Unit test mencakup normalisasi payload, keamanan URL avatar, queue FIFO, dedupe,
+cap antrean, jeda antar pengirim, dan batas tier. Test tidak memerlukan koneksi TikTok.
 
 Verifikasi visual yang sudah dilakukan:
 
-- Semua tier tampil dengan label, warna, dan avatar yang benar.
-- Setelah 13 gift: 9 kartu, 4 foto di gulungan, 0 slot kosong, 2 toast.
-- Avatar gagal dimuat menampilkan inisial tanpa merusak layout.
-- Debug panel tidak menutupi HUD.
-- Mode mock end-to-end dan shutdown graceful sudah diuji.
+- Mesin cetak v3: fase move/press/draw/lift/feed berjalan; kepala cetak berpindah
+  kolom 1 → 2 → 3; kertas bergulir tiap 3 foto dan baris lama melilit roller bawah.
+- Cincin tier Perunggu/Perak/Emas/Berlian tergambar, badge tier muncul, nama
+  pengirim diketik mengikuti fase drawing.
+- Snapshot gulungan: foto lebih lama muncul sebagai mini avatar ber-dot accent tier
+  di drum, counter GULUNGAN akurat (maks 7).
+- Kertas kosong bergaya dashed halo; slot tercetak tidak menyisakan artefak.
 - Koneksi TikTok LIVE dengan signing Euler Stream dan penerimaan gift nyata sudah diuji.
 
 Belum diverifikasi:
@@ -207,6 +247,12 @@ Lalu buka `http://127.0.0.1:5174/overlay/` dan set `?ws=ws://127.0.0.1:8080` bil
 **Avatar tidak muncul**
 Avatar TikTok dapat gagal dimuat karena CDN/CORS. Overlay otomatis memakai inisial
 nama. Ini bukan error kritis.
+
+**HUD menampilkan ANTREAN PENUH (merah)**
+Antrean mencapai `maxQueueItems`; gift baru ditolak sampai antrean menyusut.
+Periksa panel debug untuk melihat panjang antrean, atau besarkan `?queue=` bila
+volume gift memang tinggi. Jeda pengirim (`senderGapMs`) mencegah satu orang
+memenuhi antrean sejak awal.
 
 **Jumlah TERCETAK lebih besar dari jumlah kartu**
 Overlay memakai snapshot jumlah cetak dari connector. Jika overlay di-refresh di
