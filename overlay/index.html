@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#12100f">
+  <title>Studio Photo Live</title>
+  <link rel="preload" href="./assets/fonts/Baloo2-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./styles/base.css">
+  <link rel="stylesheet" href="./styles/scene.css">
+  <link rel="stylesheet" href="./styles/cards.css">
+  <link rel="stylesheet" href="./styles/effects.css">
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="stage-glow" aria-hidden="true"></div>
+
+    <header class="studio-header">
+      <p class="studio-eyebrow" id="studioSubtitle">LIVE PHOTO BOOTH</p>
+      <h1 class="studio-title" id="studioTitle">STUDIO PHOTO</h1>
+      <div class="studio-rule" aria-hidden="true"><span></span></div>
+    </header>
+
+    <div class="connection" id="connection" data-state="connecting" role="status" aria-live="polite">
+      <span class="connection-dot" aria-hidden="true"></span>
+      <span id="connectionLabel">MENYAMBUNG</span>
+    </div>
+
+    <main class="scene" id="scene" aria-label="Mesin cetak foto studio">
+      <div class="scene-wall" aria-hidden="true">
+        <span class="wall-light"></span>
+        <span class="wall-frame"></span>
+      </div>
+
+      <div class="desk" aria-hidden="true">
+        <span class="desk-grain"></span>
+        <span class="desk-shadow"></span>
+        <span class="desk-prop prop-a"></span>
+        <span class="desk-prop prop-b"></span>
+      </div>
+
+      <div class="paper-wrap">
+        <div class="printer" aria-hidden="true">
+          <span class="printer-back"></span>
+          <span class="printer-rail"></span>
+          <span class="printer-post printer-post-left"></span>
+          <span class="printer-post printer-post-right"></span>
+          <span class="printer-head" id="printerHead">
+            <span class="printer-lens"></span>
+            <span class="printer-light"></span>
+          </span>
+        </div>
+
+        <article class="photo-sheet" id="photoSheet">
+          <div class="sheet-head">
+            <span class="sheet-brand" id="sheetBrand">STUDIO PHOTO</span>
+            <span class="sheet-serial">LIVE &middot; <span id="sheetCount">0</span></span>
+          </div>
+          <div class="photo-grid" id="photoGrid"></div>
+          <div class="sheet-foot">
+            <span>SETIAP FOTO ADALAH KENANGAN</span>
+            <span class="sheet-stamp" aria-hidden="true">SP</span>
+          </div>
+          <span class="sheet-curl" aria-hidden="true"></span>
+        </article>
+
+        <section class="roll" id="roll" aria-label="Gulungan foto sebelumnya">
+          <div class="roll-edge" aria-hidden="true"></div>
+          <div class="roll-label">
+            <span>GULUNGAN</span>
+            <span id="rollCount">0/7</span>
+          </div>
+          <div class="roll-strip" id="rollStrip"></div>
+        </section>
+      </div>
+    </main>
+
+    <section class="hud" aria-label="Statistik studio">
+      <div class="hud-stat hud-printed">
+        <span class="hud-label">TERCETAK</span>
+        <strong class="hud-value" id="printedCount">0</strong>
+      </div>
+      <div class="hud-stat hud-target">
+        <div class="hud-target-row">
+          <span class="hud-label">TARGET KOIN</span>
+          <strong class="hud-target-value" id="targetText">0/500</strong>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <span class="progress-fill" id="targetBar"></span>
+        </div>
+      </div>
+      <div class="hud-stat hud-queue" id="queueStat" hidden>
+        <span class="hud-label">ANTREAN</span>
+        <strong class="hud-value" id="queueCount">0</strong>
+      </div>
+    </section>
+
+    <aside class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></aside>
+
+    <div class="sim-badge" id="simBadge" hidden>MODE SIMULASI</div>
+
+    <aside class="debug-panel" id="debugPanel" hidden aria-label="Panel pengujian">
+      <div class="debug-head">
+        <strong>Panel Tes</strong>
+        <span>?debug=1</span>
+      </div>
+      <div class="debug-grid">
+        <button type="button" data-test="standard">Standar &middot; 1</button>
+        <button type="button" data-test="bronze">Perunggu &middot; 50</button>
+        <button type="button" data-test="silver">Perak &middot; 250</button>
+        <button type="button" data-test="gold">Emas &middot; 1.000</button>
+        <button type="button" data-test="diamond">Berlian &middot; 29.999</button>
+        <button type="button" data-test="broken">Avatar rusak</button>
+        <button type="button" data-test="burst">Antrean 5</button>
+        <button type="button" data-test="clear">Kosongkan antrean</button>
+      </div>
+      <p class="debug-note">API: <code>StudioPhoto.pushGift(data)</code></p>
+    </aside>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+# PRD - Studio Photo Live TikTok
+
+| | |
+|---|---|
+| Versi dokumen | 1.1 |
+| Tanggal | 23 Oktober 2026 |
+| Status | Draft untuk dikembangkan. Riwayat: v1.1 menetapkan keputusan terbuka (connector Python, engine web) dan mengganti bingkai emas tunggal menjadi bingkai bertingkat Perunggu/Perak/Emas/Berlian dengan spesifikasi desain mewah di Bagian 9.1 |
+| Pemilik produk / developer | Awan |
+| Penyusun | Lyra |
+| Dokumen terkait | `[Konten] Konsep - Sistem Studio Photo Live TikTok.md`, `[Konten] Rencana - Studio Photo Live TikTok.md`, `[Konten] Studio Photo - Overlay.html` (referensi implementasi v1) |
+
+---
+
+## 1. Ringkasan produk
+
+Studio Photo adalah game live interaktif untuk TikTok LIVE. Penonton yang mengirim gift akan melihat foto profil dan username-nya "tercetak" satu per satu oleh mesin cetak foto virtual di layar live, lalu foto-foto lama tergulung ke bawah seperti gulungan kertas. Produk ini dibangun sendiri (self-host) dalam tiga lapisan: connector yang membaca event dari TikTok, jembatan data lokal, dan game/overlay yang menjalankan animasi dan ditampilkan lewat OBS atau TikTok LIVE Studio.
+
+## 2. Latar belakang
+
+Format serupa terbukti menarik penonton di akun lain (contoh: live "STUDIO PHOTO MBILZ", penonton antre mengirim Mawar 1 koin supaya foto profilnya tercetak dan ramai mengetik "aku" di kolom komentar). Aplikasi aslinya tidak tersedia publik, kemungkinan custom. Daripada bergantung pada layanan pihak ketiga, produk ini dibangun sendiri supaya aturan gift, visual, dan datanya sepenuhnya milik Awan dan bisa dikembangkan ke format game interaktif lain.
+
+## 3. Tujuan dan ruang lingkup
+
+### Tujuan
+1. Penonton mendapat respons visual yang jelas dan terasa personal setiap kali mengirim gift: fotonya muncul di layar dengan namanya.
+2. Host bisa menjalankan format ini berjam-jam tanpa mengoperasikan apa pun secara manual.
+3. Sistem cukup modular untuk dipakai ulang pada format interaktif berikutnya (game lain tinggal mengganti lapisan game).
+
+### Di dalam cakupan (v1)
+- Membaca event gift dari satu room TikTok LIVE milik host secara real-time.
+- Animasi cetak foto profil + username mengikuti antrean.
+- Aturan gift dasar yang bisa diubah lewat konfigurasi, tanpa mengubah kode.
+- Tampilan pendukung: jumlah foto tercetak, antrean, target koin, notifikasi pengirim terakhir.
+- Mode simulasi untuk pengembangan dan pengujian tanpa live.
+
+### Di luar cakupan (v1)
+- Membaca event selain gift (komen, like, follow dicatat sebagai kandidat v2).
+- Multi-room / multi-akun dalam satu sesi.
+- Monetisasi tambahan di luar gift TikTok (donasi eksternal, QRIS, leaderboard permanen antar sesi).
+- Aplikasi mobile penonton. Penonton tidak menginstal apa pun.
+
+## 4. Pengguna
+
+| Pengguna | Kebutuhan utama |
+|---|---|
+| Host (Awan) | Setup cepat sebelum live, sistem stabil selama live, aturan gift gampang diganti, tahu status koneksi sekilas |
+| Penonton pengirim gift | Fotonya benar-benar muncul, namanya tertulis benar, tidak menunggu terlalu lama |
+| Penonton biasa | Paham dalam hitungan detik gift apa yang harus dikirim supaya ikut tampil |
+
+## 5. User stories
+
+1. Sebagai penonton, saya mengirim Mawar supaya foto profil saya tercetak di layar dan dilihat semua orang.
+2. Sebagai penonton, saya mengirim gift besar supaya foto saya tampil lebih menonjol (bingkai khusus) sebagai bentuk pengakuan.
+3. Sebagai host, saya ingin semua gift yang masuk tetap tercetak walau datang beruntun, tanpa ada yang hilang atau dobel.
+4. Sebagai host, saya ingin mengganti aturan gift (misalnya gift pemicu, target koin, judul studio) tanpa menyentuh kode.
+5. Sebagai host, saya ingin mengetes seluruh tampilan sebelum live memakai gift simulasi.
+6. Sebagai host, saya ingin sistem menyambung lagi sendiri kalau koneksi ke TikTok putus di tengah live.
+
+## 6. Arsitektur ringkas
+
+```
+TikTok LIVE (webcast) -> CONNECTOR -> WebSocket lokal -> GAME/OVERLAY -> OBS / LIVE Studio
+```
+
+Penjelasan lengkap arsitektur, anatomi event, dan jebakan teknis ada di dokumen konsep. PRD ini menetapkan kebutuhan tiap lapisannya.
+
+## 7. Kebutuhan fungsional
+
+Prioritas memakai MoSCoW: **M** = wajib di v1, **S** = sebaiknya ada, **C** = kalau sempat.
+
+### 7.1 Connector (CON)
+
+| ID | Kebutuhan | Prioritas |
+|---|---|---|
+| CON-01 | Terhubung ke room TikTok LIVE hanya dengan @username publik. Tidak ada kredensial TikTok yang diminta, disimpan, atau dikirim ke mana pun | M |
+| CON-02 | Memakai library connector open-source **`TikTokLive` (Python)** dengan tanda tangan request via Euler Stream (API key dari environment variable, tidak hardcode). Alasan pemilihan: gratis dan open-source, paling aktif dirawat, dokumentasi dan contoh paling lengkap, dan Python sejalan dengan jalur belajar Awan. Alternatif Node (`tiktok-live-connector`) tetap sah sebagai cadangan karena skema BRG membuat game tidak bergantung pada bahasa connector | M |
+| CON-03 | Mendengarkan event gift dan mengekstrak: username, nama tampilan, URL foto profil, nama/ID gift, repeatCount, repeatEnd, diamondCount | M |
+| CON-04 | Menangani combo dengan benar: event dalam satu combo (groupId sama) diakumulasi, dan satu aksi game diterbitkan saat `repeatEnd = true` dengan total repeat terakhir | M |
+| CON-05 | Reconnect otomatis dengan backoff (mis. 5, 10, 20 detik) saat koneksi putus, dan status koneksi selalu terlihat di log serta indikator sederhana | M |
+| CON-06 | Menulis log event ke file (waktu, pengirim, gift, jumlah) untuk bahan debug dan rekap sesi | S |
+| CON-07 | Tetap berjalan stabil walau room belum live saat connector dinyalakan: menunggu dan tersambung saat live dimulai | S |
+
+### 7.2 Jembatan data (BRG)
+
+| ID | Kebutuhan | Prioritas |
+|---|---|---|
+| BRG-01 | Connector meneruskan setiap aksi gift sebagai JSON berskema baku (lihat Bagian 8) lewat WebSocket lokal, default `ws://127.0.0.1:8080` | M |
+| BRG-02 | Skema JSON tidak bergantung pada nama field connector tertentu, supaya ganti library connector tidak mengubah game | M |
+| BRG-03 | Game yang baru tersambung menerima status awal (jumlah tercetak, target, status koneksi) | S |
+
+### 7.3 Game / overlay (GAM)
+
+| ID | Kebutuhan | Prioritas |
+|---|---|---|
+| GAM-01 | Setiap aksi gift masuk antrean FIFO. Satu proses cetak berjalan dalam satu waktu; event baru tidak menginterupsi cetakan yang sedang berjalan | M |
+| GAM-02 | Animasi cetak per foto: kepala printer aktif, gambar muncul bertahap (buram ke tajam, terungkap dari atas), username muncul setelah gambar selesai. Durasi target 1,5-2,5 detik per foto | M |
+| GAM-03 | Lembaran menampilkan maksimal 9 foto aktif (grid 3x3). Foto yang keluar dari grid pindah ke gulungan bawah (roll), tersimpan visual sebagai miniatur, maksimal 7 miniatur | M |
+| GAM-04 | Foto tercetak memakai **bingkai bertingkat** mengikuti total koin combo: Perunggu 10-99, Perak 100-499, Emas 500-4.999, Berlian >= 5.000. Di bawah ambang Perunggu memakai bingkai putih standar. Ambang dapat diubah lewat konfigurasi. Rincian visual per tingkat ada di Bagian 9.1 | M |
+| GAM-04a | Setiap foto bertingkat menampilkan label tingkat di bawah username (PERUNGGU / PERAK / EMAS / BERLIAN) dengan gaya perhiasan: huruf kapital berjarak, pil berkilau warna logam tingkatnya | M |
+| GAM-04b | Tingkat Perak ke atas mendapat efek sapuan cahaya (shine sweep) sekali saat cetakan selesai; Emas dan Berlian mendapat partikel bintang berkelip (sparkles) dan cahaya tepi (glow) warna tingkatnya; Berlian mendapat bingkai pelangi es beranimasi (conic gradient berputar) | M |
+| GAM-05 | Notifikasi pengirim (toast) berisi avatar, nama, dan gift yang dikirim, tampil maksimal 5 detik, maksimal 3 toast bertumpuk | M |
+| GAM-06 | Indikator selalu terlihat: jumlah foto tercetak, panjang antrean (hanya saat > 0), progres target koin (mis. 120/500) | M |
+| GAM-07 | State machine eksplisit: `IDLE -> PRINTING -> DONE -> IDLE`. Tidak ada foto hilang atau tercetak dua kali dalam kondisi normal maupun saat antrean panjang | M |
+| GAM-08 | Fallback avatar: bila URL foto profil gagal dimuat, tampilkan avatar inisial dari nama pengirim supaya layout tidak rusak | M |
+| GAM-09 | Judul studio, nama studio, dan target koin dapat diganti lewat parameter URL atau file konfigurasi | M |
+| GAM-10 | Mode simulasi: tanpa konektor, overlay menghasilkan gift palsu berkala untuk demo; panel tes manual tersedia (di v1 referensi: parameter `?debug=1` dan API `StudioPhoto.pushGift(data)`) | M |
+| GAM-11 | Bunyi cetak opsional, default mati, diaktifkan lewat konfigurasi | C |
+| GAM-12 | Varian animasi untuk gift sangat besar (cetak ukuran jumbo / efek khusus) | C |
+
+### 7.4 Konfigurasi (CFG)
+
+| ID | Kebutuhan | Prioritas |
+|---|---|---|
+| CFG-01 | Satu tempat konfigurasi (file `.env` untuk connector, parameter URL atau file JSON untuk game) berisi: username TikTok, port WebSocket, aturan gift, ambang bingkai emas, target koin, judul studio | M |
+| CFG-02 | Perubahan aturan gift berlaku tanpa mengubah kode sumber | M |
+
+## 8. Spesifikasi data
+
+Skema JSON baku antara connector dan game:
+
+```json
+{
+  "type": "gift",
+  "user": {
+    "username": "awanbalango",
+    "displayName": "Awan",
+    "avatarUrl": "https://.../avatar.webp"
+  },
+  "gift": {
+    "id": 5655,
+    "name": "Rose",
+    "repeat": 5,
+    "coinsPerItem": 1,
+    "totalCoins": 5
+  },
+  "timestamp": "2026-10-23T11:57:00+08:00"
+}
+```
+
+Aturan main data:
+- `avatarUrl` boleh kosong; game wajib menangani dengan fallback (GAM-08).
+- Satu pesan JSON diterbitkan per **combo selesai**, bukan per ketukan gift (CON-04).
+- Field tambahan di masa depan ditambahkan tanpa menghapus field lama (kompatibilitas mundur).
+
+## 9. Aturan gift default
+
+| Gift / kondisi | Aksi di game |
+|---|---|
+| Gift apa pun (default) | Cetak 1 foto pengirim |
+| Total koin combo 10-99 | Bingkai **Perunggu** |
+| Total koin combo 100-499 | Bingkai **Perak** + shine sweep |
+| Total koin combo 500-4.999 | Bingkai **Emas** + shine sweep + sparkles |
+| Total koin combo >= 5.000 | Bingkai **Berlian** + semua efek Emas + bingkai beranimasi |
+| Gift yang sama dari pengirim yang sama, combo terpisah | Tetap tercetak lagi (setiap combo = satu foto) |
+
+Contoh pemetaan gift TikTok yang umum: Mawar 1 koin = standar; combo Mawar 20x = Perunggu; Perfume 20 koin x5 = Perak; gift 500an koin (mis. Money Gun 500) = Emas; Lion 29.999 koin = Berlian.
+
+Aturan ini default awal dan harus bisa diubah lewat konfigurasi (CFG-02). Pembatasan opsional untuk v2: jeda minimum per pengirim untuk mencegah satu orang memenuhi antrean.
+
+### 9.1 Spesifikasi desain bingkai mewah
+
+Prinsipnya: semakin tinggi tingkat, semakin terasa seperti perhiasan asli, bukan sekadar ganti warna tepi. Setiap tingkat punya palet logam, cahaya, dan efek sendiri. Kartu foto tetap putih bersih di semua tingkat supaya wajah penonton selalu jadi pusat perhatian; kemewahan dipusatkan di bingkai, label, dan efek cahaya.
+
+| Tingkat | Palet bingkai | Label | Efek cahaya | Kesan |
+|---|---|---|---|---|
+| Standar (< 10) | Putih bersih, bayangan lembut | Tidak ada | Tidak ada | Kartu foto biasa, bersih |
+| Perunggu (10-99) | Gradasi tembaga `#a05a2c -> #cd7f32 -> #e8b07c`, tepi 4px | Pil cokelat tembaga, teks putih | Glow hangat tipis oranye | Hangat, pencapaian pertama |
+| Perak (100-499) | Gradasi perak `#8e9eab -> #eef2f3 -> #b8c6db`, tepi 4px | Pil perak, teks abu gelap | Glow dingin kebiruan + **shine sweep** menyapu kartu sekali saat selesai cetak | Elegan, metalik dingin |
+| Emas (500-4.999) | Gradasi emas `#bf953f -> #fcf6ba -> #b38728 -> #fbf5b7`, tepi 5px | Pil emas, teks cokelat gelap | Glow emas kuat + shine sweep + **3 titik sparkles** berkelip di sudut kartu | Mewah, perayaan |
+| Berlian (>= 5.000) | Bingkai **conic gradient berputar** warna es `#8be9ff, #ffffff, #c3a6ff, #8be9ff`, tepi 5px, di atas dasar putih kristal | Pil biru es berkilau dengan ikon 💎, teks putih | Semua efek Emas + glow berdenyut (pulse) biru es + sparkles lebih banyak | Puncak, langka, jadi pusat perhatian seluruh layar |
+
+Aturan desain pendamping:
+
+1. **Tipografi label**: font display membulat (Baloo 2 atau setara), kapital, letter-spacing lebar, ukuran cukup dibaca dari layar HP penonton.
+2. **Gerakan hemat**: efek berjalan sekali saat cetakan selesai (shine, sparkles muncul), lalu berhenti; hanya glow Berlian dan putaran bingkainya yang terus bergerak, supaya layar tidak ramai.
+3. **Konsistensi di gulungan**: miniatur foto di roll bawah mempertahankan titik warna tingkatnya (dot kecil warna logam di sudut miniatur) supaya riwayat gift besar tetap terlihat setelah foto keluar dari grid.
+4. **Toast ikut tingkat**: notifikasi pengirim gift bertingkat memakai aksen warna tingkatnya, dan untuk Berlian toast bertahan 2 detik lebih lama.
+5. **Aksesibilitas visual**: nama pengirim selalu teks gelap di atas kartu terang di semua tingkat; kemewahan tidak boleh mengorbankan keterbacaan nama dan wajah.
+
+## 10. Kebutuhan non-fungsional
+
+| Aspek | Target |
+|---|---|
+| Latensi | Gift selesai dikirim penonton sampai animasi mulai jalan <= 2 detik dalam kondisi jaringan normal (di luar antrean) |
+| Performa | Overlay berjalan 30 fps stabil di browser source 1080x1920 pada PC host kelas menengah, berdampingan dengan OBS dan connector |
+| Keandalan | Live 3 jam tanpa restart; connector reconnect otomatis; overlay tidak crash oleh payload event yang aneh (semua input divalidasi/dinormalisasi) |
+| Antrean | Menampung minimal 100 gift menunggu tanpa kehilangan data; urutan cetak sesuai urutan kedatangan combo selesai |
+| Keamanan | Tidak ada password TikTok di sistem mana pun; API key Euler hanya di environment variable; WebSocket hanya bind ke localhost |
+| Observabilitas | Log connector mencatat koneksi, putus/sambung, dan setiap aksi gift yang diterbitkan |
+
+## 11. Keamanan dan kepatuhan
+
+- Jalur webcast bersifat tidak resmi. Risiko perubahan protokol TikTok diterima, dengan mitigasi: kunci versi library connector di file dependensi, dan uji singkat sebelum live penting.
+- Jangan pernah memakai tool yang meminta login/password TikTok.
+- Foto profil penonton adalah konten publik dari event live; produk hanya menampilkannya selama sesi live berjalan.
+
+## 12. Pengujian dan kriteria penerimaan
+
+Skenario uji wajib sebelum v1 dinyatakan selesai:
+
+1. **Uji dasar**: live uji coba, kirim 1 Mawar dari akun kedua, foto dan nama tercetak benar dalam <= 2 detik.
+2. **Uji combo**: kirim Mawar 20x dalam satu combo, hasilnya tepat 1 foto dengan label/total yang benar, bukan 20 foto.
+3. **Uji antrean**: kirim 15 gift beruntun dari beberapa akun, semua tercetak berurutan, tidak ada yang hilang atau dobel.
+4. **Uji bingkai bertingkat**: kirim empat combo bernilai 50, 250, 1.000, dan 29.999 koin; bingkai yang tercetak harus berturut-turut Perunggu, Perak, Emas, Berlian, masing-masing dengan label dan efek sesuai Bagian 9.1.
+5. **Uji putus koneksi**: matikan jaringan 30 detik di tengah live, connector menyambung lagi sendiri dan event berikutnya tetap tercetak.
+6. **Uji avatar rusak**: simulasikan event dengan avatarUrl kosong/invalid, layout tetap rapi dengan avatar inisial.
+7. **Uji durasi**: simulasi berjalan 60 menit, performa stabil, antrean tidak bocor (memori tidak naik terus).
+
+## 13. Tahapan rilis
+
+| Tahap | Isi | Keluaran |
+|---|---|---|
+| MVP | CON-01 s.d. CON-05, BRG-01, game menampilkan foto + nama tanpa animasi (cukup muncul) | Bukti alur ujung ke ujung jalan |
+| v1 | Seluruh kebutuhan M, termasuk animasi cetak, gulungan, bingkai emas, konfigurasi, mode simulasi, lolos 7 skenario uji | Siap dipakai live publik |
+| v1.1 | Log rekap sesi, indikator status koneksi di overlay, pembatasan jeda per pengirim | Live lebih terkendali |
+| v2 (kandidat) | Event komen/like/follow sebagai pemicu, papan top gifter per sesi, varian scene/mesin lain | Format berkembang |
+
+## 14. Risiko dan mitigasi
+
+| Risiko | Dampak | Mitigasi |
+|---|---|---|
+| TikTok mengubah protokol webcast | Connector berhenti menerima event | Pantau rilis library connector; uji sebelum live; jalur cadangan SaaS (TokElements) untuk overlay yang sama |
+| Euler Stream free tier mencapai batas | Tidak bisa connect | API key cadangan atau sign server self-hosted; catat pemakaian |
+| Gift spam memenuhi antrean | Penonton lain menunggu sangat lama | Batas panjang antrean terlihat di layar; opsi jeda per pengirim (v1.1); host bisa mengosongkan antrean |
+| Foto profil penonton tidak pantas | Tampil di layar live | Host/moderator siaga; kandidat v2: daftar blokir username |
+| PC host tidak kuat menjalankan OBS + game berat | Frame drop | v1 memakai overlay web ringan (HTML/CSS/JS); scene 3D berat ditunda sampai teruji |
+
+## 15. Keputusan
+
+Sudah diputuskan Awan, 23 Oktober 2026:
+
+1. **Bahasa connector: Python (`TikTokLive`).** Gratis dan open-source, dengan API key Euler Stream free tier untuk tanda tangan request.
+2. **Engine game: web (HTML/CSS/JS).** Overlay web diteruskan untuk v1 dan seterusnya sampai ada alasan kuat pindah engine; referensi implementasi adalah `[Konten] Studio Photo - Overlay.html`.
+3. **Bingkai bertingkat** Perunggu/Perak/Emas/Berlian dengan ambang 10 / 100 / 500 / 5.000 koin per combo, mengikuti Bagian 9 dan 9.1.
+
+Masih terbuka:
+
+1. Target koin default per sesi untuk progres di layar (sementara 20, mengikuti contoh referensi; kemungkinan diganti angka yang lebih menantang seperti 500).
+
+## 16. Metrik keberhasilan
+
+- Persentase gift yang tercetak tanpa hilang/dobel selama sesi live: target >= 99% (dari log connector vs hitungan tercetak di overlay).
+- Latensi rata-rata gift ke animasi: <= 2 detik.
+- Waktu setup dari menyalakan PC sampai siap live: <= 10 menit.
+- Retensi penonton dan jumlah gift per sesi dibandingkan live biasa (dicatat manual oleh host sebagai bahan evaluasi format).

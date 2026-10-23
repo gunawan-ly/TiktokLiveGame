@@ -1,0 +1,4 @@
+TikTokLive==7.0.1
+websockets==17.3
+python-dotenv==1.2.4
+pytest==9.1.1

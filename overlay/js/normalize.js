@@ -1,0 +1,97 @@
+let localSequence = 0;
+
+function clampInteger(value, fallback, min = 0, max = Number.MAX_SAFE_INTEGER) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return fallback;
+  }
+  return Math.min(max, Math.max(min, Math.floor(number)));
+}
+
+function cleanText(value, fallback, limit = 80) {
+  const text = String(value ?? "")
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return (text || fallback).slice(0, limit);
+}
+
+export function isSafeAvatarUrl(value) {
+  const url = String(value ?? "").trim();
+  if (!url) {
+    return "";
+  }
+  if (/^https?:\/\/[^\s]+$/i.test(url)) {
+    return url;
+  }
+  if (/^data:image\/(?:png|jpe?g|webp|gif|svg\+xml);/i.test(url)) {
+    return url;
+  }
+  if (url.startsWith("/") || url.startsWith("./") || url.startsWith("../")) {
+    return url;
+  }
+  return "";
+}
+
+export function initialsFor(name) {
+  const parts = String(name ?? "")
+    .replace(/[._-]+/g, " ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2);
+  const initials = parts.map((part) => part[0]).join("").toUpperCase();
+  return initials || "SP";
+}
+
+export function avatarHueFor(name) {
+  let hash = 0;
+  for (const character of String(name ?? "studio")) {
+    hash = (hash * 31 + character.codePointAt(0)) % 360;
+  }
+  return 18 + (hash % 300);
+}
+
+export function normalizeGiftMessage(message) {
+  if (!message || message.type !== "gift") {
+    return null;
+  }
+
+  const user = message.user && typeof message.user === "object" ? message.user : {};
+  const gift = message.gift && typeof message.gift === "object" ? message.gift : {};
+
+  const username = cleanText(
+    user.username ?? user.displayName,
+    "viewer",
+    40,
+  );
+  const displayName = cleanText(user.displayName ?? username, username, 80);
+  const giftName = cleanText(gift.name, "Gift", 40);
+  const repeat = clampInteger(gift.repeat, 1, 1, 1_000_000);
+  const coinsPerItem = clampInteger(gift.coinsPerItem, 0, 0, 1_000_000_000);
+  const computedTotal = repeat * coinsPerItem;
+  const totalCoins = clampInteger(
+    gift.totalCoins ?? message.totalCoins,
+    computedTotal,
+    0,
+    1_000_000_000_000,
+  );
+
+  const eventId = cleanText(
+    message.eventId ?? gift.eventId,
+    `local-${Date.now().toString(36)}-${++localSequence}`,
+    120,
+  );
+
+  return {
+    eventId,
+    username,
+    displayName,
+    avatarUrl: isSafeAvatarUrl(user.avatarUrl),
+    giftId: clampInteger(gift.id, 0, 0),
+    giftName,
+    repeat,
+    coinsPerItem,
+    totalCoins,
+    timestamp: cleanText(message.timestamp, new Date().toISOString(), 40),
+  };
+}

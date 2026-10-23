@@ -1,0 +1,33 @@
+{
+  "title": "STUDIO PHOTO",
+  "subtitle": "LIVE PHOTO BOOTH",
+  "targetCoins": 500,
+  "wsUrl": "ws://127.0.0.1:8080",
+  "maxActivePhotos": 9,
+  "maxRollPhotos": 7,
+  "printDurationMs": 2000,
+  "toastDurationMs": 5000,
+  "diamondToastExtraMs": 2000,
+  "tiers": {
+    "bronze": {
+      "minCoins": 10,
+      "label": "PERUNGGU"
+    },
+    "silver": {
+      "minCoins": 100,
+      "label": "PERAK"
+    },
+    "gold": {
+      "minCoins": 500,
+      "label": "EMAS"
+    },
+    "diamond": {
+      "minCoins": 5000,
+      "label": "BERLIAN"
+    }
+  },
+  "sound": {
+    "enabled": false,
+    "volume": 0.25
+  }
+}

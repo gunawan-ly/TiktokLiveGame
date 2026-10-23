@@ -1,0 +1,80 @@
+.scene.is-printing .printer-lens {
+  animation: printLensPulse 0.55s ease-in-out infinite alternate;
+}
+
+.scene.is-printing .printer-light {
+  animation: printLightPulse 0.38s ease-in-out infinite alternate;
+}
+
+.photo-card.is-rolling {
+  animation: cardRollOut 0.34s cubic-bezier(0.5, 0, 0.7, 0.4) both;
+}
+
+.pill-gem {
+  display: inline-block;
+  width: 0.42rem;
+  height: 0.42rem;
+  border: 0.05rem solid rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, #ffffff, #8be9ff 48%, #c3a6ff);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  box-shadow: 0 0 0.3rem rgba(139, 233, 255, 0.9);
+}
+
+.toast-avatar .avatar-fallback {
+  font-size: 1.15rem;
+}
+
+.toast-avatar img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.roll-mini.tier-diamond .roll-mini-dot {
+  animation: miniDotTwinkle 1.8s ease-in-out infinite;
+}
+
+@keyframes cardRollOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(2.4rem) rotate(-4deg) scale(0.88);
+  }
+}
+
+@keyframes printLensPulse {
+  from {
+    box-shadow: 0 0 0.6rem rgba(98, 220, 255, 0.24);
+  }
+  to {
+    box-shadow:
+      0 0 1.3rem rgba(139, 233, 255, 0.95),
+      0 0 2.8rem rgba(139, 233, 255, 0.45);
+  }
+}
+
+@keyframes printLightPulse {
+  from {
+    opacity: 0.45;
+    transform: translateX(-50%) scaleX(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1.08);
+  }
+}
+
+@keyframes miniDotTwinkle {
+  0%,
+  100% {
+    box-shadow: 0 0 0.35rem rgba(139, 233, 255, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 0.65rem rgba(139, 233, 255, 0.95),
+      0 0 1.1rem rgba(195, 166, 255, 0.55);
+  }
+}
