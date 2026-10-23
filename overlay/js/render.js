@@ -7,6 +7,45 @@ import { tierAccent, tierLabel } from "./tiers.js";
 const sleep = (milliseconds) =>
   new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 
+const GALLERY_ITEMS = [
+  {
+    displayName: "Ayunia ",
+    totalCoins: 1,
+    tier: "standard",
+    avatarUrl: "../assets/avatars/avatar-1.svg",
+  },
+  {
+    displayName: "Perunggu",
+    totalCoins: 50,
+    tier: "bronze",
+    avatarUrl: "../assets/avatars/avatar-2.svg",
+  },
+  {
+    displayName: "Perak",
+    totalCoins: 250,
+    tier: "silver",
+    avatarUrl: "../assets/avatars/avatar-3.svg",
+  },
+  {
+    displayName: "Emas",
+    totalCoins: 1000,
+    tier: "gold",
+    avatarUrl: "../assets/avatars/avatar-4.svg",
+  },
+  {
+    displayName: "Berlian",
+    totalCoins: 29999,
+    tier: "diamond",
+    avatarUrl: "../assets/avatars/avatar-5.svg",
+  },
+  {
+    displayName: "Ayunia ",
+    totalCoins: 1,
+    tier: "standard",
+    avatarUrl: "../assets/avatars/avatar-6.svg",
+  },
+];
+
 const CONNECTION_LABELS = {
   connecting: "MENYAMBUNG",
   connected: "LIVE",
@@ -150,16 +189,17 @@ export class OverlayRenderer {
     card.className = `photo-card tier-${tier}`;
     card.style.setProperty("--print-duration", `${this.config.printDurationMs}ms`);
 
-    const inner = document.createElement("div");
-    inner.className = "card-inner";
+    const excerpt = document.createElement("div");
+    excerpt.className = "card-print";
 
-    const frame = document.createElement("div");
-    frame.className = "avatar-frame";
+    const photo = document.createElement("div");
+    photo.className = "card-photo";
+
     const fallback = document.createElement("div");
     fallback.className = "avatar-fallback";
     fallback.style.setProperty("--avatar-hue", avatarHueFor(item.displayName));
     fallback.textContent = initialsFor(item.displayName);
-    frame.append(fallback);
+    photo.append(fallback);
 
     if (item.avatarUrl) {
       const image = document.createElement("img");
@@ -169,50 +209,50 @@ export class OverlayRenderer {
       image.decoding = "async";
       image.addEventListener("error", () => image.remove(), { once: true });
       image.src = item.avatarUrl;
-      frame.append(image);
+      photo.append(image);
     }
 
-    const username = document.createElement("span");
-    username.className = "card-username";
-    username.textContent = item.displayName;
-
-    inner.append(frame, username);
-
-    if (tier !== "standard") {
-      const pill = document.createElement("span");
-      pill.className = "tier-pill";
-      if (tier === "diamond") {
-        const gem = document.createElement("span");
-        gem.className = "pill-gem";
-        gem.setAttribute("aria-hidden", "true");
-        pill.append(gem);
-      }
-      pill.append(document.createTextNode(tierLabel(tier, this.tiers)));
-      inner.append(pill);
-    }
+    excerpt.append(photo);
 
     const shine = document.createElement("span");
     shine.className = "card-shine";
     shine.setAttribute("aria-hidden", "true");
-    inner.append(shine);
+    excerpt.append(shine);
 
     const sparkles = document.createElement("span");
     sparkles.className = "card-sparkles";
     sparkles.setAttribute("aria-hidden", "true");
-    const sparkleCount = tier === "diamond" ? 6 : tier === "gold" ? 3 : 0;
+    const sparkleCount = tier === "diamond" ? 6 : tier === "gold" ? 4 : tier === "silver" ? 2 : 0;
     for (let index = 0; index < sparkleCount; index += 1) {
       const sparkle = document.createElement("i");
       sparkle.className = "sparkle";
-      sparkle.style.left = `${12 + ((index * 31) % 74)}%`;
-      sparkle.style.top = `${10 + ((index * 29) % 70)}%`;
-      sparkle.style.setProperty("--sparkle-delay", `${index * 110}ms`);
-      sparkle.style.setProperty("--sparkle-speed", `${720 + index * 80}ms`);
-      sparkle.style.setProperty("--sparkle-size", index % 2 ? "0.34rem" : "0.5rem");
+      sparkle.style.left = `${10 + ((index * 31) % 78)}%`;
+      sparkle.style.top = `${10 + ((index * 27) % 70)}%`;
+      sparkle.style.setProperty("--sparkle-delay", `${index * 90}ms`);
+      sparkle.style.setProperty("--sparkle-size", index % 2 ? "0.36rem" : "0.5rem");
       sparkles.append(sparkle);
     }
-    inner.append(sparkles);
+    excerpt.append(sparkles);
 
-    card.append(inner);
+    const username = document.createElement("span");
+    username.className = "card-name";
+    username.textContent = item.displayName;
+    excerpt.append(username);
+
+    if (tier !== "standard") {
+      const tierPill = document.createElement("span");
+      tierPill.className = "card-tier";
+      const gem = tier === "diamond" ? document.createElement("span") : null;
+      if (gem) {
+        gem.className = "card-tier-gem";
+        gem.setAttribute("aria-hidden", "true");
+        tierPill.append(gem);
+      }
+      tierPill.append(document.createTextNode(tierLabel(tier, this.tiers)));
+      excerpt.append(tierPill);
+    }
+
+    card.append(excerpt);
     return card;
   }
 
@@ -258,8 +298,8 @@ export class OverlayRenderer {
       image.alt = "";
       image.referrerPolicy = "no-referrer";
       image.decoding = "async";
-      image.src = entry.item.avatarUrl;
       image.addEventListener("error", () => image.remove(), { once: true });
+      image.src = entry.item.avatarUrl;
       avatar.append(image);
     }
 
@@ -303,8 +343,8 @@ export class OverlayRenderer {
       image.alt = "";
       image.referrerPolicy = "no-referrer";
       image.decoding = "async";
-      image.src = item.avatarUrl;
       image.addEventListener("error", () => image.remove(), { once: true });
+      image.src = item.avatarUrl;
       avatar.append(image);
     }
 

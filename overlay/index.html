@@ -27,51 +27,60 @@
     </div>
 
     <main class="scene" id="scene" aria-label="Mesin cetak foto studio">
-      <div class="scene-wall" aria-hidden="true">
-        <span class="wall-light"></span>
-        <span class="wall-frame"></span>
-      </div>
-
-      <div class="desk" aria-hidden="true">
-        <span class="desk-grain"></span>
-        <span class="desk-shadow"></span>
-        <span class="desk-prop prop-a"></span>
-        <span class="desk-prop prop-b"></span>
-      </div>
-
-      <div class="paper-wrap">
-        <div class="printer" aria-hidden="true">
-          <span class="printer-back"></span>
-          <span class="printer-rail"></span>
-          <span class="printer-post printer-post-left"></span>
-          <span class="printer-post printer-post-right"></span>
-          <span class="printer-head" id="printerHead">
-            <span class="printer-lens"></span>
-            <span class="printer-light"></span>
-          </span>
+      <div class="scene-inner">
+        <div class="room">
+          <div class="room-wall">
+            <span class="wall-light"></span>
+            <span class="wall-lamp"></span>
+            <span class="wall-frame"></span>
+            <span class="window"></span>
+            <span class="window-light"></span>
+            <span class="dust" aria-hidden="true"></span>
+          </div>
         </div>
 
-        <article class="photo-sheet" id="photoSheet">
-          <div class="sheet-head">
-            <span class="sheet-brand" id="sheetBrand">STUDIO PHOTO</span>
-            <span class="sheet-serial">LIVE &middot; <span id="sheetCount">0</span></span>
-          </div>
-          <div class="photo-grid" id="photoGrid"></div>
-          <div class="sheet-foot">
-            <span>SETIAP FOTO ADALAH KENANGAN</span>
-            <span class="sheet-stamp" aria-hidden="true">SP</span>
-          </div>
-          <span class="sheet-curl" aria-hidden="true"></span>
-        </article>
+        <div class="desk">
+          <span class="desk-grain"></span>
+          <span class="desk-shadow"></span>
+          <span class="desk-prop prop-a"></span>
+          <span class="desk-prop prop-b"></span>
+          <span class="desk-prop prop-c"></span>
+        </div>
 
-        <section class="roll" id="roll" aria-label="Gulungan foto sebelumnya">
-          <div class="roll-edge" aria-hidden="true"></div>
-          <div class="roll-label">
-            <span>GULUNGAN</span>
-            <span id="rollCount">0/7</span>
+        <div class="paper-wrap">
+          <div class="printer" aria-hidden="true">
+            <span class="printer-body"></span>
+            <span class="printer-rail"></span>
+            <span class="printer-post printer-post-left"></span>
+            <span class="printer-post printer-post-right"></span>
+            <span class="printer-head" id="printerHead">
+              <span class="printer-lens"></span>
+              <span class="printer-light"></span>
+            </span>
           </div>
-          <div class="roll-strip" id="rollStrip"></div>
-        </section>
+
+          <article class="photo-sheet" id="photoSheet">
+            <div class="sheet-head">
+              <span class="sheet-brand" id="sheetBrand">STUDIO PHOTO</span>
+              <span class="sheet-serial">LIVE &middot; <span id="sheetCount">0</span></span>
+            </div>
+            <div class="photo-grid" id="photoGrid"></div>
+            <div class="sheet-foot">
+              <span>SETIAP FOTO ADALAH KENANGAN</span>
+              <span class="sheet-stamp" aria-hidden="true">SP</span>
+            </div>
+            <span class="sheet-curl" aria-hidden="true"></span>
+          </article>
+
+          <section class="roll" id="roll" aria-label="Gulungan foto sebelumnya">
+            <div class="roll-edge" aria-hidden="true"></div>
+            <div class="roll-label">
+              <span>GULUNGAN</span>
+              <span id="rollCount">0/7</span>
+            </div>
+            <div class="roll-strip" id="rollStrip"></div>
+          </section>
+        </div>
       </div>
     </main>
 
