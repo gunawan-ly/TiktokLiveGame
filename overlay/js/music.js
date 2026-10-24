@@ -38,6 +38,7 @@ export class MusicPlayer {
     }
     this.index = index;
     this.audio.loop = false;
+    this.audio.preload = "auto";
     this.audio.volume = this.volume;
     this.audio.src = this.tracks[index];
     try {

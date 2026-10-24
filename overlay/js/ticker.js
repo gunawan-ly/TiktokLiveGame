@@ -1,6 +1,7 @@
-// Running teks overlay: dua strip pesan berjalan dari kanan ke kiri,
-// mengulang tanpa putus. Strip atas untuk info arahan live (penting,
-// harus selalu terlihat); strip bawah untuk credits.
+// Running teks overlay: dua strip pesan berjalan model marquee klasik.
+// Teks muncul dari kanan, berjalan ke kiri sampai hilang seluruhnya,
+// lalu muncul lagi dari kanan. Strip atas untuk info arahan live
+// (penting, harus selalu terlihat); strip bawah untuk credits.
 //
 // Info ditaruh paling atas (bukan bawah) atas permintaan pemilik: kolom
 // komentar TikTok menutupi area bawah layar penonton, jadi info penting
@@ -9,14 +10,18 @@
 // mengulang. Strip atas juga tidak menabrak header (mulai 2.2rem) maupun
 // toast (jangkar bawah).
 //
-// Loop mulus: isi digandakan jadi dua span identik, animasi menggeser
-// track sejauh -50%. Kecepatan konstan (px/detik) supaya teks tetap
-// terbaca berapa pun panjang pesannya; durasi dihitung dari lebar span
-// sesudah dirender. Modul ini bebas DOM saat import: elemen disuntik
-// lewat konstruktor, pembuatan span bisa diganti pabrik palsu di test.
+// Mekanisme: satu span di dalam track. JS mengukur lebar strip (C) dan
+// lebar teks (W) lalu mengatur --ticker-from (C px, teks mulai di luar
+// kanan), --ticker-to (-(W + margin) px, teks hilang di kiri), dan
+// --ticker-duration ((C + W) / kecepatan). Pengukuran dilakukan sesudah
+// strip ditampilkan (offsetWidth elemen tersembunyi selalu 0) dan
+// semuanya sinkron dalam satu tugas supaya tidak ada kedip. Modul ini
+// bebas DOM saat import: elemen disuntik lewat konstruktor, pembuatan
+// span bisa diganti pabrik palsu di test.
 
 export const TICKER_SEPARATOR = "  ✦  ";
 const FALLBACK_DURATION_SEC = 40;
+const EDGE_MARGIN_PX = 8;
 
 export function buildTickerText(messages, separator = TICKER_SEPARATOR) {
   const list = (Array.isArray(messages) ? messages : [])
@@ -28,13 +33,21 @@ export function buildTickerText(messages, separator = TICKER_SEPARATOR) {
   return list.join(separator);
 }
 
-export function loopDurationSec(contentWidthPx, speedPxPerSec) {
-  const width = Number(contentWidthPx);
+export function tickerTravelSec(containerWidthPx, textWidthPx, speedPxPerSec) {
+  const container = Number(containerWidthPx);
+  const text = Number(textWidthPx);
   const speed = Number(speedPxPerSec);
-  if (!Number.isFinite(width) || !Number.isFinite(speed) || width <= 0 || speed <= 0) {
+  if (
+    !Number.isFinite(container) ||
+    !Number.isFinite(text) ||
+    !Number.isFinite(speed) ||
+    container <= 0 ||
+    text <= 0 ||
+    speed <= 0
+  ) {
     return FALLBACK_DURATION_SEC;
   }
-  return Math.min(180, Math.max(10, width / speed));
+  return Math.min(300, Math.max(5, (container + text) / speed));
 }
 
 export class Ticker {
@@ -74,18 +87,18 @@ export class Ticker {
     if (!text) {
       return;
     }
-    // Pemisah di ujung membuat jarak antar putaran sama dengan jarak
-    // antar pesan, jadi sambungan loop tidak terlihat.
-    const spanText = text + this.separator;
-    this.track.appendChild(this._makeSpan(spanText));
-    this.track.appendChild(this._makeSpan(spanText));
-    const first = this.track.children ? this.track.children[0] : null;
-    const width = first ? Number(first.offsetWidth) || 0 : 0;
-    const duration = loopDurationSec(width, this.speed);
+    const span = this._makeSpan(text);
+    this.track.appendChild(span);
+    // Tampilkan dulu baru ukur: offsetWidth saat tersembunyi selalu 0.
+    this.container.hidden = false;
+    const containerWidth = Number(this.container.offsetWidth) || 0;
+    const textWidth = Number(span.offsetWidth) || 0;
+    const duration = tickerTravelSec(containerWidth, textWidth, this.speed);
     if (this.track.style && typeof this.track.style.setProperty === "function") {
+      this.track.style.setProperty("--ticker-from", `${containerWidth}px`);
+      this.track.style.setProperty("--ticker-to", `${-(textWidth + EDGE_MARGIN_PX)}px`);
       this.track.style.setProperty("--ticker-duration", `${duration}s`);
     }
-    this.container.hidden = false;
     this.started = true;
   }
 

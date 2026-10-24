@@ -25,15 +25,15 @@
 }
 
 .ticker-track {
-  display: flex;
-  flex-shrink: 0;
+  display: block;
+  flex: none;
   white-space: nowrap;
   will-change: transform;
   animation: tickerScroll var(--ticker-duration, 40s) linear infinite;
 }
 
 .ticker-track span {
-  padding-right: 0;
+  display: inline-block;
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -42,9 +42,9 @@
 
 @keyframes tickerScroll {
   from {
-    transform: translateX(0);
+    transform: translateX(var(--ticker-from, 100%));
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(var(--ticker-to, -100%));
   }
 }

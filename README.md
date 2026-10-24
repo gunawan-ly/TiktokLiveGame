@@ -132,12 +132,13 @@ nonaktif secara default; aktifkan dengan `?music=1`. Volumenya sengaja kecil
 terdengar daripada musik. Daftar lagu, lisensi CC BY, dan teks kredit
 yang ditampilkan lewat running teks ada di `overlay/assets/music/README.md`.
 
-Running teks ada dua strip. Strip atas untuk info arahan live (di atas
-scene, supaya tidak terhalang kolom komentar TikTok yang menutupi area
-bawah layar); pesannya dari `ticker.messages` di `config/game.json`.
-Strip bawah khusus credits; pesannya dari `tickerCredits.messages`.
-Keduanya bisa dimatikan terpisah dengan `?ticker=0` dan
-`?tickerCredits=0`.
+Running teks ada dua strip, model marquee klasik: teks muncul dari
+kanan, berjalan ke kiri sampai hilang, lalu muncul lagi dari kanan.
+Strip atas untuk info arahan live (di atas scene, supaya tidak terhalang
+kolom komentar TikTok yang menutupi area bawah layar); pesannya dari
+`ticker.messages` di `config/game.json`. Strip bawah khusus credits;
+pesannya dari `tickerCredits.messages`. Keduanya bisa dimatikan terpisah
+dengan `?ticker=0` dan `?tickerCredits=0`.
 
 ## Konfigurasi
 

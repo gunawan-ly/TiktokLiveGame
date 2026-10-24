@@ -71,6 +71,11 @@ body {
   position: relative;
   width: 100vw;
   height: 100vh;
+  /* dvh mengikuti area yang benar-benar terlihat di browser HP; tanpa ini
+     elemen jangkar bawah (HUD, ticker credits) tersembunyi di balik bar
+     browser karena 100vh menghitung area di balik bar juga. Di OBS,
+     dvh == vh sehingga tidak ada perubahan. */
+  height: 100dvh;
   overflow: hidden;
   isolation: isolate;
   background:

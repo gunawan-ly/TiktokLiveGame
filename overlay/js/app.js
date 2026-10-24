@@ -95,8 +95,11 @@ async function bootstrap() {
   const sound = new PrintSound(config.sound);
   const music = new MusicPlayer({ audio: new Audio(), ...config.music });
   music.start();
-  // HP mengunci audio sampai ada gestur: ketukan pertama membuka musik.
-  window.addEventListener("pointerdown", () => music.unlock(), { once: true });
+  // HP mengunci audio sampai ada gestur. Unlock dicoba lagi di setiap
+  // ketukan dan setiap gift masuk: sesudah ketukan pertama, aktivasi
+  // lengket browser membuat percobaan berikutnya berhasil (mekanisme
+  // yang sama yang membuka bunyi aksi).
+  window.addEventListener("pointerdown", () => music.unlock());
   const ticker = new Ticker({
     container: elements.ticker,
     track: elements.tickerTrack,
@@ -122,6 +125,7 @@ async function bootstrap() {
       console.warn("Gift diabaikan karena payload tidak valid.");
       return false;
     }
+    music.unlock();
     renderer.prefetchAvatar(item.avatarUrl);
     const result = queue.push(item);
     if (!result.ok) {
