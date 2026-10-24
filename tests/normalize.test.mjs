@@ -6,6 +6,7 @@ import {
   isSafeAvatarUrl,
   normalizeEmeraldMessage,
   normalizeGiftMessage,
+  normalizeJoinMessage,
 } from "../overlay/js/normalize.js";
 
 function message(overrides = {}) {
@@ -42,6 +43,24 @@ test("cumulativeCoins drives the frame tier, combo total stays per combo", () =>
   assert.equal(item.cumulativeCoins, 250);
   // Payload lama tanpa cumulativeCoins jatuh ke total combo.
   assert.equal(normalizeGiftMessage(message()).cumulativeCoins, 5);
+});
+
+test("normalizes a join popup message", () => {
+  const item = normalizeJoinMessage({
+    type: "join",
+    eventId: "join-runA-123",
+    user: {
+      username: "awanbalango",
+      displayName: "Awan",
+      avatarUrl: "https://cdn.example.com/a.webp",
+    },
+    timestamp: "2026-10-24T11:46:00+08:00",
+  });
+  assert.equal(item.displayName, "Awan");
+  assert.equal(item.avatarUrl, "https://cdn.example.com/a.webp");
+  assert.equal(item.eventId, "join-runA-123");
+  assert.equal(normalizeJoinMessage(message()), null);
+  assert.equal(normalizeJoinMessage(null), null);
 });
 
 test("computes total coins when missing", () => {

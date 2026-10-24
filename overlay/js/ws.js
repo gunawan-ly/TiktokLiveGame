@@ -48,6 +48,8 @@ export class StudioSocket {
         this.handlers.onGift?.(payload);
       } else if (payload.type === "emerald_print") {
         this.handlers.onEmerald?.(payload);
+      } else if (payload.type === "join") {
+        this.handlers.onJoin?.(payload);
       } else if (payload.type === "status") {
         this.handlers.onStatus?.(payload.connection || "disconnected", payload.detail || "");
       } else if (payload.type === "snapshot") {

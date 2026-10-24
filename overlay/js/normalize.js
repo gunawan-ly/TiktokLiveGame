@@ -92,11 +92,42 @@ export function normalizeEmeraldMessage(message) {
   };
 }
 
+// Popup sambutan penonton masuk: bukan cetakan, tidak lewat antrean
+// cetak dan tidak membawa koin. Cukup identitas untuk notifikasi kecil
+// di pojok kanan bawah.
+export function normalizeJoinMessage(message) {
+  if (!message || message.type !== "join") {
+    return null;
+  }
+
+  const user = message.user && typeof message.user === "object" ? message.user : {};
+
+  const username = cleanText(
+    user.username ?? user.displayName,
+    "viewer",
+    40,
+  );
+  const displayName = cleanText(user.displayName ?? username, username, 80);
+
+  const eventId = cleanText(
+    message.eventId,
+    `local-join-${Date.now().toString(36)}-${++localSequence}`,
+    120,
+  );
+
+  return {
+    eventId,
+    username,
+    displayName,
+    avatarUrl: isSafeAvatarUrl(user.avatarUrl),
+    timestamp: cleanText(message.timestamp, new Date().toISOString(), 40),
+  };
+}
+
 export function normalizeGiftMessage(message) {
   if (!message || message.type !== "gift") {
     return null;
   }
-
   const user = message.user && typeof message.user === "object" ? message.user : {};
   const gift = message.gift && typeof message.gift === "object" ? message.gift : {};
 

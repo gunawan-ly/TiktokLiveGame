@@ -12,14 +12,14 @@ from dotenv import load_dotenv
 from TikTokLive import TikTokLiveClient
 from TikTokLive.client.errors import UserOfflineError
 from TikTokLive.client.web.web_settings import WebDefaults
-from TikTokLive.events import ConnectEvent, DisconnectEvent, GiftEvent, LikeEvent
+from TikTokLive.events import ConnectEvent, DisconnectEvent, GiftEvent, JoinEvent, LikeEvent
 
 from .bridge import Bridge
 from .combo import ComboAggregator
 from .config import PROJECT_ROOT, ConnectorConfig
 from .likes import LikeTracker
 from .mock_feed import MockFeed
-from .normalizer import extract_gift_signal, extract_like_signal
+from .normalizer import extract_gift_signal, extract_join_signal, extract_like_signal
 from .session_log import SessionLog
 
 
@@ -166,6 +166,16 @@ async def live_forever(
             except Exception:
                 LOGGER.exception("Gagal memproses event like")
 
+        @client.on(JoinEvent)
+        async def on_join(event: JoinEvent) -> None:
+            try:
+                signal = extract_join_signal(event)
+                if signal is None:
+                    return
+                await bridge.publish_join(signal, run_id)
+            except Exception:
+                LOGGER.exception("Gagal memproses event join")
+
         connect_task = asyncio.create_task(
             client.connect(fetch_live_check=True),
             name="tiktok-connect",
@@ -289,6 +299,7 @@ async def async_main(args: argparse.Namespace) -> int:
             overlay_origin=config.overlay_origin,
             logger=LOGGER,
             interval=args.mock_interval,
+            run_id=run_id,
         )
         tasks.append(asyncio.create_task(feed.run(stop), name="mock-feed"))
     else:

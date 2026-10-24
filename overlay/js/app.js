@@ -1,7 +1,7 @@
 import { loadGameConfig } from "./config.js";
 import { setupDebugPanel } from "./debug.js";
 import { MusicPlayer } from "./music.js";
-import { normalizeEmeraldMessage, normalizeGiftMessage } from "./normalize.js";
+import { normalizeEmeraldMessage, normalizeGiftMessage, normalizeJoinMessage } from "./normalize.js";
 import { PrintQueue } from "./queue.js";
 import { OverlayRenderer } from "./render.js";
 import { startSimulation } from "./simulate.js";
@@ -25,6 +25,7 @@ const elements = {
   connection: document.getElementById("connection"),
   connectionLabel: document.getElementById("connectionLabel"),
   toastStack: document.getElementById("toastStack"),
+  joinStack: document.getElementById("joinStack"),
   simBadge: document.getElementById("simBadge"),
   debugPanel: document.getElementById("debugPanel"),
   ticker: document.getElementById("ticker"),
@@ -178,6 +179,22 @@ async function bootstrap() {
 
   const pushGift = (data) => acceptGift(coercePayload(data));
 
+  // Popup orang masuk tidak lewat antrean cetak; cukup saring payload,
+  // tolak duplikat eventId, lalu tampilkan sebagai notifikasi mini.
+  const seenJoinIds = new Set();
+  const acceptJoin = (message) => {
+    if (!config.joinPopupsEnabled) {
+      return false;
+    }
+    const item = normalizeJoinMessage(message);
+    if (!item || seenJoinIds.has(item.eventId)) {
+      return false;
+    }
+    seenJoinIds.add(item.eventId);
+    renderer.showJoin(item);
+    return true;
+  };
+
   const clearQueue = () => {
     const cleared = queue.clear();
     updateQueue();
@@ -232,6 +249,7 @@ async function bootstrap() {
     enabled: Boolean(config.debug),
     pushGift,
     pushEmerald: acceptEmerald,
+    pushJoin: acceptJoin,
     clearQueue,
   });
 
@@ -243,6 +261,7 @@ async function bootstrap() {
     socket = new StudioSocket(config.wsUrl, {
       onGift: acceptGift,
       onEmerald: acceptEmerald,
+      onJoin: acceptJoin,
       onStatus: (state, detail) => renderer.setConnection(state, detail),
       onSnapshot: (snapshot) => renderer.applySnapshot(snapshot),
     });
@@ -250,12 +269,13 @@ async function bootstrap() {
   }
 
   if (config.simulate) {
-    simulation = startSimulation(pushGift);
+    simulation = startSimulation(pushGift, acceptJoin);
   }
 
   window.StudioPhoto = {
     pushGift,
     pushEmerald: acceptEmerald,
+    pushJoin: acceptJoin,
     clearQueue,
     getState: () => ({
       printed: renderer.printedPhotos,

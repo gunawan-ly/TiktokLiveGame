@@ -93,11 +93,21 @@ Skema gift ter-normalisasi ada di `overlay/js/normalize.js` dan
 `connector/normalizer.py`; ubah keduanya bersamaan atau jangan sama sekali.
 
 Pesan `emerald_print` adalah perintah cetak Zamrud dari jalur tap-tap:
-connector mengagregasi `LikeEvent` per user (`connector/likes.py`) dan hanya
-mengirim pesan ini SATU kali saat total like user menyentuh ambang sesi.
+connector mengagregasi `LikeEvent` per user (`connector/likes.py`) dan
+mengirim pesan ini SETIAP KALI total like user menyentuh kelipatan ambang
+sesi (500, 1000, 1500, ...).
 Event like mentah tidak pernah diteruskan ke overlay. `eventId` deterministik
-per run connector + user (`emerald-<run>-<userId>`); restart connector =
-sesi baru = kesempatan baru. Skema normalizernya `normalizeEmeraldMessage`.
+per run connector + user + kelipatan (`emerald-<run>-<userId>-<kelipatan>`);
+restart connector = sesi baru = kesempatan baru. Skema normalizernya
+`normalizeEmeraldMessage`.
+
+Pesan `join` adalah popup sambutan penonton masuk (dari `JoinEvent`
+TikTokLive): bridge menerbitkannya MAKSIMAL SEKALI per user per sesi
+connector (`join-<run>-<userId>`), tidak menyentuh statistik cetakan/koin
+dan tidak lewat antrean cetak. Overlay menampilkannya sebagai notifikasi
+mini di pojok kanan bawah (maks `joinMaxVisible` bersamaan, tampil
+`joinDurationMs` per popup; matikan lewat `joinPopupsEnabled: false` atau
+`?joins=0`). Skema normalizernya `normalizeJoinMessage`.
 
 ## 5. Aturan game (jangan diubah diam-diam)
 

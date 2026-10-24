@@ -32,6 +32,7 @@ class Bridge:
         self._clients: Set[ServerConnection] = set()
         self._server = None
         self._coin_ledger = CoinLedger()
+        self._seen_joins: set[str] = set()
         self._status = "starting"
         self._detail = ""
         self._stats = {
@@ -154,6 +155,40 @@ class Bridge:
             action.total_coins,
         )
         await self._broadcast(message)
+
+    async def publish_join(self, signal, run_id: str) -> bool:
+        """Broadcast a viewer-join popup, at most once per user per session.
+
+        Popup orang masuk hanya notifikasi sesaat: penonton yang keluar
+        lalu masuk lagi tidak diumumkan berulang kali. Tidak menyentuh
+        statistik cetakan/koin. eventId membawa run_id supaya overlay
+        tidak menelan popup sesi connector berikutnya sebagai duplikat.
+        """
+        if not signal.user_id or signal.user_id in self._seen_joins:
+            return False
+        self._seen_joins.add(signal.user_id)
+        message = {
+            "type": "join",
+            "eventId": f"join-{run_id}-{signal.user_id}",
+            "user": {
+                "username": signal.username,
+                "displayName": signal.display_name,
+                "avatarUrl": signal.avatar_url,
+            },
+            "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
+        }
+        if self.session_log:
+            self.session_log.write(
+                "join",
+                {
+                    "eventId": message["eventId"],
+                    "username": signal.username,
+                    "displayName": signal.display_name,
+                },
+            )
+        self.logger.info("Bergabung -> %s", signal.display_name)
+        await self._broadcast(message)
+        return True
 
     async def publish_emerald(self, award, run_id: str) -> None:
         """Broadcast a Zamrud print a viewer earned via tap-tap.

@@ -152,6 +152,13 @@ hitungan tercetak tanpa menambah koin. Tombol
 "Zamrud · Tap 500" di panel debug (`?debug=1`) mensimulasikannya tanpa
 connector.
 
+Popup sambutan orang masuk: setiap penonton yang bergabung ke live
+muncul sekali per sesi sebagai notifikasi mini di pojok kanan bawah
+(foto profil + nama + "bergabung ke live"), dari `JoinEvent` TikTokLive.
+Diatur dengan `joinPopupsEnabled`, `joinDurationMs`, dan `joinMaxVisible`
+di `config/game.json` (atau `?joins=0` untuk mematikan). Tombol
+"Orang masuk" di panel debug mensimulasikannya tanpa connector.
+
 ## Konfigurasi
 
 Edit `config/game.json`:
@@ -165,10 +172,14 @@ Edit `config/game.json`:
   "senderGapMs": 4000,
   "printDurationMs": 2000,
   "toastDurationMs": 5000,
+  "joinPopupsEnabled": true,
+  "joinDurationMs": 3800,
+  "joinMaxVisible": 2,
   "tiers": {
     "bronze": { "minCoins": 10, "label": "PERUNGGU" },
     "silver": { "minCoins": 10, "label": "PERAK" },
     "gold": { "minCoins": 50, "label": "EMAS" },
+    "amethyst": { "minCoins": 100, "label": "KECUBUNG" },
     "diamond": { "minCoins": 200, "label": "BERLIAN" }
   }
 }

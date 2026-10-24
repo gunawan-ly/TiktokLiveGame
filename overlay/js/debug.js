@@ -8,7 +8,7 @@ const TEST_GIFTS = {
 
 let debugSequence = 0;
 
-export function setupDebugPanel({ enabled, pushGift, pushEmerald, clearQueue }) {
+export function setupDebugPanel({ enabled, pushGift, pushEmerald, pushJoin, clearQueue }) {
   const panel = document.getElementById("debugPanel");
   if (!panel) {
     return;
@@ -30,6 +30,10 @@ export function setupDebugPanel({ enabled, pushGift, pushEmerald, clearQueue }) 
     }
     if (test === "emerald") {
       pushEmerald?.(makeEmerald("pengetuk setia"));
+      return;
+    }
+    if (test === "join") {
+      pushJoin?.(makeJoin("pengunjung baru"));
       return;
     }
     if (test === "broken") {
@@ -63,6 +67,20 @@ function makeEmerald(displayName) {
     },
     likeTotal: 500,
     threshold: 500,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+function makeJoin(displayName) {
+  debugSequence += 1;
+  return {
+    type: "join",
+    eventId: `debug-join-${Date.now().toString(36)}-${debugSequence}`,
+    user: {
+      username: `debug_join_${debugSequence}`,
+      displayName,
+      avatarUrl: "",
+    },
     timestamp: new Date().toISOString(),
   };
 }

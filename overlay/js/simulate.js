@@ -15,7 +15,23 @@ const SCENARIOS = [
   { name: "Nabila", gift: "Mawar", totalCoins: 7, repeat: 7 },
 ];
 
+const JOINERS = ["Dewi", "Bima", "Sari", "Rizky", "Putri", "Eko"];
+
 let sequence = 0;
+
+function buildJoin(name, index) {
+  sequence += 1;
+  return {
+    type: "join",
+    eventId: `sim-join-${Date.now().toString(36)}-${sequence}`,
+    user: {
+      username: name.toLowerCase().replace(/\s+/g, "_"),
+      displayName: name,
+      avatarUrl: AVATAR_URLS[(index + 3) % AVATAR_URLS.length],
+    },
+    timestamp: new Date().toISOString(),
+  };
+}
 
 function buildGift(scenario, index) {
   sequence += 1;
@@ -38,7 +54,7 @@ function buildGift(scenario, index) {
   };
 }
 
-export function startSimulation(pushGift) {
+export function startSimulation(pushGift, pushJoin) {
   let stopped = false;
   let timer = null;
   let index = 0;
@@ -51,6 +67,12 @@ export function startSimulation(pushGift) {
     timer = window.setTimeout(() => {
       if (stopped) {
         return;
+      }
+      // Sesekali ada penonton baru masuk: popup join muncul sebentar
+      // sebelum gift berikutnya supaya fitur sambutannya terlihat.
+      if (pushJoin && index % 3 === 2) {
+        const joiner = JOINERS[Math.floor(index / 3) % JOINERS.length];
+        pushJoin(buildJoin(joiner, index));
       }
       const scenario = SCENARIOS[index % SCENARIOS.length];
       pushGift(buildGift(scenario, index));

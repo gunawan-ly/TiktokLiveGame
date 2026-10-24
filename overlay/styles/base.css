@@ -275,6 +275,97 @@ body {
   letter-spacing: 0.16em;
 }
 
+/* Popup sambutan orang masuk: notifikasi mini di pojok kanan bawah.
+ * Bahasa visualnya sama dengan toast gift (kertas krem, bayangan sama)
+ * tapi jauh lebih ringkas: foto kecil + nama + "bergabung ke live". */
+.join-stack {
+  position: absolute;
+  z-index: 10;
+  right: 2.8rem;
+  bottom: 3.3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.join-popup {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  max-width: 22rem;
+  padding: 0.38rem 0.95rem 0.38rem 0.42rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 248, 236, 0.94), rgba(255, 233, 214, 0.96));
+  box-shadow:
+    0 0.5rem 1.2rem rgba(0, 0, 0, 0.45),
+    inset 0 0 0 0.09rem rgba(255, 255, 255, 0.6);
+  animation: joinIn 0.3s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+
+.join-popup.is-leaving {
+  animation: joinOut 0.28s ease-in both;
+}
+
+.join-avatar {
+  position: relative;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  padding: 0.08rem;
+  background: linear-gradient(180deg, #d8d0c2, rgba(120, 90, 60, 0.5));
+}
+
+.join-avatar .avatar-fallback {
+  position: absolute;
+  inset: 0.08rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    160deg,
+    oklch(0.72 0.14 var(--avatar-hue, 30)),
+    oklch(0.55 0.12 calc(var(--avatar-hue, 30) - 14))
+  );
+  color: #fff8ee;
+  font-weight: 800;
+  font-size: 0.72rem;
+}
+
+.join-avatar .avatar-img {
+  position: absolute;
+  inset: 0.08rem;
+  width: calc(100% - 0.16rem);
+  height: calc(100% - 0.16rem);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.join-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.join-name {
+  color: #3d2a20;
+  font-size: 0.95rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.join-sub {
+  color: #7c6353;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .connection {
   position: absolute;
   z-index: 8;

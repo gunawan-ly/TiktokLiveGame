@@ -100,3 +100,21 @@
     transform: translateX(-1.4rem) scale(0.95);
   }
 }
+
+@keyframes joinIn {
+  from {
+    opacity: 0;
+    transform: translateX(1.4rem) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes joinOut {
+  to {
+    opacity: 0;
+    transform: translateX(1.4rem) scale(0.95);
+  }
+}

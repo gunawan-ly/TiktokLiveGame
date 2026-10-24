@@ -206,3 +206,46 @@ def extract_like_signal(event: Any) -> LikeSignal | None:
         avatar_url=_avatar_url(user),
         like_count=like_count,
     )
+
+
+@dataclass(slots=True)
+class JoinSignal:
+    user_id: str
+    username: str
+    display_name: str
+    avatar_url: str
+
+
+def extract_join_signal(event: Any) -> JoinSignal | None:
+    """Convert a TikTokLive JoinEvent into a join signal.
+
+    JoinEvent adalah WebcastMemberMessage (penonton masuk room). Hanya
+    identitas penonton yang dipakai untuk popup sambutan; event ini tidak
+    membawa hitungan apa pun dan tidak memengaruhi statistik sesi.
+    """
+
+    user = _read(event, "user")
+    if user is None:
+        return None
+
+    username = _clean_text(
+        _read(user, "display_id", _read(user, "unique_id", "")),
+        "viewer",
+        40,
+    )
+    display_name = _clean_text(
+        _read(user, "nickname", username),
+        username,
+    )
+    user_id = _clean_text(
+        _read(user, "id", _read(user, "user_id", username)),
+        username,
+        40,
+    )
+
+    return JoinSignal(
+        user_id=user_id,
+        username=username,
+        display_name=display_name,
+        avatar_url=_avatar_url(user),
+    )

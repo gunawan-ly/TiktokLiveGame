@@ -21,6 +21,8 @@ export class OverlayRenderer {
     this.queueLength = 0;
     this.snapshotApplied = false;
     this.toastTimers = new Map();
+    this.joinTimers = new Map();
+    this.joinWaiting = [];
     this._avatarPrefetch = new Map();
     this._avatarPrefetchLimit = 500;
     this._queueFullTimer = null;
@@ -228,5 +230,83 @@ export class OverlayRenderer {
     }
     toast.classList.add("is-leaving");
     window.setTimeout(() => toast.remove(), 290);
+  }
+
+  // Popup sambutan orang masuk (pojok kanan bawah): versi mini toast
+  // gift, hanya foto + nama + "bergabung ke live". Maksimal joinMaxVisible
+  // tampil bersamaan; sisanya mengantre sebentar (maks 3) lalu dibuang,
+  // karena notifikasi basi tidak berguna.
+  showJoin(item) {
+    if (!this.el.joinStack) {
+      return;
+    }
+    if (this.el.joinStack.children.length >= (this.config.joinMaxVisible || 2)) {
+      if (this.joinWaiting.length < 3) {
+        this.joinWaiting.push(item);
+      }
+      return;
+    }
+    this._showJoinPopup(item);
+  }
+
+  _showJoinPopup(item) {
+    const popup = document.createElement("div");
+    popup.className = "join-popup";
+
+    const avatar = document.createElement("div");
+    avatar.className = "join-avatar";
+    const fallback = document.createElement("div");
+    fallback.className = "avatar-fallback";
+    fallback.style.setProperty("--avatar-hue", avatarHueFor(item.displayName));
+    fallback.textContent = initialsFor(item.displayName);
+    avatar.append(fallback);
+    if (item.avatarUrl && !this._avatarKnownBad(item.avatarUrl)) {
+      const image = document.createElement("img");
+      image.className = "avatar-img";
+      image.alt = "";
+      image.referrerPolicy = "no-referrer";
+      image.decoding = "async";
+      image.addEventListener("error", () => image.remove(), { once: true });
+      image.src = item.avatarUrl;
+      avatar.append(image);
+    }
+
+    const copy = document.createElement("div");
+    copy.className = "join-copy";
+    const name = document.createElement("span");
+    name.className = "join-name";
+    name.textContent = item.displayName;
+    const sub = document.createElement("span");
+    sub.className = "join-sub";
+    sub.textContent = "bergabung ke live";
+    copy.append(name, sub);
+
+    popup.append(avatar, copy);
+    this.el.joinStack.append(popup);
+
+    const timer = window.setTimeout(
+      () => this._dismissJoin(popup),
+      this.config.joinDurationMs || 3800,
+    );
+    this.joinTimers.set(popup, timer);
+  }
+
+  _dismissJoin(popup) {
+    if (!popup || !popup.isConnected) {
+      return;
+    }
+    const timer = this.joinTimers.get(popup);
+    if (timer) {
+      window.clearTimeout(timer);
+      this.joinTimers.delete(popup);
+    }
+    popup.classList.add("is-leaving");
+    window.setTimeout(() => {
+      popup.remove();
+      const next = this.joinWaiting.shift();
+      if (next) {
+        this.showJoin(next);
+      }
+    }, 290);
   }
 }

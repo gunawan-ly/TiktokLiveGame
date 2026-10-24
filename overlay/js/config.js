@@ -10,10 +10,14 @@ export const DEFAULT_CONFIG = {
   printDurationMs: 2000,
   toastDurationMs: 5000,
   diamondToastExtraMs: 2000,
+  joinPopupsEnabled: true,
+  joinDurationMs: 3800,
+  joinMaxVisible: 2,
   tiers: {
     bronze: { minCoins: 10, label: "PERUNGGU" },
     silver: { minCoins: 10, label: "PERAK" },
     gold: { minCoins: 50, label: "EMAS" },
+    amethyst: { minCoins: 100, label: "KECUBUNG" },
     diamond: { minCoins: 200, label: "BERLIAN" },
   },
   sound: {
@@ -43,7 +47,7 @@ export const DEFAULT_CONFIG = {
   // Ambang Zamrud dibaca connector dari config/game.json; overlay hanya
   // meneruskannya supaya satu file tetap jadi sumber kebenaran bersama.
   engagement: {
-    likeThreshold: 1000,
+    likeThreshold: 500,
   },
 };
 
@@ -130,6 +134,9 @@ export async function loadGameConfig() {
   if (params.has("tickerCredits")) {
     merged.tickerCredits.enabled = flagEnabled(params.get("tickerCredits"));
   }
+  if (params.has("joins")) {
+    merged.joinPopupsEnabled = flagEnabled(params.get("joins"));
+  }
 
   merged.targetCoins = Math.round(clamp(merged.targetCoins, 1, 1_000_000_000, 500));
   merged.maxActivePhotos = Math.round(clamp(merged.maxActivePhotos, 1, 9, 9));
@@ -141,6 +148,9 @@ export async function loadGameConfig() {
   merged.diamondToastExtraMs = Math.round(
     clamp(merged.diamondToastExtraMs, 0, 6000, 2000),
   );
+  merged.joinDurationMs = Math.round(clamp(merged.joinDurationMs, 1500, 10000, 3800));
+  merged.joinMaxVisible = Math.round(clamp(merged.joinMaxVisible, 1, 4, 2));
+  merged.joinPopupsEnabled = merged.joinPopupsEnabled !== false;
   merged.sound.volume = clamp(merged.sound.volume, 0, 1, 0.4);
   merged.music.volume = clamp(merged.music.volume, 0, 1, 0.15);
   merged.ticker.speed = Math.round(clamp(merged.ticker.speed, 20, 300, 55));
@@ -148,7 +158,7 @@ export async function loadGameConfig() {
     clamp(merged.tickerCredits.speed, 20, 300, 55),
   );
   merged.engagement.likeThreshold = Math.round(
-    clamp(merged.engagement.likeThreshold, 1, 1_000_000, 1000),
+    clamp(merged.engagement.likeThreshold, 1, 1_000_000, 500),
   );
   merged.debug = params.has("debug") && flagEnabled(params.get("debug"));
   merged.simulate = params.has("sim") && flagEnabled(params.get("sim"));

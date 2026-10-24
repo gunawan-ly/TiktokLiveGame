@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from .bridge import Bridge
 from .combo import ComboAggregator
-from .normalizer import GiftSignal
+from .normalizer import GiftSignal, JoinSignal
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,12 +44,14 @@ class MockFeed:
         overlay_origin: str,
         logger: logging.Logger,
         interval: float = 4.0,
+        run_id: str = "mock",
     ) -> None:
         self.bridge = bridge
         self.aggregator = aggregator
         self.overlay_origin = overlay_origin.rstrip("/")
         self.logger = logger
         self.interval = max(0.8, interval)
+        self.run_id = run_id
         self._group_id = 1000
 
     def _avatar_url(self, index: int | None) -> str:
@@ -112,6 +114,17 @@ class MockFeed:
             scenario = SCENARIOS[index % len(SCENARIOS)]
             index += 1
             try:
+                # Persona "masuk room" dulu sebelum gift pertamanya; bridge
+                # hanya menerbitkan popup join sekali per user per sesi.
+                await self.bridge.publish_join(
+                    JoinSignal(
+                        user_id=scenario.username,
+                        username=scenario.username,
+                        display_name=scenario.display_name,
+                        avatar_url=self._avatar_url(scenario.avatar),
+                    ),
+                    self.run_id,
+                )
                 await self._emit(scenario)
             except Exception:
                 self.logger.exception("Mock feed gagal mengirim gift")
