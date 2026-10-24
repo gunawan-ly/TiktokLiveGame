@@ -31,6 +31,7 @@ const elements = {
   tickerTrack: document.getElementById("tickerTrack"),
   tickerCredits: document.getElementById("tickerCredits"),
   tickerCreditsTrack: document.getElementById("tickerCreditsTrack"),
+  audioHint: document.getElementById("audioHint"),
 };
 
 let queue;
@@ -99,7 +100,21 @@ async function bootstrap() {
   // ketukan dan setiap gift masuk: sesudah ketukan pertama, aktivasi
   // lengket browser membuat percobaan berikutnya berhasil (mekanisme
   // yang sama yang membuka bunyi aksi).
-  window.addEventListener("pointerdown", () => music.unlock());
+  // Chip penanda muncul selama musik aktif tapi belum terdengar, supaya
+  // keadaan terkunci terlihat (di OBS: klik chip lewat Interact) dan
+  // hilang sendiri begitu musik benar-benar berputar.
+  const refreshAudioHint = () => {
+    if (elements.audioHint) {
+      elements.audioHint.hidden = !(config.music.enabled && !music.isAudible());
+    }
+  };
+  const pokeAudio = () => {
+    music.unlock();
+    window.setTimeout(refreshAudioHint, 350);
+  };
+  window.addEventListener("pointerdown", pokeAudio);
+  music.audio?.addEventListener?.("play", refreshAudioHint);
+  window.setTimeout(refreshAudioHint, 1200);
   const ticker = new Ticker({
     container: elements.ticker,
     track: elements.tickerTrack,
@@ -125,7 +140,7 @@ async function bootstrap() {
       console.warn("Gift diabaikan karena payload tidak valid.");
       return false;
     }
-    music.unlock();
+    pokeAudio();
     renderer.prefetchAvatar(item.avatarUrl);
     const result = queue.push(item);
     if (!result.ok) {
@@ -146,7 +161,7 @@ async function bootstrap() {
       console.warn("Cetak Zamrud diabaikan karena payload tidak valid.");
       return false;
     }
-    music.unlock();
+    pokeAudio();
     renderer.prefetchAvatar(item.avatarUrl);
     const result = queue.push(item);
     if (!result.ok) {

@@ -98,3 +98,18 @@ test("stop menjeda dan menghentikan perpindahan lagu", () => {
   assert.equal(audio.src, TRACKS[0]);
   assert.equal(audio.playCalls, 1);
 });
+
+test("isAudible mencerminkan keadaan putar sebenarnya", () => {
+  const audio = new FakeAudio();
+  const music = new MusicPlayer({ audio, tracks: TRACKS, enabled: true });
+  assert.equal(music.isAudible(), false);
+  music.start();
+  assert.equal(music.isAudible(), true);
+  // Simulasi kunci autoplay: elemen terjeda walau sudah start.
+  audio.pause();
+  assert.equal(music.isAudible(), false);
+  music.unlock();
+  assert.equal(music.isAudible(), true);
+  music.stop();
+  assert.equal(music.isAudible(), false);
+});

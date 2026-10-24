@@ -318,6 +318,29 @@ body {
   animation: statusPulse 1.2s ease-in-out infinite;
 }
 
+/* Penanda audio terkunci: muncul hanya saat musik aktif di config tapi
+ * browser (HP/OBS) masih mengunci putar otomatis. Sekali klik di chip ini
+ * (di OBS lewat Interact) membuka kuncinya dan chip hilang sendiri.
+ * Ditaruh di atas strip credits supaya tidak tertutup HUD/toast. */
+.audio-hint {
+  position: absolute;
+  z-index: 11;
+  left: 50%;
+  bottom: 3.1rem;
+  transform: translateX(-50%);
+  padding: 0.55rem 1.1rem;
+  border: 1px solid rgba(255, 214, 170, 0.35);
+  border-radius: 999px;
+  background: rgba(24, 16, 12, 0.88);
+  color: #ffd9a8;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  animation: statusPulse 1.6s ease-in-out infinite;
+}
+
 .hud {
   position: absolute;
   z-index: 10;

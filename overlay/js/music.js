@@ -75,6 +75,12 @@ export class MusicPlayer {
     }
   }
 
+  isAudible() {
+    return Boolean(
+      this.started && this.audio && !this.audio.paused && !this.audio.ended,
+    );
+  }
+
   stop() {
     this.started = false;
     if (!this.audio) {
