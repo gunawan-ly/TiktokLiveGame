@@ -18,14 +18,7 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
 - **Bingkai tier mewah** dalam bentuk **cincin perhiasan di keliling foto**:
   - **Perunggu**: cincin copper dengan sheen facet.
   - **Perak**: cincin satin putih-biru dan multitint.
-  - **Emas**: bingkai kartu SVG penuh (`overlay/frames/frame-card-gold.svg`:
-    mahkota, hati permata, permata bintang, bulu, nameplate biru) yang
-    disejajarkan dengan lingkaran foto; label nama HTML disembunyikan
-    untuk emas karena nameplate sudah ada di SVG. SVG dimuat sekali
-    saat startup (`overlay/js/frames.js`); kalau gagal dimuat, emas
-    jatuh kembali ke cincin CSS. Catatan: mahkota menjulur di atas
-    sel, jadi di baris 1-2 mahkota tertutup nama baris di atasnya
-    dan di baris 0 terpotong tepi kertas (lihat AGENTS.md bagian 8).
+  - **Emas**: cincin kuning berkilau multi-stop + kilat.
   - **Berlian**: cincin ice dengan rotasi perlahan + luster glow.
   - Cincin menggambar setengah putaran mulai dari atas (`--draw`) setiap cetakan,
     lalu sweep kilau sekali ketika selesai.

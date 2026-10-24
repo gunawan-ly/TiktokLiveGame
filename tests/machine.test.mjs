@@ -137,7 +137,7 @@ globalThis.window = {
 
 const { PrintMachine } = await import("../overlay/js/machine.js");
 
-function buildMachine(options = {}) {
+function buildMachine() {
   const root = new FakeElement("div");
   const make = (id, parent = root) => {
     const el = new FakeElement("div");
@@ -159,7 +159,6 @@ function buildMachine(options = {}) {
     config: { printDurationMs: 1200, maxRollPhotos: 7 },
     tiers: {},
     avatarKnownBad: () => false,
-    ...options,
   });
 }
 
@@ -194,38 +193,4 @@ test("feed keeps row slots unique and rotates printed rows to the drum", async (
   assert.equal(printedOnSheet(), 6);
   assert.equal(machine.minis.length, 3);
   assert.equal(machine.fedPhotos, 3);
-});
-
-test("gold tier uses the SVG frame instead of the CSS ring", async () => {
-  const seen = [];
-  const machine = buildMachine({
-    goldFrameSvg: "<svg>bingkai emas</svg>",
-    goldFrameBuilder: (text, name, instanceId) => {
-      seen.push({ text, name, instanceId });
-      const svg = new FakeElement("svg");
-      svg.dataset.frameFor = name;
-      return svg;
-    },
-  });
-  await machine.print({ displayName: "Awan", avatarUrl: "" }, "gold");
-  const cell = machine.sheet.children[0].children[0];
-  assert.ok(cell.className.includes("has-svg-frame"));
-  assert.equal(cell.querySelector(".cell-frame"), null);
-  const layer = cell.querySelector(".cell-svg-frame");
-  assert.ok(layer, "lapisan SVG emas harus ada di sel");
-  assert.equal(layer.querySelector("svg")?.dataset.frameFor, "Awan");
-  // Nama HTML tetap ada untuk logika gulungan, walau disembunyikan CSS.
-  assert.equal(cell.querySelector(".card-name").textContent, "Awan");
-  assert.equal(seen.length, 1);
-  assert.equal(seen[0].name, "Awan");
-  assert.match(seen[0].instanceId, /^g\d+$/);
-});
-
-test("gold tier falls back to the CSS ring when the SVG is missing", async () => {
-  const machine = buildMachine({ goldFrameSvg: null });
-  await machine.print({ displayName: "Awan", avatarUrl: "" }, "gold");
-  const cell = machine.sheet.children[0].children[0];
-  assert.ok(!cell.className.includes("has-svg-frame"));
-  assert.ok(cell.querySelector(".cell-frame"));
-  assert.equal(cell.querySelector(".cell-svg-frame"), null);
 });

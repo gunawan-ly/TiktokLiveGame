@@ -31,8 +31,7 @@ connector/       Connector Python: main, bridge, combo, normalizer, config,
                  mock_feed, session_log, requirements.txt
 overlay/         Overlay web: index.html, js/ (app, config, debug, machine,
                  normalize, queue, render, simulate, sound, tiers, ws),
-                 styles/ (base, cards, effects, scene), assets/,
-                 frames/ (bingkai kartu SVG per tier, saat ini baru emas)
+                 styles/ (base, cards, effects, scene), assets/
 config/game.json Sumber kebenaran konfigurasi game (tier, target, antrean)
 tests/           Test Node (*.test.mjs) dan test Python (test_*.py)
 logs/            Log sesi JSONL. Jangan commit. Tidak boleh berisi URL avatar.
@@ -154,19 +153,6 @@ npm test
 4. Test DOM untuk `machine.js` sudah ada (`tests/machine.test.mjs`, stub DOM
    tanpa dependensi baru). Perilaku visual lain (animasi CSS di `styles/`)
    tetap diverifikasi manual lewat mode mock.
-5. **Bingkai SVG tier emas - BATASAN GRID (24 Okt 2026).** Kartu emas memakai
-   `overlay/frames/frame-card-gold.svg` (versi tempel Awan yang sudah dikoreksi:
-   lubang foto evenodd, hati di mahkota, bintang dipersempit, ring r=88
-   dihapus) lewat `overlay/js/frames.js`, disejajarkan dengan lingkaran foto
-   (`.cell-svg-frame` di `styles/cards.css`; label nama HTML disembunyikan
-   untuk emas karena nameplate ada di SVG). Karena SVG disejajarkan dengan
-   foto, mahkotanya menjulur ~1,9rem di atas sel: di baris 0 mahkota
-   terpotong tepi kertas (`.paper-panel` overflow hidden), di baris 1-2
-   mahkota tertutup nama baris di atasnya (aturan z-index `.sheet-row`).
-   Ring, bintang, bulu, dan nameplate tampil benar; hanya mahkota (+hati
-   di mahkota) yang tidak terlihat penuh di grid. Keputusan soal mahkota
-   (terima / ubah layout) menunggu pemilik; jangan ubah layout grid
-   diam-diam untuk mengejar mahkota ini.
 
 ## 9. Alur git
 
