@@ -1,11 +1,33 @@
 from __future__ import annotations
 
+import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+DEFAULT_LIKE_THRESHOLD = 1000
+
+
+def _game_json_like_threshold() -> int | None:
+    """Read engagement.likeThreshold from config/game.json, tolerantly.
+
+    game.json is shared with the overlay, so a broken or missing value
+    must not kill the connector; the env override and the default cover
+    it. Env LIKE_THRESHOLD wins over the file so a live test can use a
+    small threshold without editing the shared config.
+    """
+
+    try:
+        data = json.loads(
+            (PROJECT_ROOT / "config" / "game.json").read_text(encoding="utf-8")
+        )
+        value = int(data.get("engagement", {}).get("likeThreshold"))
+    except Exception:
+        return None
+    return value if value >= 1 else None
 
 
 def _int_env(name: str, default: int, minimum: int = 1) -> int:
@@ -35,6 +57,7 @@ class ConnectorConfig:
     ws_host: str
     ws_port: int
     target_coins: int
+    like_threshold: int
     log_dir: Path
     reconnect_base_seconds: int
     reconnect_max_seconds: int
@@ -60,12 +83,18 @@ class ConnectorConfig:
         if not log_dir.is_absolute():
             log_dir = PROJECT_ROOT / log_dir
 
+        like_threshold = _int_env(
+            "LIKE_THRESHOLD",
+            _game_json_like_threshold() or DEFAULT_LIKE_THRESHOLD,
+        )
+
         return cls(
             username=username,
             sign_api_key=sign_api_key,
             ws_host=ws_host,
             ws_port=_int_env("WS_PORT", 8080),
             target_coins=_int_env("TARGET_COINS", 500),
+            like_threshold=like_threshold,
             log_dir=log_dir,
             reconnect_base_seconds=_int_env("RECONNECT_BASE_SECONDS", 5),
             reconnect_max_seconds=_int_env("RECONNECT_MAX_SECONDS", 30),

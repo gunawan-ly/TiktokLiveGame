@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   initialsFor,
   isSafeAvatarUrl,
+  normalizeEmeraldMessage,
   normalizeGiftMessage,
 } from "../overlay/js/normalize.js";
 
@@ -58,4 +59,32 @@ test("produces initials from display names", () => {
 test("rejects non-gift messages", () => {
   assert.equal(normalizeGiftMessage({ type: "status" }), null);
   assert.equal(normalizeGiftMessage(null), null);
+});
+
+test("normalizes an emerald print message", () => {
+  const item = normalizeEmeraldMessage({
+    type: "emerald_print",
+    eventId: "emerald-run1-123",
+    user: {
+      username: "pengetuk",
+      displayName: "Pengetuk Setia",
+      avatarUrl: "https://cdn.example.com/a.webp",
+    },
+    likeTotal: 1000,
+    threshold: 1000,
+    timestamp: "2026-10-24T16:30:00+08:00",
+  });
+  assert.equal(item.displayName, "Pengetuk Setia");
+  assert.equal(item.tierOverride, "emerald");
+  assert.equal(item.likeTotal, 1000);
+  // Zamrud tidak pernah membawa koin: bukan gift.
+  assert.equal(item.totalCoins, 0);
+  assert.equal(item.repeat, 1);
+  assert.equal(item.giftName, "Tap-Tap");
+});
+
+test("emerald normalizer rejects other message types", () => {
+  assert.equal(normalizeEmeraldMessage(message()), null);
+  assert.equal(normalizeEmeraldMessage(null), null);
+  assert.equal(normalizeGiftMessage({ type: "emerald_print" }), null);
 });

@@ -5,19 +5,21 @@ import asyncio
 import logging
 import signal
 import sys
+import uuid
 from contextlib import suppress
 
 from dotenv import load_dotenv
 from TikTokLive import TikTokLiveClient
 from TikTokLive.client.errors import UserOfflineError
 from TikTokLive.client.web.web_settings import WebDefaults
-from TikTokLive.events import ConnectEvent, DisconnectEvent, GiftEvent
+from TikTokLive.events import ConnectEvent, DisconnectEvent, GiftEvent, LikeEvent
 
 from .bridge import Bridge
 from .combo import ComboAggregator
 from .config import PROJECT_ROOT, ConnectorConfig
+from .likes import LikeTracker
 from .mock_feed import MockFeed
-from .normalizer import extract_gift_signal
+from .normalizer import extract_gift_signal, extract_like_signal
 from .session_log import SessionLog
 
 
@@ -90,6 +92,8 @@ async def live_forever(
     config: ConnectorConfig,
     bridge: Bridge,
     aggregator: ComboAggregator,
+    like_tracker: LikeTracker,
+    run_id: str,
     stop: asyncio.Event,
 ) -> None:
     if not config.username:
@@ -129,6 +133,18 @@ async def live_forever(
                     await bridge.publish_action(action)
             except Exception:
                 LOGGER.exception("Gagal memproses event gift")
+
+        @client.on(LikeEvent)
+        async def on_like(event: LikeEvent) -> None:
+            try:
+                signal = extract_like_signal(event)
+                if signal is None:
+                    return
+                award = like_tracker.add(signal)
+                if award is not None:
+                    await bridge.publish_emerald(award, run_id)
+            except Exception:
+                LOGGER.exception("Gagal memproses event like")
 
         connect_task = asyncio.create_task(
             client.connect(fetch_live_check=True),
@@ -230,6 +246,8 @@ async def async_main(args: argparse.Namespace) -> int:
         session_log=session_log,
     )
     aggregator = ComboAggregator()
+    like_tracker = LikeTracker(config.like_threshold)
+    run_id = uuid.uuid4().hex[:12]
     stop = asyncio.Event()
 
     loop = asyncio.get_running_loop()
@@ -241,6 +259,7 @@ async def async_main(args: argparse.Namespace) -> int:
     if session_log:
         LOGGER.info("Log sesi: %s", session_log.path)
     LOGGER.info("Target koin: %d", config.target_coins)
+    LOGGER.info("Ambang Zamrud (like per user per sesi): %d", config.like_threshold)
 
     tasks = [asyncio.create_task(flush_loop(aggregator, bridge, stop), name="flush")]
     if args.mock:
@@ -255,7 +274,7 @@ async def async_main(args: argparse.Namespace) -> int:
     else:
         tasks.append(
             asyncio.create_task(
-                live_forever(config, bridge, aggregator, stop),
+                live_forever(config, bridge, aggregator, like_tracker, run_id, stop),
                 name="tiktok-live",
             )
         )

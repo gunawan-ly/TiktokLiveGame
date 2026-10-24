@@ -7,7 +7,7 @@ const TEST_GIFTS = {
 
 let debugSequence = 0;
 
-export function setupDebugPanel({ enabled, pushGift, clearQueue }) {
+export function setupDebugPanel({ enabled, pushGift, pushEmerald, clearQueue }) {
   const panel = document.getElementById("debugPanel");
   if (!panel) {
     return;
@@ -27,6 +27,10 @@ export function setupDebugPanel({ enabled, pushGift, clearQueue }) {
       clearQueue();
       return;
     }
+    if (test === "emerald") {
+      pushEmerald?.(makeEmerald("pengetuk setia"));
+      return;
+    }
     if (test === "broken") {
       pushGift(makeGift("avatar rusak", { totalCoins: 250 }, "https://invalid.local/rusak.webp"));
       return;
@@ -44,6 +48,22 @@ export function setupDebugPanel({ enabled, pushGift, clearQueue }) {
       pushGift(makeGift("tester", gift));
     }
   });
+}
+
+function makeEmerald(displayName) {
+  debugSequence += 1;
+  return {
+    type: "emerald_print",
+    eventId: `debug-emerald-${Date.now().toString(36)}-${debugSequence}`,
+    user: {
+      username: `debug_tap_${debugSequence}`,
+      displayName,
+      avatarUrl: "",
+    },
+    likeTotal: 1000,
+    threshold: 1000,
+    timestamp: new Date().toISOString(),
+  };
 }
 
 function makeGift(displayName, gift, avatarUrl = "") {

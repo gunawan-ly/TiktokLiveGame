@@ -51,6 +51,47 @@ export function avatarHueFor(name) {
   return 18 + (hash % 300);
 }
 
+// Tier emerald (Zamrud) hanya lahir dari jalur engagement tap-tap:
+// tierForCoins tidak pernah menghasilkannya karena bukan tier gift.
+// Itemnya membawa tierOverride "emerald" dari normalizer pesan
+// emerald_print, memakai antrean cetak yang sama, tanpa koin.
+export function normalizeEmeraldMessage(message) {
+  if (!message || message.type !== "emerald_print") {
+    return null;
+  }
+
+  const user = message.user && typeof message.user === "object" ? message.user : {};
+
+  const username = cleanText(
+    user.username ?? user.displayName,
+    "viewer",
+    40,
+  );
+  const displayName = cleanText(user.displayName ?? username, username, 80);
+  const likeTotal = clampInteger(message.likeTotal, 0, 0, 1_000_000_000);
+
+  const eventId = cleanText(
+    message.eventId,
+    `local-emerald-${Date.now().toString(36)}-${++localSequence}`,
+    120,
+  );
+
+  return {
+    eventId,
+    username,
+    displayName,
+    avatarUrl: isSafeAvatarUrl(user.avatarUrl),
+    giftId: 0,
+    giftName: "Tap-Tap",
+    repeat: 1,
+    coinsPerItem: 0,
+    totalCoins: 0,
+    likeTotal,
+    tierOverride: "emerald",
+    timestamp: cleanText(message.timestamp, new Date().toISOString(), 40),
+  };
+}
+
 export function normalizeGiftMessage(message) {
   if (!message || message.type !== "gift") {
     return null;

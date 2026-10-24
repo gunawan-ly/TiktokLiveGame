@@ -1,7 +1,7 @@
 import { loadGameConfig } from "./config.js";
 import { setupDebugPanel } from "./debug.js";
 import { MusicPlayer } from "./music.js";
-import { normalizeGiftMessage } from "./normalize.js";
+import { normalizeEmeraldMessage, normalizeGiftMessage } from "./normalize.js";
 import { PrintQueue } from "./queue.js";
 import { OverlayRenderer } from "./render.js";
 import { startSimulation } from "./simulate.js";
@@ -140,6 +140,27 @@ async function bootstrap() {
     return true;
   };
 
+  const acceptEmerald = (message) => {
+    const item = normalizeEmeraldMessage(message);
+    if (!item) {
+      console.warn("Cetak Zamrud diabaikan karena payload tidak valid.");
+      return false;
+    }
+    music.unlock();
+    renderer.prefetchAvatar(item.avatarUrl);
+    const result = queue.push(item);
+    if (!result.ok) {
+      if (result.reason === "full") {
+        renderer.flashQueueFull();
+        console.warn("Cetak Zamrud ditolak karena antrean penuh.");
+      }
+      return false;
+    }
+    updateQueue();
+    pump();
+    return true;
+  };
+
   const pushGift = (data) => acceptGift(coercePayload(data));
 
   const clearQueue = () => {
@@ -177,7 +198,7 @@ async function bootstrap() {
     clearRetryTimer();
     updateQueue();
     try {
-      const tier = tierForCoins(item.totalCoins, tiers);
+      const tier = item.tierOverride || tierForCoins(item.totalCoins, tiers);
       await renderer.printGift(item, tier);
     } catch (error) {
       console.error("Gagal mencetak gift:", error);
@@ -195,6 +216,7 @@ async function bootstrap() {
   setupDebugPanel({
     enabled: Boolean(config.debug),
     pushGift,
+    pushEmerald: acceptEmerald,
     clearQueue,
   });
 
@@ -205,6 +227,7 @@ async function bootstrap() {
   } else {
     socket = new StudioSocket(config.wsUrl, {
       onGift: acceptGift,
+      onEmerald: acceptEmerald,
       onStatus: (state, detail) => renderer.setConnection(state, detail),
       onSnapshot: (snapshot) => renderer.applySnapshot(snapshot),
     });
@@ -217,6 +240,7 @@ async function bootstrap() {
 
   window.StudioPhoto = {
     pushGift,
+    pushEmerald: acceptEmerald,
     clearQueue,
     getState: () => ({
       printed: renderer.printedPhotos,

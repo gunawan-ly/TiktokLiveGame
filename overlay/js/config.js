@@ -30,8 +30,8 @@ export const DEFAULT_CONFIG = {
     speed: 80,
     messages: [
       "Gift Mawar = cetak foto profilmu di Studio Photo",
+      "Tap-tap 1.000 like = cetak foto bingkai Zamrud",
       "Gift lain juga bisa, makin besar gift makin mewah bingkainya: Perak, Emas, Berlian",
-      "Tap-tap layar biar live makin rame",
       "Follow biar tidak ketinggalan live Studio Photo berikutnya",
     ],
   },
@@ -39,6 +39,11 @@ export const DEFAULT_CONFIG = {
     enabled: true,
     speed: 80,
     messages: ["♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY"],
+  },
+  // Ambang Zamrud dibaca connector dari config/game.json; overlay hanya
+  // meneruskannya supaya satu file tetap jadi sumber kebenaran bersama.
+  engagement: {
+    likeThreshold: 1000,
   },
 };
 
@@ -80,6 +85,10 @@ export async function loadGameConfig() {
     tickerCredits: {
       ...DEFAULT_CONFIG.tickerCredits,
       ...(fileConfig.tickerCredits || {}),
+    },
+    engagement: {
+      ...DEFAULT_CONFIG.engagement,
+      ...(fileConfig.engagement || {}),
     },
     tiers: { ...DEFAULT_CONFIG.tiers, ...(fileConfig.tiers || {}) },
   };
@@ -137,6 +146,9 @@ export async function loadGameConfig() {
   merged.ticker.speed = Math.round(clamp(merged.ticker.speed, 20, 300, 80));
   merged.tickerCredits.speed = Math.round(
     clamp(merged.tickerCredits.speed, 20, 300, 80),
+  );
+  merged.engagement.likeThreshold = Math.round(
+    clamp(merged.engagement.likeThreshold, 1, 1_000_000, 1000),
   );
   merged.debug = params.has("debug") && flagEnabled(params.get("debug"));
   merged.simulate = params.has("sim") && flagEnabled(params.get("sim"));

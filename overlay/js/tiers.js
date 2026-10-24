@@ -17,6 +17,7 @@ export const TIER_LABEL = {
   silver: "PERAK",
   gold: "EMAS",
   diamond: "BERLIAN",
+  emerald: "ZAMRUD",
 };
 
 export const TIER_ACCENT = {
@@ -25,6 +26,7 @@ export const TIER_ACCENT = {
   silver: "#c9d6df",
   gold: "#f4d16a",
   diamond: "#8be9ff",
+  emerald: "#34d399",
 };
 
 function normalizeOneTier(key, input) {

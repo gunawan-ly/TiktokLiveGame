@@ -146,6 +146,49 @@ class Bridge:
         )
         await self._broadcast(message)
 
+    async def publish_emerald(self, award, run_id: str) -> None:
+        """Broadcast the one Zamrud print a viewer earned via tap-tap.
+
+        Counts as a print in the session stats but never as coins: it is
+        an engagement reward, not a gift. The event id is deterministic
+        per connector run + user, so the overlay dedupes replays while a
+        connector restart (new run id) opens a fresh chance.
+        """
+
+        event_id = f"emerald-{run_id}-{award.user_id}"
+        timestamp = datetime.now().astimezone().isoformat(timespec="seconds")
+        message = {
+            "type": "emerald_print",
+            "eventId": event_id,
+            "user": {
+                "username": award.username,
+                "displayName": award.display_name,
+                "avatarUrl": award.avatar_url,
+            },
+            "likeTotal": award.like_total,
+            "threshold": award.threshold,
+            "timestamp": timestamp,
+        }
+        self._stats["printed"] += 1
+        if self.session_log:
+            self.session_log.write(
+                "emerald",
+                {
+                    "eventId": event_id,
+                    "username": award.username,
+                    "displayName": award.display_name,
+                    "likeTotal": award.like_total,
+                    "threshold": award.threshold,
+                },
+            )
+        self.logger.info(
+            "Zamrud -> %s | %d like (ambang %d)",
+            award.display_name,
+            award.like_total,
+            award.threshold,
+        )
+        await self._broadcast(message)
+
     @property
     def stats(self) -> dict[str, Any]:
         return dict(self._stats)

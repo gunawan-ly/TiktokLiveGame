@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   normalizeTiers,
+  tierAccent,
   tierForCoins,
   tierLabel,
 } from "../overlay/js/tiers.js";
@@ -35,6 +36,14 @@ test("tier labels are available", () => {
   assert.equal(tierLabel("gold", tiers), "EMAS");
   assert.equal(tierLabel("diamond", tiers), "BERLIAN");
   assert.equal(tierLabel("standard", tiers), "");
+});
+
+test("emerald is engagement-only: label exists, coins never produce it", () => {
+  assert.equal(tierLabel("emerald", tiers), "ZAMRUD");
+  assert.equal(tierAccent("emerald"), "#34d399");
+  for (const coins of [0, 10, 200, 29999, 1_000_000]) {
+    assert.notEqual(tierForCoins(coins, tiers), "emerald", `coins=${coins}`);
+  }
 });
 
 test("custom thresholds override defaults", () => {

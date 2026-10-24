@@ -17,6 +17,7 @@ const COMPLETION_NOTES = {
   silver: [620, 780, 930],
   gold: [740, 920, 1108, 1318],
   diamond: [880, 1108, 1318, 1568, 1760],
+  emerald: [659, 784, 988, 1319],
 };
 
 export class PrintSound {

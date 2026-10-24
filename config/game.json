@@ -45,8 +45,8 @@
     "speed": 80,
     "messages": [
       "Gift Mawar = cetak foto profilmu di Studio Photo",
+      "Tap-tap 1.000 like = cetak foto bingkai Zamrud",
       "Gift lain juga bisa, makin besar gift makin mewah bingkainya: Perak, Emas, Berlian",
-      "Tap-tap layar biar live makin rame",
       "Follow biar tidak ketinggalan live Studio Photo berikutnya"
     ]
   },
@@ -56,5 +56,8 @@
     "messages": [
       "♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY"
     ]
+  },
+  "engagement": {
+    "likeThreshold": 1000
   }
 }

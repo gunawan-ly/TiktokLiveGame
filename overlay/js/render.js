@@ -194,7 +194,9 @@ export class OverlayRenderer {
     name.textContent = item.displayName;
     const gift = document.createElement("span");
     gift.className = "toast-gift";
-    gift.textContent = `${item.giftName} x ${item.repeat}`;
+    gift.textContent = item.likeTotal
+      ? `${item.giftName} ${Number(item.likeTotal).toLocaleString("id-ID")} like`
+      : `${item.giftName} x ${item.repeat}`;
     copy.append(name, gift);
 
     if (tier !== "standard") {

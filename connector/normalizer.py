@@ -154,3 +154,55 @@ def extract_gift_signal(event: Any) -> GiftSignal | None:
         repeat_end=repeat_end,
         streakable=streakable,
     )
+
+
+@dataclass(slots=True)
+class LikeSignal:
+    user_id: str
+    username: str
+    display_name: str
+    avatar_url: str
+    like_count: int
+
+
+def extract_like_signal(event: Any) -> LikeSignal | None:
+    """Convert a TikTokLive LikeEvent into a per-user like batch.
+
+    `count` is the number of likes this event carries for this user.
+    `total_like_count` is the ROOM total and must never be used here:
+    the Zamrud threshold counts likes per user, not per room.
+    """
+
+    user = _read(event, "user")
+    if user is None:
+        return None
+
+    like_count = max(
+        0,
+        _safe_int(_read(event, "count", _read(event, "like_count", 0))),
+    )
+    if like_count <= 0:
+        return None
+
+    username = _clean_text(
+        _read(user, "display_id", _read(user, "unique_id", "")),
+        "viewer",
+        40,
+    )
+    display_name = _clean_text(
+        _read(user, "nickname", username),
+        username,
+    )
+    user_id = _clean_text(
+        _read(user, "id", _read(user, "user_id", username)),
+        username,
+        40,
+    )
+
+    return LikeSignal(
+        user_id=user_id,
+        username=username,
+        display_name=display_name,
+        avatar_url=_avatar_url(user),
+        like_count=like_count,
+    )

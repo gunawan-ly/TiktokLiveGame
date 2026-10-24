@@ -24,6 +24,22 @@ test("queue is FIFO and ignores duplicates", () => {
   assert.equal(queue.beginNext().eventId, "b");
 });
 
+test("emerald items flow through the queue with their tier override", () => {
+  const queue = new PrintQueue();
+  const emerald = gift("emerald-run1-123", {
+    username: "pengetuk",
+    totalCoins: 0,
+    likeTotal: 1000,
+    tierOverride: "emerald",
+  });
+  assert.equal(queue.push(emerald).ok, true);
+  // Replay dengan eventId yang sama ditolak (dedupe melindungi cetak ganda).
+  assert.equal(queue.push(emerald).ok, false);
+  const chosen = queue.beginNext();
+  assert.equal(chosen.tierOverride, "emerald");
+  assert.equal(chosen.totalCoins, 0);
+});
+
 test("beginNext cannot interrupt a running print", () => {
   const queue = new PrintQueue();
   queue.push(gift("a"));

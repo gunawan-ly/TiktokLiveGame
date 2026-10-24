@@ -92,6 +92,13 @@ Setiap gift wajib punya `eventId` unik; overlay menolak duplikat berdasar itu.
 Skema gift ter-normalisasi ada di `overlay/js/normalize.js` dan
 `connector/normalizer.py`; ubah keduanya bersamaan atau jangan sama sekali.
 
+Pesan `emerald_print` adalah perintah cetak Zamrud dari jalur tap-tap:
+connector mengagregasi `LikeEvent` per user (`connector/likes.py`) dan hanya
+mengirim pesan ini SATU kali saat total like user menyentuh ambang sesi.
+Event like mentah tidak pernah diteruskan ke overlay. `eventId` deterministik
+per run connector + user (`emerald-<run>-<userId>`); restart connector =
+sesi baru = kesempatan baru. Skema normalizernya `normalizeEmeraldMessage`.
+
 ## 5. Aturan game (jangan diubah diam-diam)
 
 Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
@@ -100,6 +107,13 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
   Emas 50+, Berlian 200+**. **Perunggu khusus jalur like** (frame avatar
   strip Top Tap-Tap, bukan dari gift) dan tidak pernah dihasilkan
   `tierForCoins`. Label: PERUNGGU, PERAK, EMAS, BERLIAN.
+- **Zamrud (label ZAMRUD) adalah tier engagement tap-tap, bukan gift:**
+  profil penonton dicetak berbinkai zamrud saat total like-nya dalam satu
+  sesi connector mencapai `engagement.likeThreshold` (default **1.000**,
+  bisa dioverride env `LIKE_THRESHOLD` di connector). Maksimal satu cetak
+  Zamrud per user per sesi; menambah hitungan TERCETAK, tidak menambah
+  koin; lewat antrean, cooldown, dan dedupe yang sama seperti gift.
+  `tierForCoins` tidak pernah menghasilkan emerald.
 - Target koin per sesi: 500. Slot foto aktif 9 (grid 3x3), gulungan foto 7.
 - Antrean cetak FIFO, kapasitas **100** item (`maxQueueItems`); penuh = gift
   ditolak dengan indikator "ANTREAN PENUH", bukan ditumpuk tanpa batas.
