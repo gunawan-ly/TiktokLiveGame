@@ -1,10 +1,13 @@
-// Running teks di tepi atas overlay: strip pesan berjalan dari kanan ke
-// kiri, mengulang tanpa putus.
+// Running teks overlay: dua strip pesan berjalan dari kanan ke kiri,
+// mengulang tanpa putus. Strip atas untuk info arahan live (penting,
+// harus selalu terlihat); strip bawah untuk credits.
 //
-// Ditaruh paling atas (bukan bawah) atas permintaan pemilik: kolom komentar
-// TikTok menutupi area bawah layar penonton, jadi strip bawah akan
-// terhalang komentar. Strip atas juga tidak menabrak header (mulai 2.2rem)
-// maupun toast (jangkar bawah).
+// Info ditaruh paling atas (bukan bawah) atas permintaan pemilik: kolom
+// komentar TikTok menutupi area bawah layar penonton, jadi info penting
+// akan terhalang komentar kalau ditaruh di bawah. Credits di bawah boleh
+// sesekali tertutup komentar karena sifatnya pelengkap dan terus
+// mengulang. Strip atas juga tidak menabrak header (mulai 2.2rem) maupun
+// toast (jangkar bawah).
 //
 // Loop mulus: isi digandakan jadi dua span identik, animasi menggeser
 // track sejauh -50%. Kecepatan konstan (px/detik) supaya teks tetap

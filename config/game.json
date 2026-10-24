@@ -44,9 +44,15 @@
     "enabled": true,
     "speed": 80,
     "messages": [
-      "♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY",
       "Gift Mawar = cetak foto profil di Studio Photo",
       "Follow = bingkai Emerald"
+    ]
+  },
+  "tickerCredits": {
+    "enabled": true,
+    "speed": 80,
+    "messages": [
+      "♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY"
     ]
   }
 }

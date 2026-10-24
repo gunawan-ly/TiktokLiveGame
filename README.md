@@ -132,10 +132,12 @@ nonaktif secara default; aktifkan dengan `?music=1`. Volumenya sengaja kecil
 terdengar daripada musik. Daftar lagu, lisensi CC BY, dan teks kredit
 yang ditampilkan lewat running teks ada di `overlay/assets/music/README.md`.
 
-Running teks tampil di tepi atas overlay (di atas scene, supaya tidak
-terhalang kolom komentar TikTok yang menutupi area bawah layar). Pesannya
-diambil dari `ticker.messages` di `config/game.json` dan bisa dimatikan
-dengan `?ticker=0`.
+Running teks ada dua strip. Strip atas untuk info arahan live (di atas
+scene, supaya tidak terhalang kolom komentar TikTok yang menutupi area
+bawah layar); pesannya dari `ticker.messages` di `config/game.json`.
+Strip bawah khusus credits; pesannya dari `tickerCredits.messages`.
+Keduanya bisa dimatikan terpisah dengan `?ticker=0` dan
+`?tickerCredits=0`.
 
 ## Konfigurasi
 
@@ -191,7 +193,8 @@ oleh overlay. Target yang tampil di HUD berasal dari `config/game.json` atau par
 | `subtitle` | `?subtitle=LIVE%20PHOTO%20BOOTH` | Override subjudul |
 | `sound` | `?sound=1` | Aktifkan sound effect |
 | `music` | `?music=1` | Aktifkan backsound lo-fi (playlist loop) |
-| `ticker` | `?ticker=0` | Matikan running teks tepi atas |
+| `ticker` | `?ticker=0` | Matikan running teks info (strip atas) |
+| `tickerCredits` | `?tickerCredits=0` | Matikan running teks credits (strip bawah) |
 
 Gunakan `?sim=1&sound=1&music=1` untuk demo audio lengkap. Browser dapat meminta interaksi pengguna
 sebelum audio diputar.

@@ -1,5 +1,5 @@
-/* Running teks tepi atas: strip gelap transparan, teks krem, geser kiri
-   tanpa putus. Durasi loop diatur JS lewat --ticker-duration (lebar span /
+/* Running teks: strip atas untuk info arahan live, strip bawah untuk
+   credits. Durasi loop diatur JS lewat --ticker-duration (lebar span /
    kecepatan px per detik); fallback 40 detik kalau pengukuran gagal. */
 
 .ticker {
@@ -15,6 +15,13 @@
   background: rgba(18, 13, 13, 0.72);
   border-bottom: 0.09rem solid rgba(255, 247, 226, 0.18);
   pointer-events: none;
+}
+
+.ticker--bottom {
+  top: auto;
+  bottom: 0;
+  border-bottom: none;
+  border-top: 0.09rem solid rgba(255, 247, 226, 0.18);
 }
 
 .ticker-track {

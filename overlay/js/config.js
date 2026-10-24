@@ -29,10 +29,14 @@ export const DEFAULT_CONFIG = {
     enabled: true,
     speed: 80,
     messages: [
-      "♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY",
       "Gift Mawar = cetak foto profil di Studio Photo",
       "Follow = bingkai Emerald",
     ],
+  },
+  tickerCredits: {
+    enabled: true,
+    speed: 80,
+    messages: ["♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY"],
   },
 };
 
@@ -71,6 +75,10 @@ export async function loadGameConfig() {
     sound: { ...DEFAULT_CONFIG.sound, ...(fileConfig.sound || {}) },
     music: { ...DEFAULT_CONFIG.music, ...(fileConfig.music || {}) },
     ticker: { ...DEFAULT_CONFIG.ticker, ...(fileConfig.ticker || {}) },
+    tickerCredits: {
+      ...DEFAULT_CONFIG.tickerCredits,
+      ...(fileConfig.tickerCredits || {}),
+    },
     tiers: { ...DEFAULT_CONFIG.tiers, ...(fileConfig.tiers || {}) },
   };
 
@@ -108,6 +116,9 @@ export async function loadGameConfig() {
   if (params.has("ticker")) {
     merged.ticker.enabled = flagEnabled(params.get("ticker"));
   }
+  if (params.has("tickerCredits")) {
+    merged.tickerCredits.enabled = flagEnabled(params.get("tickerCredits"));
+  }
 
   merged.targetCoins = Math.round(clamp(merged.targetCoins, 1, 1_000_000_000, 500));
   merged.maxActivePhotos = Math.round(clamp(merged.maxActivePhotos, 1, 9, 9));
@@ -122,6 +133,9 @@ export async function loadGameConfig() {
   merged.sound.volume = clamp(merged.sound.volume, 0, 1, 0.4);
   merged.music.volume = clamp(merged.music.volume, 0, 1, 0.15);
   merged.ticker.speed = Math.round(clamp(merged.ticker.speed, 20, 300, 80));
+  merged.tickerCredits.speed = Math.round(
+    clamp(merged.tickerCredits.speed, 20, 300, 80),
+  );
   merged.debug = params.has("debug") && flagEnabled(params.get("debug"));
   merged.simulate = params.has("sim") && flagEnabled(params.get("sim"));
 

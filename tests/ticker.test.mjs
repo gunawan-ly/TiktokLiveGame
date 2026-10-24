@@ -126,3 +126,31 @@ test("stop menyembunyikan strip lagi", () => {
   ticker.stop();
   assert.equal(container.hidden, true);
 });
+
+test("dua instance ticker (info + credits) saling bebas", () => {
+  const infoContainer = new FakeContainer();
+  const infoTrack = new FakeTrack();
+  const creditsContainer = new FakeContainer();
+  const creditsTrack = new FakeTrack();
+  const info = new Ticker({
+    container: infoContainer,
+    track: infoTrack,
+    messages: ["Info live"],
+    enabled: true,
+    createSpan: (text) => new FakeSpan(text),
+  });
+  const credits = new Ticker({
+    container: creditsContainer,
+    track: creditsTrack,
+    messages: ["Credits lagu"],
+    enabled: true,
+    createSpan: (text) => new FakeSpan(text),
+  });
+  info.start();
+  credits.start();
+  assert.equal(infoTrack.children[0].textContent, `Info live${TICKER_SEPARATOR}`);
+  assert.equal(creditsTrack.children[0].textContent, `Credits lagu${TICKER_SEPARATOR}`);
+  info.stop();
+  assert.equal(infoContainer.hidden, true);
+  assert.equal(creditsContainer.hidden, false);
+});

@@ -29,6 +29,8 @@ const elements = {
   debugPanel: document.getElementById("debugPanel"),
   ticker: document.getElementById("ticker"),
   tickerTrack: document.getElementById("tickerTrack"),
+  tickerCredits: document.getElementById("tickerCredits"),
+  tickerCreditsTrack: document.getElementById("tickerCreditsTrack"),
 };
 
 let queue;
@@ -101,6 +103,12 @@ async function bootstrap() {
     ...config.ticker,
   });
   ticker.start();
+  const tickerCredits = new Ticker({
+    container: elements.tickerCredits,
+    track: elements.tickerCreditsTrack,
+    ...config.tickerCredits,
+  });
+  tickerCredits.start();
   renderer = new OverlayRenderer({ config, tiers, elements, sound });
   queue = new PrintQueue(config.maxQueueItems, config.senderGapMs);
 
@@ -218,6 +226,7 @@ async function bootstrap() {
   window.addEventListener("beforeunload", () => {
     clearRetryTimer();
     ticker.stop();
+    tickerCredits.stop();
     music.stop();
     socket?.close();
     simulation?.stop();
