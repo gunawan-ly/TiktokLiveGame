@@ -94,9 +94,10 @@
   --glow-opacity: 1;
 }
 
-/* Zamrud: tier engagement tap-tap, bukan gift. Hijau zamrud dengan
- * perlakuan cahaya sekelas silver (denyut halo + cincin berputar sesudah
- * selesai) supaya terasa istimewa dan eksklusif. */
+/* Zamrud: tier engagement tap-tap, bukan gift. SENGAJA statis: cincin
+ * hijau tanpa denyut, tanpa putaran, tanpa sparkles, halo redup. Reward
+ * gratis tidak boleh tampak lebih hidup dari bingkai gift berbayar
+ * (keputusan Awan 24 Okt 2026 sesudah review screenshot). */
 .print-cell.tier-emerald {
   --ring-w: 0.88rem;
   --metal-a: #064e3b;
@@ -105,7 +106,7 @@
   --metal-d: #047857;
   --metal-e: #a7f3d0;
   --glow-color: rgba(52, 211, 153, 0.8);
-  --glow-opacity: 1;
+  --glow-opacity: 0.55;
 }
 
 .print-cell.is-done {
@@ -156,12 +157,15 @@
   animation: ringSpin 9s linear infinite;
 }
 
-.print-cell.tier-emerald .frame-glow {
+/* Emas menyusul Perak/Berlian (review Awan 24 Okt 2026: Emas satu-satunya
+ * tier gift berbayar yang diam). Denyut halo sama, putaran lebih lambat
+ * (12 detik) supaya tetap terasa di atas Perak. */
+.print-cell.tier-gold .frame-glow {
   animation: glowPulse 2.4s ease-in-out infinite;
 }
 
-.print-cell.tier-emerald.is-done .frame-wrap {
-  animation: ringSpin 9s linear infinite;
+.print-cell.tier-gold.is-done .frame-wrap {
+  animation: ringSpin 12s linear infinite;
 }
 
 .frame-wrap {
@@ -366,6 +370,30 @@
 .card-name span.is-shown {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Nama ber-chip untuk Emas ke atas (permintaan Awan 24 Okt 2026):
+ * teks nama duduk di atas pil sewarna tiernya, sekeluarga dengan pil
+ * tier, supaya nama tier tinggi terasa lebih eksklusif dan tetap terbaca
+ * walau dekat cincin baris tetangga. */
+.print-cell.tier-gold .card-name,
+.print-cell.tier-diamond .card-name {
+  width: fit-content;
+  margin-inline: auto;
+  padding: 0.1rem 0.7rem 0.14rem;
+  border-radius: 999px;
+}
+
+.print-cell.tier-gold .card-name {
+  background: linear-gradient(180deg, rgba(252, 233, 168, 0.95), rgba(201, 153, 44, 0.95));
+  color: #4d3410;
+  box-shadow: 0 0.15rem 0.5rem rgba(120, 84, 10, 0.45);
+}
+
+.print-cell.tier-diamond .card-name {
+  background: linear-gradient(180deg, rgba(215, 246, 255, 0.95), rgba(139, 233, 255, 0.92));
+  color: #0c4a5e;
+  box-shadow: 0 0.15rem 0.5rem rgba(80, 170, 205, 0.45);
 }
 
 .tier-pill {

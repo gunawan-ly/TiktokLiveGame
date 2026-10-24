@@ -42,7 +42,7 @@
   },
   "ticker": {
     "enabled": true,
-    "speed": 80,
+    "speed": 55,
     "messages": [
       "Gift Mawar = cetak foto profilmu di Studio Photo",
       "Tap-tap 1.000 like = cetak foto bingkai Zamrud",
@@ -52,7 +52,7 @@
   },
   "tickerCredits": {
     "enabled": true,
-    "speed": 80,
+    "speed": 55,
     "messages": [
       "♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY"
     ]

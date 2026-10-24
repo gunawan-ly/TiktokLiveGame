@@ -27,7 +27,7 @@ export const DEFAULT_CONFIG = {
   },
   ticker: {
     enabled: true,
-    speed: 80,
+    speed: 55,
     messages: [
       "Gift Mawar = cetak foto profilmu di Studio Photo",
       "Tap-tap 1.000 like = cetak foto bingkai Zamrud",
@@ -37,7 +37,7 @@ export const DEFAULT_CONFIG = {
   },
   tickerCredits: {
     enabled: true,
-    speed: 80,
+    speed: 55,
     messages: ["♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY"],
   },
   // Ambang Zamrud dibaca connector dari config/game.json; overlay hanya
@@ -143,9 +143,9 @@ export async function loadGameConfig() {
   );
   merged.sound.volume = clamp(merged.sound.volume, 0, 1, 0.4);
   merged.music.volume = clamp(merged.music.volume, 0, 1, 0.15);
-  merged.ticker.speed = Math.round(clamp(merged.ticker.speed, 20, 300, 80));
+  merged.ticker.speed = Math.round(clamp(merged.ticker.speed, 20, 300, 55));
   merged.tickerCredits.speed = Math.round(
-    clamp(merged.tickerCredits.speed, 20, 300, 80),
+    clamp(merged.tickerCredits.speed, 20, 300, 55),
   );
   merged.engagement.likeThreshold = Math.round(
     clamp(merged.engagement.likeThreshold, 1, 1_000_000, 1000),

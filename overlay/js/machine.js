@@ -17,7 +17,7 @@ const PHASES = {
   feed: 0.23,
 };
 
-const SPARKLE_COUNT = { standard: 0, bronze: 0, silver: 2, gold: 4, diamond: 6, emerald: 5 };
+const SPARKLE_COUNT = { standard: 0, bronze: 0, silver: 2, gold: 4, diamond: 6, emerald: 0 };
 
 export class PrintMachine {
   constructor({ root, config, tiers, avatarKnownBad = null, onEvent = null }) {

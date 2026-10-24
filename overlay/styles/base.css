@@ -98,7 +98,7 @@ body {
 .studio-header {
   position: absolute;
   z-index: 6;
-  top: 2.2rem;
+  top: 2.7rem;
   left: 2rem;
   right: 2rem;
   text-align: center;
@@ -267,7 +267,7 @@ body {
 .connection {
   position: absolute;
   z-index: 8;
-  top: 2.2rem;
+  top: 2.7rem;
   right: 2.8rem;
   display: flex;
   align-items: center;
@@ -437,7 +437,7 @@ body {
 .sim-badge {
   position: absolute;
   z-index: 9;
-  top: 2.4rem;
+  top: 2.9rem;
   left: 2.8rem;
   padding: 0.42rem 0.85rem;
   border-radius: 999px;

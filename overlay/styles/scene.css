@@ -7,9 +7,9 @@
    * or into the row below when photo/tier sizes change.
    */
   --row-pad: 0.3rem;
-  --row-pad-bottom: 0.55rem;
+  --row-pad-bottom: 1.15rem;
   --photo-d: 9.7rem;
-  --name-gap: 1.45rem;
+  --name-gap: 1.9rem;
   --name-line: 1.15rem;
   --row-h: calc(
     var(--row-pad) + var(--row-pad-bottom) + var(--photo-d) +

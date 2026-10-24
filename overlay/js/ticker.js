@@ -7,7 +7,7 @@
 // komentar TikTok menutupi area bawah layar penonton, jadi info penting
 // akan terhalang komentar kalau ditaruh di bawah. Credits di bawah boleh
 // sesekali tertutup komentar karena sifatnya pelengkap dan terus
-// mengulang. Strip atas juga tidak menabrak header (mulai 2.2rem) maupun
+// mengulang. Strip atas juga tidak menabrak header (mulai 2.7rem) maupun
 // toast (jangkar bawah).
 //
 // Mekanisme: satu span di dalam track. JS mengukur lebar strip (C) dan
