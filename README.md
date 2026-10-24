@@ -184,14 +184,14 @@ Mulai live dari HP atau TikTok LIVE Studio seperti biasa. Connector
 berpindah dari `waiting` ke `connected` dan gift mulai masuk. Kirim satu
 gift kecil sebagai tes: foto tercetak, toast muncul, HUD TERCETAK naik.
 
-**7. Kalau musik tidak berbunyi di OBS**
+**8. Kalau musik tidak berbunyi di OBS**
 
 Browser OBS mengunci audio sampai ada klik di dalam source. Klik kanan
 Browser Source, pilih **Interact**, klik sekali di area overlay. Chip
 "Musik terkunci, ketuk di sini untuk menyalakan" di overlay juga hilang
 sendiri begitu musik berputar. Pastikan source tidak di-mute di mixer.
 
-**8. Selama live: semua hitungan per sesi connector**
+**9. Selama live: semua hitungan per sesi connector**
 
 - Kelas bingkai gift mengikuti **akumulasi koin per penonton** sesi ini
   (Perak 10+, Emas 50+, Kecubung 100+, Berlian 200+), bukan per gift.
@@ -202,7 +202,7 @@ sendiri begitu musik berputar. Pastikan source tidak di-mute di mixer.
   daftar sambutan semuanya kembali ke nol. Hindari restart di tengah
   live kecuali memang perlu.
 
-**9. Selesai live**
+**10. Selesai live**
 
 Hentikan connector dengan `Ctrl+C` (log sesi dan statistik akhir tetap
 ditulis ke `logs/`), lalu hentikan server overlay dengan `Ctrl+C`.
@@ -415,6 +415,12 @@ dari kosong. Ini disengaja.
 Periksa username, status live, dan `SIGN_API_KEY`. Tanpa API key, koneksi live dapat
 dibatasi oleh Euler Stream. Log connector menampilkan alasan kegagalan tanpa
 menyimpan URL avatar.
+
+**`.venv/bin/python` is not recognized (Windows)**
+Itu jalur venv versi macOS/Linux. Di PowerShell jalurnya
+`.\.venv\Scripts\python -m connector.main`, lengkap dengan awalan `.\`.
+Kalau masih error, venv-nya memang belum dibuat: jalankan langkah 2 di
+"Step by Step: Live Beneran".
 
 **Musik tidak berbunyi di OBS**
 Browser OBS mengunci putar otomatis sampai ada interaksi: klik kanan Browser
