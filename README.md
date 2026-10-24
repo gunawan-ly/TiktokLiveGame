@@ -63,9 +63,17 @@ python3 -m venv .venv
 cp .env.example .env
 ```
 
-Di Windows, perintah venv dan Python-nya menjadi `py -m venv .venv`,
-`.venv\Scripts\pip install -r connector\requirements.txt`, dan
-`.venv\Scripts\python ...` untuk semua contoh di dokumen ini.
+Di Windows (PowerShell), urutan yang sama menjadi:
+
+```powershell
+git clone https://github.com/gunawan-ly/TiktokLiveGame.git
+cd TiktokLiveGame
+
+py -m venv .venv
+.venv\Scripts\pip install -r connector\requirements.txt
+
+cp .env.example .env
+```
 
 Jalankan server overlay di terminal pertama:
 
@@ -105,7 +113,24 @@ Semua perubahan kode dan `config/game.json` baru berlaku setelah
 connector direstart dan Browser Source di-refresh, jadi lakukan langkah
 ini sebelum mulai, bukan di tengah live.
 
-**2. Siapkan `.env` (sekali saja)**
+**2. Buat venv dan install dependensi (sekali saja)**
+
+Lompati langkah ini kalau folder `.venv` sudah ada. Di Windows
+(PowerShell):
+
+```powershell
+py -m venv .venv
+.venv\Scripts\pip install -r connector\requirements.txt
+```
+
+Di macOS/Linux:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r connector/requirements.txt
+```
+
+**3. Siapkan `.env` (sekali saja)**
 
 ```dotenv
 TIKTOK_USERNAME=@username_akun
@@ -116,21 +141,26 @@ SIGN_API_KEY=api_key_euler_stream
 API key diperlukan untuk signing request TikTok webcast; mode mock tidak
 memerlukannya. Jangan commit file `.env`.
 
-**3. Terminal 1: jalankan server overlay dari root repo**
+**4. Terminal 1: jalankan server overlay dari root repo**
 
 ```bash
 python3 -m http.server 5173 --bind 127.0.0.1
 ```
 
+Di Windows: `py -m http.server 5173 --bind 127.0.0.1`.
+
 Wajib dari root repo: overlay membaca `config/game.json` relatif terhadap
 root server. Server yang dijalankan dari folder lain membuat overlay
 jatuh ke konfigurasi default.
 
-**4. Terminal 2: jalankan connector**
+**5. Terminal 2: jalankan connector**
 
 ```bash
 .venv/bin/python -m connector.main
 ```
+
+Di Windows: `.\.venv\Scripts\python -m connector.main` (awalan `.\`
+wajib di PowerShell, dan jalurnya memakai `\Scripts\`, bukan `/bin/`).
 
 Periksa log awalnya: `WebSocket bridge aktif di ws://127.0.0.1:8080`,
 `Target koin: 500`, dan `Ambang Zamrud (like per user per sesi): 500`.
@@ -142,13 +172,13 @@ maksimum 30 detik. Override username tanpa mengubah `.env`:
 .venv/bin/python -m connector.main --username @akun_lain --verbose
 ```
 
-**5. OBS: pasang Browser Source produksi**
+**6. OBS: pasang Browser Source produksi**
 
 Ikuti daftar di seksi "OBS / TikTok LIVE Studio" di bawah (URL produksi
 memakai `?sound=1&music=1`, ukuran 1080 × 1440). Pastikan chip status di
 pojok kanan atas overlay menunjukkan LIVE setelah connector tersambung.
 
-**6. Mulai live di TikTok**
+**7. Mulai live di TikTok**
 
 Mulai live dari HP atau TikTok LIVE Studio seperti biasa. Connector
 berpindah dari `waiting` ke `connected` dan gift mulai masuk. Kirim satu
