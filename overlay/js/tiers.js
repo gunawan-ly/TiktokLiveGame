@@ -1,14 +1,15 @@
-export const TIER_KEYS = ["bronze", "silver", "gold", "diamond"];
+export const TIER_KEYS = ["bronze", "silver", "gold", "amethyst", "diamond"];
 
-// Gift hanya memakai silver/gold/diamond. Bronze khusus jalur like
+// Gift hanya memakai silver/gold/amethyst/diamond. Bronze khusus jalur like
 // (frame avatar strip Top Tap-Tap) dan tidak pernah dihasilkan
 // tierForCoins, supaya gift tidak pernah tercetak dengan bingkai perunggu.
-export const GIFT_TIER_KEYS = ["silver", "gold", "diamond"];
+export const GIFT_TIER_KEYS = ["silver", "gold", "amethyst", "diamond"];
 
 export const DEFAULT_TIER_MIN = {
   bronze: 10,
   silver: 10,
   gold: 50,
+  amethyst: 100,
   diamond: 200,
 };
 
@@ -16,6 +17,7 @@ export const TIER_LABEL = {
   bronze: "PERUNGGU",
   silver: "PERAK",
   gold: "EMAS",
+  amethyst: "KECUBUNG",
   diamond: "BERLIAN",
   emerald: "ZAMRUD",
 };
@@ -25,6 +27,7 @@ export const TIER_ACCENT = {
   bronze: "#cd7f32",
   silver: "#c9d6df",
   gold: "#f4d16a",
+  amethyst: "#a78bfa",
   diamond: "#8be9ff",
   emerald: "#34d399",
 };

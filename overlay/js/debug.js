@@ -1,7 +1,8 @@
 const TEST_GIFTS = {
   standard: { name: "Mawar", repeat: 1, coinsPerItem: 1, totalCoins: 1 },
   silver: { name: "Perfume", repeat: 1, coinsPerItem: 25, totalCoins: 25 },
-  gold: { name: "Money Gun", repeat: 1, coinsPerItem: 100, totalCoins: 100 },
+  gold: { name: "Money Gun", repeat: 1, coinsPerItem: 50, totalCoins: 50 },
+  amethyst: { name: "Galaxy Mini", repeat: 1, coinsPerItem: 100, totalCoins: 100 },
   diamond: { name: "Lion", repeat: 1, coinsPerItem: 29999, totalCoins: 29999 },
 };
 
@@ -60,8 +61,8 @@ function makeEmerald(displayName) {
       displayName,
       avatarUrl: "",
     },
-    likeTotal: 1000,
-    threshold: 1000,
+    likeTotal: 500,
+    threshold: 500,
     timestamp: new Date().toISOString(),
   };
 }

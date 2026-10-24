@@ -31,7 +31,7 @@ export const DEFAULT_CONFIG = {
     messages: [
       "Gift Mawar = cetak foto profilmu di Studio Photo",
       "Tap-tap 500 like = cetak foto bingkai Zamrud",
-      "Total gift 10 koin = bingkai Perak, 50 koin = Emas, 200 koin = Berlian",
+      "Total gift 10 koin = Perak, 50 koin = Emas, 100 koin = Kecubung, 200 koin = Berlian",
       "Follow biar tidak ketinggalan live Studio Photo berikutnya",
     ],
   },

@@ -19,6 +19,7 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
   - **Perunggu**: cincin copper dengan sheen facet (khusus jalur like).
   - **Perak**: cincin satin putih-biru dan multitint.
   - **Emas**: cincin kuning berkilau multi-stop + kilat.
+  - **Kecubung**: cincin ungu violet dengan denyut halo + putaran 10 detik.
   - **Berlian**: cincin ice dengan rotasi perlahan + luster glow.
   - Cincin menggambar setengah putaran mulai dari atas (`--draw`) setiap cetakan,
     lalu sweep kilau sekali ketika selesai.
@@ -29,7 +30,7 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
 
 - Target koin default: **500**
 - Tier gift (dari total akumulasi koin per penonton dalam satu sesi):
-  Standar <10, Perak 10+, Emas 50+, Berlian 200+; Perunggu
+  Standar <10, Perak 10+, Emas 50+, Kecubung 100+, Berlian 200+; Perunggu
   khusus like (frame avatar strip Top Tap-Tap, bukan dari gift)
 - Slot foto aktif: **9** (kertas mesin), gulungan: **7**
 - Overlay: `http://127.0.0.1:5173/overlay/`

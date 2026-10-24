@@ -105,7 +105,8 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
 
 - Tier gift dari **total akumulasi koin per user dalam satu sesi
   connector** (termasuk combo yang baru selesai; keputusan Awan 24 Okt
-  2026): standar di bawah 10, **Perak 10+, Emas 50+, Berlian 200+**.
+  2026): standar di bawah 10, **Perak 10+, Emas 50+, Kecubung 100+,
+  Berlian 200+**.
   Combo tetap pemicu cetak (satu combo selesai = satu cetakan); kelas
   bingkainya yang mengikuti akumulasi, dibawa field `cumulativeCoins`. **Perunggu khusus jalur like** (frame avatar
   strip Top Tap-Tap, bukan dari gift) dan tidak pernah dihasilkan

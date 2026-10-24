@@ -17,7 +17,9 @@ test("gift tier boundaries (bronze is likes-only)", () => {
     [10, "silver"],
     [49, "silver"],
     [50, "gold"],
-    [199, "gold"],
+    [99, "gold"],
+    [100, "amethyst"],
+    [199, "amethyst"],
     [200, "diamond"],
     [29999, "diamond"],
   ];
@@ -25,7 +27,7 @@ test("gift tier boundaries (bronze is likes-only)", () => {
     assert.equal(tierForCoins(coins, tiers), expected, `coins=${coins}`);
   }
   // Gift tidak pernah menghasilkan bronze, berapa pun koinnya.
-  for (const coins of [0, 5, 10, 50, 200, 5000]) {
+  for (const coins of [0, 5, 10, 50, 100, 200, 5000]) {
     assert.notEqual(tierForCoins(coins, tiers), "bronze", `coins=${coins}`);
   }
 });
@@ -34,8 +36,10 @@ test("tier labels are available", () => {
   assert.equal(tierLabel("bronze", tiers), "PERUNGGU");
   assert.equal(tierLabel("silver", tiers), "PERAK");
   assert.equal(tierLabel("gold", tiers), "EMAS");
+  assert.equal(tierLabel("amethyst", tiers), "KECUBUNG");
   assert.equal(tierLabel("diamond", tiers), "BERLIAN");
   assert.equal(tierLabel("standard", tiers), "");
+  assert.equal(tierAccent("amethyst"), "#a78bfa");
 });
 
 test("emerald is engagement-only: label exists, coins never produce it", () => {

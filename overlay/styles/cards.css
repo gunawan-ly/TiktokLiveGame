@@ -83,6 +83,17 @@
   --glow-opacity: 1;
 }
 
+.print-cell.tier-amethyst {
+  --ring-w: 0.94rem;
+  --metal-a: #4c1d95;
+  --metal-b: #ddd0fb;
+  --metal-c: #8b5cf6;
+  --metal-d: #6d28a8;
+  --metal-e: #c4b5fd;
+  --glow-color: rgba(167, 139, 250, 0.8);
+  --glow-opacity: 1;
+}
+
 .print-cell.tier-diamond {
   --ring-w: 1rem;
   --metal-a: #74d8f4;
@@ -174,6 +185,16 @@
 
 .print-cell.tier-gold.is-done .frame-wrap {
   animation: ringSpin 12s linear infinite;
+}
+
+/* Kecubung (100+): di antara Emas dan Berlian. Denyut halo sama, putaran
+ * 10 detik, sparkles 5 (machine.js), chip nama + pil ungu. */
+.print-cell.tier-amethyst .frame-glow {
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
+
+.print-cell.tier-amethyst.is-done .frame-wrap {
+  animation: ringSpin 10s linear infinite;
 }
 
 .frame-wrap {
@@ -385,6 +406,7 @@
  * tier, supaya nama tier tinggi terasa lebih eksklusif dan tetap terbaca
  * walau dekat cincin baris tetangga. */
 .print-cell.tier-gold .card-name,
+.print-cell.tier-amethyst .card-name,
 .print-cell.tier-diamond .card-name {
   width: fit-content;
   margin-inline: auto;
@@ -396,6 +418,12 @@
   background: linear-gradient(180deg, rgba(252, 233, 168, 0.95), rgba(201, 153, 44, 0.95));
   color: #4d3410;
   box-shadow: 0 0.15rem 0.5rem rgba(120, 84, 10, 0.45);
+}
+
+.print-cell.tier-amethyst .card-name {
+  background: linear-gradient(180deg, rgba(221, 208, 251, 0.95), rgba(139, 92, 246, 0.95));
+  color: #2e1065;
+  box-shadow: 0 0.15rem 0.5rem rgba(76, 29, 149, 0.5);
 }
 
 .print-cell.tier-diamond .card-name {
@@ -443,6 +471,14 @@
   background: linear-gradient(180deg, #fce9a8, #c9992c);
   color: #4d3410;
   box-shadow: 0 0.15rem 0.5rem rgba(120, 84, 10, 0.55);
+}
+
+.print-cell.tier-amethyst .tier-pill {
+  background: linear-gradient(180deg, #ddd0fb, #8b5cf6 62%, #6d28a8);
+  color: #2e1065;
+  box-shadow:
+    0 0.15rem 0.55rem rgba(76, 29, 149, 0.6),
+    0 0 0.8rem rgba(167, 139, 250, 0.5);
 }
 
 .print-cell.tier-diamond .tier-pill {
