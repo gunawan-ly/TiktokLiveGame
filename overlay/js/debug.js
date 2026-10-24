@@ -1,8 +1,7 @@
 const TEST_GIFTS = {
   standard: { name: "Mawar", repeat: 1, coinsPerItem: 1, totalCoins: 1 },
-  bronze: { name: "Mawar", repeat: 50, coinsPerItem: 1, totalCoins: 50 },
-  silver: { name: "Perfume", repeat: 1, coinsPerItem: 250, totalCoins: 250 },
-  gold: { name: "Money Gun", repeat: 1, coinsPerItem: 1000, totalCoins: 1000 },
+  silver: { name: "Perfume", repeat: 1, coinsPerItem: 25, totalCoins: 25 },
+  gold: { name: "Money Gun", repeat: 1, coinsPerItem: 100, totalCoins: 100 },
   diamond: { name: "Lion", repeat: 1, coinsPerItem: 29999, totalCoins: 29999 },
 };
 

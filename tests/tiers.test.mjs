@@ -9,21 +9,23 @@ import {
 
 const tiers = normalizeTiers();
 
-test("tier boundaries follow the PRD", () => {
+test("gift tier boundaries (bronze is likes-only)", () => {
   const cases = [
     [0, "standard"],
     [9, "standard"],
-    [10, "bronze"],
-    [99, "bronze"],
-    [100, "silver"],
-    [499, "silver"],
-    [500, "gold"],
-    [4999, "gold"],
-    [5000, "diamond"],
+    [10, "silver"],
+    [49, "silver"],
+    [50, "gold"],
+    [199, "gold"],
+    [200, "diamond"],
     [29999, "diamond"],
   ];
   for (const [coins, expected] of cases) {
     assert.equal(tierForCoins(coins, tiers), expected, `coins=${coins}`);
+  }
+  // Gift tidak pernah menghasilkan bronze, berapa pun koinnya.
+  for (const coins of [0, 5, 10, 50, 200, 5000]) {
+    assert.notEqual(tierForCoins(coins, tiers), "bronze", `coins=${coins}`);
   }
 });
 
@@ -42,20 +44,28 @@ test("custom thresholds override defaults", () => {
     gold: { minCoins: 100 },
     diamond: { minCoins: 1000 },
   });
-  assert.equal(tierForCoins(5, custom), "bronze");
-  assert.equal(tierForCoins(19, custom), "bronze");
+  // Nilai bronze diabaikan untuk gift: di bawah silver = standar.
+  assert.equal(tierForCoins(5, custom), "standard");
+  assert.equal(tierForCoins(19, custom), "standard");
   assert.equal(tierForCoins(20, custom), "silver");
+  assert.equal(tierForCoins(99, custom), "silver");
+  assert.equal(tierForCoins(100, custom), "gold");
   assert.equal(tierForCoins(1000, custom), "diamond");
 });
 
-test("invalid thresholds stay ordered", () => {
+test("gift thresholds stay ordered, bronze stays independent", () => {
   const custom = normalizeTiers({
     bronze: { minCoins: 500 },
-    silver: { minCoins: 10 },
-    gold: { minCoins: 100 },
+    silver: { minCoins: 100 },
+    gold: { minCoins: 50 },
     diamond: { minCoins: 1000 },
   });
-  assert.ok(custom.silver.minCoins > custom.bronze.minCoins);
-  assert.ok(custom.gold.minCoins > custom.silver.minCoins);
-  assert.ok(custom.diamond.minCoins > custom.gold.minCoins);
+  // Rantai gift diurutkan (gold yang terlalu rendah dinaikkan di atas silver),
+  // sementara bronze jalur like tidak ikut dipaksa dan tidak memaksa gift.
+  assert.equal(custom.bronze.minCoins, 500);
+  assert.equal(custom.silver.minCoins, 100);
+  assert.equal(custom.gold.minCoins, 101);
+  assert.equal(custom.diamond.minCoins, 1000);
+  assert.ok(custom.silver.minCoins < custom.gold.minCoins);
+  assert.ok(custom.gold.minCoins < custom.diamond.minCoins);
 });

@@ -16,15 +16,15 @@
       "label": "PERUNGGU"
     },
     "silver": {
-      "minCoins": 100,
+      "minCoins": 10,
       "label": "PERAK"
     },
     "gold": {
-      "minCoins": 500,
+      "minCoins": 50,
       "label": "EMAS"
     },
     "diamond": {
-      "minCoins": 5000,
+      "minCoins": 200,
       "label": "BERLIAN"
     }
   },

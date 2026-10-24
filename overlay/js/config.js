@@ -12,9 +12,9 @@ export const DEFAULT_CONFIG = {
   diamondToastExtraMs: 2000,
   tiers: {
     bronze: { minCoins: 10, label: "PERUNGGU" },
-    silver: { minCoins: 100, label: "PERAK" },
-    gold: { minCoins: 500, label: "EMAS" },
-    diamond: { minCoins: 5000, label: "BERLIAN" },
+    silver: { minCoins: 10, label: "PERAK" },
+    gold: { minCoins: 50, label: "EMAS" },
+    diamond: { minCoins: 200, label: "BERLIAN" },
   },
   sound: {
     enabled: false,

@@ -94,8 +94,10 @@ Skema gift ter-normalisasi ada di `overlay/js/normalize.js` dan
 
 Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
 
-- Tier dari total koin per combo: standar di bawah 10, **Perunggu 10+,
-  Perak 100+, Emas 500+, Berlian 5.000+**. Label: PERUNGGU, PERAK, EMAS, BERLIAN.
+- Tier gift dari total koin per combo: standar di bawah 10, **Perak 10+,
+  Emas 50+, Berlian 200+**. **Perunggu khusus jalur like** (frame avatar
+  strip Top Tap-Tap, bukan dari gift) dan tidak pernah dihasilkan
+  `tierForCoins`. Label: PERUNGGU, PERAK, EMAS, BERLIAN.
 - Target koin per sesi: 500. Slot foto aktif 9 (grid 3x3), gulungan foto 7.
 - Antrean cetak FIFO, kapasitas **100** item (`maxQueueItems`); penuh = gift
   ditolak dengan indikator "ANTREAN PENUH", bukan ditumpuk tanpa batas.

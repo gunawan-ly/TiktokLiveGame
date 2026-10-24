@@ -16,7 +16,7 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
 - **Kertas cetak** bergaya vintage, 3 baris × 3 kolom. Baris yang turun ke roller
   bawah, snapshot salinan mini ke **drum** di atas gulungan (maks 7, `maxRollPhotos`).
 - **Bingkai tier mewah** dalam bentuk **cincin perhiasan di keliling foto**:
-  - **Perunggu**: cincin copper dengan sheen facet.
+  - **Perunggu**: cincin copper dengan sheen facet (khusus jalur like).
   - **Perak**: cincin satin putih-biru dan multitint.
   - **Emas**: cincin kuning berkilau multi-stop + kilat.
   - **Berlian**: cincin ice dengan rotasi perlahan + luster glow.
@@ -28,7 +28,8 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
   TARGET KOIN / ANTREAN), toast.
 
 - Target koin default: **500**
-- Tier: Perunggu 10+, Perak 100+, Emas 500+, Berlian 5.000+
+- Tier gift: Standar <10, Perak 10+, Emas 50+, Berlian 200+; Perunggu
+  khusus like (frame avatar strip Top Tap-Tap, bukan dari gift)
 - Slot foto aktif: **9** (kertas mesin), gulungan: **7**
 - Overlay: `http://127.0.0.1:5173/overlay/`
 - WebSocket: `ws://127.0.0.1:8080`
@@ -76,7 +77,7 @@ Buka:
 http://127.0.0.1:5173/overlay/
 ```
 
-Connector mock mengirim combo, tier Perunggu sampai Berlian, avatar rusak, dan burst
+Connector mock mengirim combo, tier Standar sampai Berlian, avatar rusak, dan burst
 gift tanpa API key. Hentikan connector dengan `Ctrl+C`; log sesi dan statistik akhir
 tetap ditulis ke `logs/`.
 
@@ -140,14 +141,15 @@ Edit `config/game.json`:
   "toastDurationMs": 5000,
   "tiers": {
     "bronze": { "minCoins": 10, "label": "PERUNGGU" },
-    "silver": { "minCoins": 100, "label": "PERAK" },
-    "gold": { "minCoins": 500, "label": "EMAS" },
-    "diamond": { "minCoins": 5000, "label": "BERLIAN" }
+    "silver": { "minCoins": 10, "label": "PERAK" },
+    "gold": { "minCoins": 50, "label": "EMAS" },
+    "diamond": { "minCoins": 200, "label": "BERLIAN" }
   }
 }
 ```
 
-Threshold harus naik berurutan. Nilai yang tidak valid akan dikoreksi atau diabaikan
+Threshold gift (perak, emas, berlian) harus naik berurutan; bronze jalur
+like tidak ikut rantai ini. Nilai yang tidak valid akan dikoreksi atau diabaikan
 oleh overlay. Target yang tampil di HUD berasal dari `config/game.json` atau parameter
 `?target=`; `TARGET_COINS` di `.env` adalah metadata target sesi pada connector.
 
