@@ -39,5 +39,14 @@
       "./assets/music/calm-lofi.mp3",
       "./assets/music/haru-lofi.mp3"
     ]
+  },
+  "ticker": {
+    "enabled": true,
+    "speed": 80,
+    "messages": [
+      "♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY",
+      "Gift Mawar = cetak foto profil di Studio Photo",
+      "Follow = bingkai Emerald"
+    ]
   }
 }

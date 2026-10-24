@@ -19,6 +19,8 @@ kecil supaya bunyi aksi tetap lebih terdengar).
    https://www.free-stock-music.com | CC BY 3.0
    https://creativecommons.org/licenses/by/3.0/deed.en_US
 
-Syarat lisensi CC BY: cantumkan kredit di atas di deskripsi live.
+Syarat lisensi CC BY: kredit di atas ditampilkan lewat running teks
+overlay (TikTok Live tidak punya kolom deskripsi, jadi kredit tidak bisa
+ditempel di deskripsi).
 File-file ini dipakai di dalam overlay saja, bukan didistribusikan ulang
 sebagai lagu mandiri.

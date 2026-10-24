@@ -6,6 +6,7 @@ import { PrintQueue } from "./queue.js";
 import { OverlayRenderer } from "./render.js";
 import { startSimulation } from "./simulate.js";
 import { PrintSound } from "./sound.js";
+import { Ticker } from "./ticker.js";
 import { normalizeTiers, tierForCoins } from "./tiers.js";
 import { StudioSocket } from "./ws.js";
 
@@ -26,6 +27,8 @@ const elements = {
   toastStack: document.getElementById("toastStack"),
   simBadge: document.getElementById("simBadge"),
   debugPanel: document.getElementById("debugPanel"),
+  ticker: document.getElementById("ticker"),
+  tickerTrack: document.getElementById("tickerTrack"),
 };
 
 let queue;
@@ -92,6 +95,12 @@ async function bootstrap() {
   music.start();
   // HP mengunci audio sampai ada gestur: ketukan pertama membuka musik.
   window.addEventListener("pointerdown", () => music.unlock(), { once: true });
+  const ticker = new Ticker({
+    container: elements.ticker,
+    track: elements.tickerTrack,
+    ...config.ticker,
+  });
+  ticker.start();
   renderer = new OverlayRenderer({ config, tiers, elements, sound });
   queue = new PrintQueue(config.maxQueueItems, config.senderGapMs);
 
@@ -208,6 +217,7 @@ async function bootstrap() {
 
   window.addEventListener("beforeunload", () => {
     clearRetryTimer();
+    ticker.stop();
     music.stop();
     socket?.close();
     simulation?.stop();

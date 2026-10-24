@@ -1,0 +1,43 @@
+/* Running teks tepi atas: strip gelap transparan, teks krem, geser kiri
+   tanpa putus. Durasi loop diatur JS lewat --ticker-duration (lebar span /
+   kecepatan px per detik); fallback 40 detik kalau pengukuran gagal. */
+
+.ticker {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.9rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: rgba(18, 13, 13, 0.72);
+  border-bottom: 0.09rem solid rgba(255, 247, 226, 0.18);
+  pointer-events: none;
+}
+
+.ticker-track {
+  display: flex;
+  flex-shrink: 0;
+  white-space: nowrap;
+  will-change: transform;
+  animation: tickerScroll var(--ticker-duration, 40s) linear infinite;
+}
+
+.ticker-track span {
+  padding-right: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--paper-cream);
+}
+
+@keyframes tickerScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
