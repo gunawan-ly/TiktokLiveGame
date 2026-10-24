@@ -29,8 +29,10 @@ export const DEFAULT_CONFIG = {
     enabled: true,
     speed: 80,
     messages: [
-      "Gift Mawar = cetak foto profil di Studio Photo",
-      "Follow = bingkai Emerald",
+      "Gift Mawar = cetak foto profilmu di Studio Photo",
+      "Gift lain juga bisa, makin besar gift makin mewah bingkainya: Perak, Emas, Berlian",
+      "Tap-tap layar biar live makin rame",
+      "Follow biar tidak ketinggalan live Studio Photo berikutnya",
     ],
   },
   tickerCredits: {
