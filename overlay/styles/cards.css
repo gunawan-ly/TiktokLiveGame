@@ -59,13 +59,17 @@
 
 .print-cell.tier-silver {
   --ring-w: 0.78rem;
-  --metal-a: #7d8b96;
-  --metal-b: #f2f6f8;
-  --metal-c: #b8c6db;
-  --metal-d: #9aa8b4;
-  --metal-e: #ffffff;
-  --glow-color: rgba(196, 224, 246, 0.6);
-  --glow-opacity: 0.85;
+  /* Improvisasi 24 Okt 2026: perak lama terlalu pucat di atas kertas krem
+   * (hampir semua stop mendekati putih) sehingga kurang terbaca sebagai
+   * chrome. Bayangan baja didalamkan, kilat chrome didorong ke putih murni,
+   * midtone dibuat lebih dingin, halo dibuat sedikit lebih kuat. */
+  --metal-a: #68798a;
+  --metal-b: #ffffff;
+  --metal-c: #a9bed6;
+  --metal-d: #7e93a8;
+  --metal-e: #eef4f8;
+  --glow-color: rgba(170, 210, 245, 0.7);
+  --glow-opacity: 0.95;
 }
 
 .print-cell.tier-gold {
