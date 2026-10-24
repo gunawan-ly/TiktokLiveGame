@@ -438,11 +438,11 @@
   top: calc(var(--row-pad, 0.85rem) + 0.22rem);
   left: 50%;
   margin-left: 2.05rem;
-  padding: 0.13rem 0.58rem 0.15rem;
+  padding: 0.18rem 0.74rem 0.2rem;
   border-radius: 999px;
-  font-size: 0.52rem;
+  font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   opacity: 0;
   transform: scale(0.6);

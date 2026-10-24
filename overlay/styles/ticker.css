@@ -8,7 +8,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 2.4rem;
+  height: 2.6rem;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -34,7 +34,7 @@
 
 .ticker-track span {
   display: inline-block;
-  font-size: 1.2rem;
+  font-size: 1.38rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--paper-cream);

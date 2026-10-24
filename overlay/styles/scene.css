@@ -67,12 +67,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.28rem 0.7rem;
+  padding: 0.34rem 0.85rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 214, 170, 0.22);
   background: rgba(255, 236, 205, 0.08);
   color: #f3d9ae;
-  font-size: 0.62rem;
+  font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.22em;
 }
@@ -282,7 +282,7 @@
 
 .sheet-brand {
   color: #f3d9ae;
-  font-size: 0.8rem;
+  font-size: 0.98rem;
   font-weight: 800;
   letter-spacing: 0.3em;
 }
@@ -486,7 +486,7 @@
   justify-content: space-between;
   margin-top: 0.42rem;
   color: #a88d78;
-  font-size: 0.62rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.28em;
 }
