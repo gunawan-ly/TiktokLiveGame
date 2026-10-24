@@ -213,7 +213,7 @@ async function bootstrap() {
     clearRetryTimer();
     updateQueue();
     try {
-      const tier = item.tierOverride || tierForCoins(item.totalCoins, tiers);
+      const tier = item.tierOverride || tierForCoins(item.cumulativeCoins ?? item.totalCoins, tiers);
       await renderer.printGift(item, tier);
     } catch (error) {
       console.error("Gagal mencetak gift:", error);

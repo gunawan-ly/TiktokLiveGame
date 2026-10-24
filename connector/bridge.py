@@ -8,6 +8,7 @@ from typing import Any, Set
 
 from websockets.asyncio.server import ServerConnection, serve
 
+from .coins import CoinLedger
 from .combo import GiftAction
 from .session_log import SessionLog
 
@@ -30,6 +31,7 @@ class Bridge:
         self.session_log = session_log
         self._clients: Set[ServerConnection] = set()
         self._server = None
+        self._coin_ledger = CoinLedger()
         self._status = "starting"
         self._detail = ""
         self._stats = {
@@ -114,6 +116,12 @@ class Bridge:
 
     async def publish_action(self, action: GiftAction) -> None:
         message = action.to_message()
+        # Kelas bingkai mengikuti akumulasi sesi si pengirim (termasuk
+        # combo ini), bukan hanya total combo; lihat connector/coins.py.
+        message["cumulativeCoins"] = self._coin_ledger.add(
+            action.signal.user_id,
+            action.total_coins,
+        )
         self._stats["printed"] += 1
         self._stats["giftsEmitted"] = self._stats["printed"]
         self._stats["totalCoins"] += action.total_coins
@@ -135,6 +143,7 @@ class Bridge:
                     "repeat": action.repeat,
                     "coinsPerItem": action.signal.coins_per_item,
                     "totalCoins": action.total_coins,
+                    "cumulativeCoins": message["cumulativeCoins"],
                 },
             )
         self.logger.info(

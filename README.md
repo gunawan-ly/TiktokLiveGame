@@ -28,7 +28,8 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
   TARGET KOIN / ANTREAN), toast.
 
 - Target koin default: **500**
-- Tier gift: Standar <10, Perak 10+, Emas 50+, Berlian 200+; Perunggu
+- Tier gift (dari total akumulasi koin per penonton dalam satu sesi):
+  Standar <10, Perak 10+, Emas 50+, Berlian 200+; Perunggu
   khusus like (frame avatar strip Top Tap-Tap, bukan dari gift)
 - Slot foto aktif: **9** (kertas mesin), gulungan: **7**
 - Overlay: `http://127.0.0.1:5173/overlay/`

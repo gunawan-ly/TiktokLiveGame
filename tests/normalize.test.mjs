@@ -36,6 +36,14 @@ test("normalizes a canonical gift", () => {
   assert.equal(item.giftName, "Rose");
 });
 
+test("cumulativeCoins drives the frame tier, combo total stays per combo", () => {
+  const item = normalizeGiftMessage(message({ cumulativeCoins: 250 }));
+  assert.equal(item.totalCoins, 5);
+  assert.equal(item.cumulativeCoins, 250);
+  // Payload lama tanpa cumulativeCoins jatuh ke total combo.
+  assert.equal(normalizeGiftMessage(message()).cumulativeCoins, 5);
+});
+
 test("computes total coins when missing", () => {
   const item = normalizeGiftMessage(
     message({ gift: { name: "Perfume", repeat: 5, coinsPerItem: 20 } }),

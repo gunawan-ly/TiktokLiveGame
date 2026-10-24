@@ -116,6 +116,14 @@ export function normalizeGiftMessage(message) {
     0,
     1_000_000_000_000,
   );
+  // Kelas bingkai mengikuti akumulasi koin si pengirim dalam satu sesi
+  // (dari connector). Payload lama tanpa field ini jatuh ke total combo.
+  const cumulativeCoins = clampInteger(
+    message.cumulativeCoins,
+    totalCoins,
+    0,
+    1_000_000_000_000,
+  );
 
   const eventId = cleanText(
     message.eventId ?? gift.eventId,
@@ -133,6 +141,7 @@ export function normalizeGiftMessage(message) {
     repeat,
     coinsPerItem,
     totalCoins,
+    cumulativeCoins,
     timestamp: cleanText(message.timestamp, new Date().toISOString(), 40),
   };
 }
