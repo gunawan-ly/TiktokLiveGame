@@ -35,7 +35,8 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
 - Slot foto aktif: **9** (kertas mesin), gulungan: **7**
 - Overlay: `http://127.0.0.1:5173/overlay/`
 - WebSocket: `ws://127.0.0.1:8080`
-- Resolusi desain: **1080 × 1920**
+- Kanvas stream: **1080 × 1920** (vertikal); overlay dirancang **1080 × 1440**
+  (rasio 3:4, target utama live; persegi dan potret tetap didukung)
 
 ## Struktur
 
@@ -53,13 +54,18 @@ Prasyarat: Python 3.10+ dan Node.js 20+. Implementasi ini diuji dengan Python 3.
 dan Node 24.
 
 ```bash
-cd /Users/runner/Desktop/TiktokLiveGame
+git clone https://github.com/gunawan-ly/TiktokLiveGame.git
+cd TiktokLiveGame
 
 python3 -m venv .venv
 .venv/bin/pip install -r connector/requirements.txt
 
 cp .env.example .env
 ```
+
+Di Windows, perintah venv dan Python-nya menjadi `py -m venv .venv`,
+`.venv\Scripts\pip install -r connector\requirements.txt`, dan
+`.venv\Scripts\python ...` untuk semua contoh di dokumen ini.
 
 Jalankan server overlay di terminal pertama:
 
@@ -83,48 +89,114 @@ Connector mock mengirim combo, tier Standar sampai Berlian, avatar rusak, dan bu
 gift tanpa API key. Hentikan connector dengan `Ctrl+C`; log sesi dan statistik akhir
 tetap ditulis ke `logs/`.
 
-## Live TikTok
+## Step by Step: Live Beneran
 
-1. Isi `.env`:
+Urutan ini yang dipakai setiap mau live. Dua proses berjalan bersamaan:
+server overlay (terminal 1) dan connector (terminal 2), keduanya dari
+root repo.
+
+**1. Ambil versi terbaru**
+
+```bash
+git pull
+```
+
+Semua perubahan kode dan `config/game.json` baru berlaku setelah
+connector direstart dan Browser Source di-refresh, jadi lakukan langkah
+ini sebelum mulai, bukan di tengah live.
+
+**2. Siapkan `.env` (sekali saja)**
 
 ```dotenv
 TIKTOK_USERNAME=@username_akun
 SIGN_API_KEY=api_key_euler_stream
 ```
 
-`EULER_API_KEY` juga didukung sebagai alias jika `SIGN_API_KEY` kosong. API key
-diperlukan untuk signing request TikTok webcast; mode mock tidak memerlukannya.
+`EULER_API_KEY` juga didukung sebagai alias jika `SIGN_API_KEY` kosong.
+API key diperlukan untuk signing request TikTok webcast; mode mock tidak
+memerlukannya. Jangan commit file `.env`.
 
-2. Pastikan akun sedang live.
-3. Jalankan connector:
+**3. Terminal 1: jalankan server overlay dari root repo**
+
+```bash
+python3 -m http.server 5173 --bind 127.0.0.1
+```
+
+Wajib dari root repo: overlay membaca `config/game.json` relatif terhadap
+root server. Server yang dijalankan dari folder lain membuat overlay
+jatuh ke konfigurasi default.
+
+**4. Terminal 2: jalankan connector**
 
 ```bash
 .venv/bin/python -m connector.main
 ```
 
-Override username tanpa mengubah `.env`:
+Periksa log awalnya: `WebSocket bridge aktif di ws://127.0.0.1:8080`,
+`Target koin: 500`, dan `Ambang Zamrud (like per user per sesi): 500`.
+Kalau room belum live, connector menampilkan status `waiting` dan mencoba
+lagi sendiri; saat koneksi terputus, backoff mulai dari 5 detik sampai
+maksimum 30 detik. Override username tanpa mengubah `.env`:
 
 ```bash
 .venv/bin/python -m connector.main --username @akun_lain --verbose
 ```
 
-Jika room belum live, connector menampilkan status `waiting` dan mencoba lagi. Saat
-koneksi terputus, backoff dimulai dari 5 detik sampai maksimum 30 detik.
+**5. OBS: pasang Browser Source produksi**
+
+Ikuti daftar di seksi "OBS / TikTok LIVE Studio" di bawah (URL produksi
+memakai `?sound=1&music=1`, ukuran 1080 × 1440). Pastikan chip status di
+pojok kanan atas overlay menunjukkan LIVE setelah connector tersambung.
+
+**6. Mulai live di TikTok**
+
+Mulai live dari HP atau TikTok LIVE Studio seperti biasa. Connector
+berpindah dari `waiting` ke `connected` dan gift mulai masuk. Kirim satu
+gift kecil sebagai tes: foto tercetak, toast muncul, HUD TERCETAK naik.
+
+**7. Kalau musik tidak berbunyi di OBS**
+
+Browser OBS mengunci audio sampai ada klik di dalam source. Klik kanan
+Browser Source, pilih **Interact**, klik sekali di area overlay. Chip
+"Musik terkunci, ketuk di sini untuk menyalakan" di overlay juga hilang
+sendiri begitu musik berputar. Pastikan source tidak di-mute di mixer.
+
+**8. Selama live: semua hitungan per sesi connector**
+
+- Kelas bingkai gift mengikuti **akumulasi koin per penonton** sesi ini
+  (Perak 10+, Emas 50+, Kecubung 100+, Berlian 200+), bukan per gift.
+- Cetak Zamrud keluar di **setiap kelipatan 500 like per penonton**,
+  dengan log `Progres like @user: X/500` di terminal connector.
+- Popup orang masuk tampil sekali per penonton per sesi.
+- **Restart connector = sesi baru**: akumulasi koin, hitungan like, dan
+  daftar sambutan semuanya kembali ke nol. Hindari restart di tengah
+  live kecuali memang perlu.
+
+**9. Selesai live**
+
+Hentikan connector dengan `Ctrl+C` (log sesi dan statistik akhir tetap
+ditulis ke `logs/`), lalu hentikan server overlay dengan `Ctrl+C`.
 
 ## OBS / TikTok LIVE Studio
 
-Tambahkan **Browser Source** dengan:
+Kanvas OBS vertikal **1080 × 1920**. Tambahkan **Browser Source** dengan:
 
-- URL: `http://127.0.0.1:5173/overlay/`
+- URL: `http://127.0.0.1:5173/overlay/?sound=1&music=1`
 - Width: `1080`
 - Height: `1440` (rasio 3:4, target utama live; `1080` persegi dan `1920` potret tetap didukung)
-- FPS: `30` atau `60`
+- FPS: `60`
 - Centang **Shutdown source when not visible** dan **Refresh browser when scene becomes active**
   agar overlay selalu memuat snapshot terbaru saat scene dibuka.
+- Custom CSS: kosongkan.
+- Posisikan source di tengah kanvas (menempel tepi kiri-kanan, ruang kosong
+  di atas dan bawahnya memang disisakan untuk judul dan area komentar).
 
-Pastikan server overlay dan connector berjalan sebelum scene diaktifkan. Overlay
-tidak memerlukan audio; sound effect nonaktif secara default. Bila diaktifkan,
-suaranya berlapis mengikuti mesin: bunyi proses selama kartu dicetak, desis kertas
+Pastikan server overlay dan connector berjalan sebelum scene diaktifkan.
+Audio source jangan di-mute; nyalakan **Monitor and Output** di mixer
+kalau ingin ikut mendengar dari mesin OBS. Sound effect dan backsound
+nonaktif secara default dan diaktifkan lewat parameter URL di atas
+(`?sound=1`, `?music=1`). Bila aktif, bunyi aksinya berlapis mengikuti
+mesin: bunyi proses selama kartu dicetak, desis kertas
 saat kertas maju, bunyi lembut saat kartu pindah ke gulungan, dan nada selesai yang
 makin meriah per tingkat bingkai. Semuanya disintesis WebAudio, tanpa file audio.
 
@@ -205,7 +277,7 @@ oleh overlay. Target yang tampil di HUD berasal dari `config/game.json` atau par
 
 | Parameter | Contoh | Fungsi |
 | --- | --- | --- |
-| `debug` | `?debug=1` | Panel tes: tier, avatar rusak, antrean, kosongkan antrean |
+| `debug` | `?debug=1` | Panel tes: tier, Zamrud, orang masuk, avatar rusak, antrean, kosongkan antrean |
 | `sim` | `?sim=1` | Simulasi lokal tanpa connector/WebSocket |
 | `ws` | `?ws=ws://127.0.0.1:8080` | Override alamat WebSocket |
 | `target` | `?target=1000` | Override target koin |
@@ -219,6 +291,7 @@ oleh overlay. Target yang tampil di HUD berasal dari `config/game.json` atau par
 | `music` | `?music=1` | Aktifkan backsound lo-fi (playlist loop) |
 | `ticker` | `?ticker=0` | Matikan running teks info (strip atas) |
 | `tickerCredits` | `?tickerCredits=0` | Matikan running teks credits (strip bawah) |
+| `joins` | `?joins=0` | Matikan popup sambutan orang masuk |
 
 Gunakan `?sim=1&sound=1&music=1` untuk demo audio lengkap. Browser dapat meminta interaksi pengguna
 sebelum audio diputar.
@@ -236,6 +309,10 @@ StudioPhoto.pushGift({
 
 StudioPhoto.getState();
 StudioPhoto.clearQueue();
+StudioPhoto.pushJoin({
+  eventId: "test-join-1",
+  user: { displayName: "Pengunjung", username: "pengunjung", avatarUrl: "" },
+});
 ```
 
 Payload connector memakai bentuk `user`, `gift`, `eventId`, dan timestamp. `totalCoins`
@@ -308,6 +385,27 @@ dari kosong. Ini disengaja.
 Periksa username, status live, dan `SIGN_API_KEY`. Tanpa API key, koneksi live dapat
 dibatasi oleh Euler Stream. Log connector menampilkan alasan kegagalan tanpa
 menyimpan URL avatar.
+
+**Musik tidak berbunyi di OBS**
+Browser OBS mengunci putar otomatis sampai ada interaksi: klik kanan Browser
+Source, **Interact**, klik sekali di area overlay. Chip "Musik terkunci" di
+overlay adalah penandanya; chip hilang sendiri saat musik mulai berputar.
+Cek juga mixer (tidak mute, track audio tercentang).
+
+**Cetak Zamrud tidak kunjung muncul**
+Tiga penyebab yang sudah terbukti: (1) connector belum direstart setelah
+`git pull`, jadi ambang yang terbaca masih yang lama (cek baris log
+`Ambang Zamrud ... : 500` saat connector start); (2) like berasal dari akun
+host sendiri, yang tidak dihitung TikTok sebagai like penonton; (3) ambang
+belum tercapai **per penonton** (bukan total room). Untuk uji cepat, restart
+connector dengan `LIKE_THRESHOLD=10` lalu tap-tap dari akun kedua sampai
+log `Progres like` mencapai ambang dan cetakan keluar.
+
+**Kelas bingkai penonton tiba-tiba kembali ke awal**
+Akumulasi koin per penonton hidup di connector; restart connector memulai
+sesi baru dan semua total kembali ke nol. Itu perilaku yang benar, bukan
+bug. Hal yang sama berlaku untuk hitungan like Zamrud dan sambutan popup
+orang masuk.
 
 ## Keamanan
 
