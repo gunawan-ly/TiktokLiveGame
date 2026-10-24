@@ -110,9 +110,11 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
 - **Zamrud (label ZAMRUD) adalah tier engagement tap-tap, bukan gift:**
   profil penonton dicetak berbinkai zamrud saat total like-nya dalam satu
   sesi connector mencapai `engagement.likeThreshold` (default **500**,
-  bisa dioverride env `LIKE_THRESHOLD` di connector). Maksimal satu cetak
-  Zamrud per user per sesi; menambah hitungan TERCETAK, tidak menambah
-  koin; lewat antrean, cooldown, dan dedupe yang sama seperti gift.
+  bisa dioverride env `LIKE_THRESHOLD` di connector). Cetak diberikan di
+  SETIAP kelipatan ambang (500, 1.000, 1.500, ...) per user per sesi
+  (keputusan Awan 24 Okt 2026, supaya semangat tap-tap terjaga); menambah
+  hitungan TERCETAK, tidak menambah koin; lewat antrean, cooldown, dan
+  dedupe yang sama seperti gift (eventId unik per kelipatan).
   `tierForCoins` tidak pernah menghasilkan emerald.
 - Target koin per sesi: 500. Slot foto aktif 9 (grid 3x3), gulungan foto 7.
 - Antrean cetak FIFO, kapasitas **100** item (`maxQueueItems`); penuh = gift

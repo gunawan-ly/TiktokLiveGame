@@ -141,14 +141,18 @@ async def live_forever(
                 if signal is None:
                     return
                 previous = like_tracker.total_for(signal.user_id)
-                award = like_tracker.add(signal)
-                if award is not None:
-                    LOGGER.info(
-                        "Zamrud diraih @%s dengan %d like; menerbitkan cetakan.",
-                        award.username,
-                        award.like_total,
-                    )
-                    await bridge.publish_emerald(award, run_id)
+                awards = like_tracker.add(signal)
+                if awards:
+                    for award in awards:
+                        LOGGER.info(
+                            "Zamrud diraih @%s dengan %d like "
+                            "(cetakan Zamrud ke-%d untuknya sesi ini); "
+                            "menerbitkan cetakan.",
+                            award.username,
+                            award.like_total,
+                            award.multiple,
+                        )
+                        await bridge.publish_emerald(award, run_id)
                 else:
                     total = like_tracker.total_for(signal.user_id)
                     crossed_hundred = total // 100 > previous // 100

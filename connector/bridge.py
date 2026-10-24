@@ -147,15 +147,16 @@ class Bridge:
         await self._broadcast(message)
 
     async def publish_emerald(self, award, run_id: str) -> None:
-        """Broadcast the one Zamrud print a viewer earned via tap-tap.
+        """Broadcast a Zamrud print a viewer earned via tap-tap.
 
         Counts as a print in the session stats but never as coins: it is
         an engagement reward, not a gift. The event id is deterministic
-        per connector run + user, so the overlay dedupes replays while a
-        connector restart (new run id) opens a fresh chance.
+        per connector run + user + like multiple, so the overlay dedupes
+        replays of the same award while every new multiple (and every
+        connector restart, via the new run id) prints as its own event.
         """
 
-        event_id = f"emerald-{run_id}-{award.user_id}"
+        event_id = f"emerald-{run_id}-{award.user_id}-{award.multiple}"
         timestamp = datetime.now().astimezone().isoformat(timespec="seconds")
         message = {
             "type": "emerald_print",
