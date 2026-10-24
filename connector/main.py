@@ -140,9 +140,25 @@ async def live_forever(
                 signal = extract_like_signal(event)
                 if signal is None:
                     return
+                previous = like_tracker.total_for(signal.user_id)
                 award = like_tracker.add(signal)
                 if award is not None:
+                    LOGGER.info(
+                        "Zamrud diraih @%s dengan %d like; menerbitkan cetakan.",
+                        award.username,
+                        award.like_total,
+                    )
                     await bridge.publish_emerald(award, run_id)
+                else:
+                    total = like_tracker.total_for(signal.user_id)
+                    crossed_hundred = total // 100 > previous // 100
+                    if previous == 0 or crossed_hundred:
+                        LOGGER.info(
+                            "Progres like @%s: %d/%d",
+                            signal.username,
+                            total,
+                            like_tracker.threshold,
+                        )
             except Exception:
                 LOGGER.exception("Gagal memproses event like")
 
