@@ -29,9 +29,23 @@
 }
 
 html {
+  /* Portrait design canvas: 67.5rem x 120rem (1080x1920). */
   font-size: min(calc(100vw / 67.5), calc(100vh / 120));
   background: #100a0a;
   overflow: hidden;
+}
+
+/*
+ * Square live canvas (1080x1080) and landscape: use a shorter design canvas
+ * so the scene is framed close to the machine instead of leaving the bottom
+ * half of a portrait frame as empty desk. The width budget stays 67.5rem so
+ * the machine is not upscaled past the frame; only the vertical empty space
+ * is removed. See "Square live canvas" block at the end of this file.
+ */
+@media (min-aspect-ratio: 1/1) {
+  html {
+    font-size: min(calc(100vw / 67.5), calc(100vh / 69));
+  }
 }
 
 html,
@@ -482,4 +496,132 @@ body {
 .avatar-fallback,
 .avatar-img {
   z-index: 1;
+}
+
+/*
+ * Square live canvas: header, HUD and toasts share the same 69rem-tall
+ * design space as the scene (see scene.css). Everything is still sized in
+ * rem, so it scales with the square stage instead of being cropped.
+ */
+@media (min-aspect-ratio: 1/1) {
+  .studio-header {
+    top: 0.8rem;
+    left: 1.2rem;
+    right: 1.2rem;
+  }
+
+  .studio-eyebrow {
+    margin-bottom: 0.12rem;
+    font-size: 0.56rem;
+    letter-spacing: 0.3em;
+  }
+
+  .studio-title {
+    font-size: 3rem;
+  }
+
+  .studio-rule {
+    margin-top: 0.3rem;
+  }
+
+  .studio-rule span {
+    width: 20rem;
+  }
+
+  .connection {
+    top: 0.9rem;
+    right: 1.4rem;
+    padding: 0.4rem 0.72rem;
+    font-size: 0.56rem;
+  }
+
+  .sim-badge {
+    top: 0.9rem;
+    left: 1.4rem;
+    padding: 0.34rem 0.68rem;
+    font-size: 0.54rem;
+  }
+
+  .hud {
+    left: 1.4rem;
+    bottom: 0.6rem;
+    gap: 0.55rem;
+  }
+
+  .hud-stat {
+    min-width: 10.5rem;
+    padding: 0.5rem 0.95rem 0.55rem;
+  }
+
+  .hud-label {
+    font-size: 0.56rem;
+  }
+
+  .hud-value {
+    font-size: 1.9rem;
+  }
+
+  .hud-target {
+    min-width: 18.5rem;
+  }
+
+  .hud-target-row {
+    gap: 1rem;
+  }
+
+  .hud-target-value {
+    font-size: 0.95rem;
+  }
+
+  .progress-track {
+    height: 0.5rem;
+    margin-top: 0.45rem;
+  }
+
+  .hud-queue {
+    min-width: 8rem;
+  }
+
+  /*
+   * Keep up to three toasts in the gap between the paper's bottom edge and
+   * the HUD, so a toast never covers a card name.
+   */
+  .toast-stack {
+    bottom: 5.6rem;
+    left: 1.4rem;
+    max-width: 26rem;
+    gap: 0.35rem;
+  }
+
+  /* Two toasts fit between the paper and the HUD; older ones stay hidden. */
+  .toast-stack .toast:not(:nth-last-child(-n + 2)) {
+    display: none;
+  }
+
+  .toast {
+    padding: 0.3rem 0.85rem 0.3rem 0.4rem;
+  }
+
+  .toast-avatar {
+    width: 2.05rem;
+    height: 2.05rem;
+  }
+
+  .toast-name {
+    font-size: 0.76rem;
+  }
+
+  .toast-gift {
+    font-size: 0.62rem;
+  }
+
+  .toast-tier {
+    font-size: 0.46rem;
+  }
+
+  .debug-panel {
+    right: 1.2rem;
+    bottom: 1rem;
+    width: 24rem;
+  }
 }

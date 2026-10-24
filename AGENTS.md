@@ -17,7 +17,7 @@ TikTok LIVE (webcast)
   -> connector/ (Python, library TikTokLive, signing via Euler Stream)
   -> bridge WebSocket lokal ws://127.0.0.1:8080
   -> overlay/ (HTML/CSS/JS murni, tanpa build step)
-  -> OBS Browser Source 1080x1920
+  -> OBS Browser Source 1080x1080 (persegi untuk live; potret tetap didukung)
 ```
 
 TikTok tidak punya API publik resmi untuk ini. Connector cukup memakai username

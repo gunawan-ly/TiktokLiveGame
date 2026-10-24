@@ -1,6 +1,10 @@
 .print-cell {
+  /*
+   * --photo-d, --row-pad, --name-gap and --name-line are inherited from
+   * .machine (scene.css) so the paper row height and the card internals
+   * always agree.
+   */
   --ring-w: 0.6rem;
-  --photo-d: 8.6rem;
   --metal-a: #efe7d4;
   --metal-b: #d8cdb4;
   --metal-c: #f7f2e4;
@@ -14,14 +18,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 0.85rem;
+  padding-top: var(--row-pad, 0.85rem);
+  padding-bottom: var(--row-pad-bottom, 0.85rem);
   will-change: contents;
 }
 
 .print-cell:not(.is-busy)::before {
   content: "";
   position: absolute;
-  top: 0.95rem;
+  top: calc(var(--row-pad, 0.85rem) + 0.1rem);
   left: 50%;
   width: var(--photo-d);
   height: var(--photo-d);
@@ -92,7 +97,7 @@
 .cell-frame {
   position: absolute;
   z-index: 3;
-  top: calc(0.85rem - var(--ring-w) - 0.15rem);
+  top: calc(var(--row-pad, 0.85rem) - var(--ring-w) - 0.15rem);
   left: 50%;
   width: calc(var(--photo-d) + var(--ring-w) * 2 + 0.3rem);
   height: calc(var(--photo-d) + var(--ring-w) * 2 + 0.3rem);
@@ -291,16 +296,24 @@
 }
 
 .card-name {
+  /*
+   * Sits above the frame ring, its glow/shadow, the tier pill and sparkles
+   * (z-index 7). The gap is large enough for the widest ring (diamond,
+   * 1rem) plus clearance; the label is clipped to its own grid cell and
+   * ellipsised instead of spilling into the next row.
+   */
   position: relative;
-  z-index: 2;
-  margin-top: 0.32rem;
-  max-width: 9.4rem;
+  z-index: 7;
+  width: 100%;
+  max-width: calc(100% - 0.8rem);
+  margin-top: var(--name-gap, 1.6rem);
+  padding: 0 0.4rem;
   color: var(--name-ink);
   font-size: 0.88rem;
   font-weight: 800;
   letter-spacing: 0.05em;
   text-align: center;
-  line-height: 1.3;
+  line-height: var(--name-line, 1.15rem);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -321,7 +334,7 @@
 .tier-pill {
   position: absolute;
   z-index: 6;
-  top: calc(0.85rem + 0.22rem);
+  top: calc(var(--row-pad, 0.85rem) + 0.22rem);
   left: 50%;
   margin-left: 2.05rem;
   padding: 0.13rem 0.58rem 0.15rem;

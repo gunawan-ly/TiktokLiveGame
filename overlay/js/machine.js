@@ -20,11 +20,12 @@ const PHASES = {
 const SPARKLE_COUNT = { standard: 0, bronze: 0, silver: 2, gold: 4, diamond: 6 };
 
 export class PrintMachine {
-  constructor({ root, config, tiers, avatarKnownBad = null }) {
+  constructor({ root, config, tiers, avatarKnownBad = null, onEvent = null }) {
     this.root = root;
     this.config = config;
     this.tiers = tiers;
     this.avatarKnownBad = avatarKnownBad || (() => false);
+    this.onEvent = onEvent || (() => {});
     this.top = root.querySelector("#machineTop");
     this.sheet = root.querySelector("#paperSheet");
     this.feedShade = root.querySelector("#feedShade");
@@ -89,6 +90,7 @@ export class PrintMachine {
       1200,
       Math.min(4000, Number(this.config.printDurationMs) || 2000),
     );
+    this.onEvent("print-start", { tier, durationMs: total });
     const moveMs = Math.round(total * PHASES.move);
     const pressMs = Math.round(total * PHASES.press);
     const drawMs = Math.round(total * PHASES.draw);
@@ -148,7 +150,13 @@ export class PrintMachine {
 
   async feed(feedMs) {
     const exiting = this.rows.pop();
+    const fedBefore = this.fedPhotos;
     this._snapshotToDrum(exiting);
+    const movedToRoll = this.fedPhotos - fedBefore;
+    if (movedToRoll > 0) {
+      this.onEvent("roll", { count: movedToRoll });
+    }
+    this.onEvent("feed", {});
 
     this.rows.unshift(exiting);
     this._slideRows(feedMs, this.rows.concat(exiting));
@@ -304,7 +312,9 @@ export class PrintMachine {
   _buildName(name) {
     const label = document.createElement("span");
     label.className = "card-name";
-    const text = String(name || "").slice(0, 24);
+    // Keep the full (already length-limited) name; CSS ellipsises it per cell.
+    // Slicing here would cut long names mid-word with no visual hint.
+    const text = String(name || "");
     for (const character of text) {
       const span = document.createElement("span");
       span.textContent = character === " " ? "\u00A0" : character;

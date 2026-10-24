@@ -1,8 +1,26 @@
 .machine {
   --beam-h: 5.2rem;
-  --row-h: 11.4rem;
-  --paper-h: calc(var(--row-h) * 3);
-  --photo-d: 8.6rem;
+  /*
+   * Row rhythm is shared with cards.css. A row must fit the photo, the
+   * frame ring/shadow, a real gap, the name line and the bottom padding.
+   * Keeping it in one place prevents the name from sliding under the ring
+   * or into the row below when photo/tier sizes change.
+   */
+  --row-pad: 0.3rem;
+  --row-pad-bottom: 0.55rem;
+  --photo-d: 9.7rem;
+  --name-gap: 1.45rem;
+  --name-line: 1.15rem;
+  --row-h: calc(
+    var(--row-pad) + var(--row-pad-bottom) + var(--photo-d) +
+    var(--name-gap) + var(--name-line)
+  );
+  /*
+   * Top inset inside the paper keeps the widest tier ring (diamond, 1rem)
+   * below the paper's top edge instead of clipping it.
+   */
+  --paper-pad-top: 1.15rem;
+  --paper-h: calc(var(--row-h) * 3 + var(--paper-pad-top));
 
   position: absolute;
   z-index: 3;
@@ -273,8 +291,13 @@
   position: absolute;
   z-index: 2;
   top: var(--beam-h);
-  left: 2.4rem;
-  right: 2.4rem;
+  /*
+   * Side inset is wider than the gantry inset on purpose: the paper is
+   * tilted, so its projected bottom edge is wider than its layout box.
+   * This keeps the whole sheet inside the machine body at every scale.
+   */
+  left: 4.2rem;
+  right: 4.2rem;
   height: var(--paper-h);
   border-radius: 1.3rem;
   overflow: hidden;
@@ -304,7 +327,7 @@
   bottom: 0;
   height: 2.4rem;
   background: linear-gradient(180deg, transparent, rgba(120, 78, 40, 0.22));
-  z-index: 3;
+  z-index: 2;
   pointer-events: none;
 }
 
@@ -314,7 +337,7 @@
   background:
     linear-gradient(155deg, rgba(255, 255, 255, 0.26) 0%, transparent 34%),
     linear-gradient(200deg, transparent 74%, rgba(255, 255, 255, 0.1) 92%);
-  z-index: 5;
+  z-index: 3;
   pointer-events: none;
 }
 
@@ -327,7 +350,7 @@
   background:
     linear-gradient(180deg, transparent, rgba(60, 34, 14, 0.34) 70%,
     rgba(30, 16, 8, 0.55));
-  z-index: 6;
+  z-index: 4;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.28s ease;
@@ -337,10 +360,15 @@
   opacity: 1;
 }
 
+/*
+ * The sheet paints above every paper decoration (grain, edge, glass sheen,
+ * feed shade). Names/photos are the content; no decorative layer may cover
+ * them, including while the paper is feeding.
+ */
 .paper-sheet {
   position: absolute;
-  inset: 0;
-  z-index: 2;
+  inset: var(--paper-pad-top, 0rem) 0 0 0;
+  z-index: 5;
 }
 
 .sheet-row {
@@ -353,6 +381,12 @@
   grid-template-columns: repeat(3, 1fr);
   transform: translateY(calc(var(--slot, 0) * var(--row-h)));
   transition: transform 0.5s cubic-bezier(0.55, 0.06, 0.3, 1);
+  /*
+   * Paint upper rows above lower ones. A lower row's ring extends a few
+   * pixels above its own cell; without this it could paint over the name
+   * label at the bottom of the row above.
+   */
+  z-index: calc(4 - var(--slot, 0));
 }
 
 .sheet-row.no-anim {
@@ -609,4 +643,65 @@
   height: 2.4rem;
   background: linear-gradient(180deg, #2f4c37, #233b28);
   box-shadow: 0 0.6rem 1rem rgba(0, 0, 0, 0.4);
+}
+
+/*
+ * Square live canvas (1080x1080). The rem base is 68rem tall (see
+ * base.css), so the machine can be wider and the paper fills the frame
+ * instead of sitting in the top half of a 120rem portrait canvas.
+ * Only geometry changes here; all game/animation code is untouched.
+ */
+@media (min-aspect-ratio: 1/1) {
+  .machine {
+    top: 5.3rem;
+    width: 50rem;
+  }
+
+  .machine-crest {
+    padding: 0.45rem 1.1rem;
+  }
+
+  .machine-top {
+    margin-top: 0.4rem;
+  }
+
+  .machine-bottom {
+    margin-top: -0.5rem;
+  }
+
+  .front-roller {
+    height: 2.6rem;
+    margin: 0 1.7rem;
+  }
+
+  .drum {
+    margin-top: 1.1rem;
+    width: 42rem;
+  }
+
+  .drum-shell {
+    height: 5.6rem;
+  }
+
+  .drum-strip {
+    max-width: 38.5rem;
+  }
+
+  .roll-label {
+    margin-top: 0.35rem;
+  }
+
+  .machine-cast {
+    bottom: -2.6rem;
+    width: 46rem;
+    height: 4.4rem;
+  }
+
+  .room-wall {
+    inset: 5.5rem 2.5rem 8rem;
+  }
+
+  .desk {
+    top: 46rem;
+  }
 }
