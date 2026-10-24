@@ -131,6 +131,17 @@
   animation: glowPulse 2.4s ease-in-out infinite;
 }
 
+/* Animasi cahaya silver, meniru berlian: halo berdenyut terus + cincin
+ * berputar perlahan sesudah cetak selesai (gradasi conic ikut berputar
+ * sehingga cahaya chrome tampak bergerak mengelilingi foto). */
+.print-cell.tier-silver .frame-glow {
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
+
+.print-cell.tier-silver.is-done .frame-wrap {
+  animation: ringSpin 9s linear infinite;
+}
+
 .frame-wrap {
   position: absolute;
   inset: 0;
