@@ -116,10 +116,18 @@
 .cell-frame {
   position: absolute;
   z-index: 3;
-  top: calc(var(--row-pad, 0.85rem) - var(--ring-w) - 0.15rem);
+  /*
+   * The ring tucks 0.1rem OVER the photo's rim (inner radius =
+   * photo-d/2 - 0.1rem) instead of leaving a cream seam outside the
+   * photo. A real frame overlaps the picture it holds; the overlap also
+   * hides any hairline gap between the photo disc and the ring.
+   * The frame stays centered on the photo: top + size/2 = row-pad +
+   * photo-d/2, exactly the photo's center.
+   */
+  top: calc(var(--row-pad, 0.85rem) - var(--ring-w) + 0.1rem);
   left: 50%;
-  width: calc(var(--photo-d) + var(--ring-w) * 2 + 0.3rem);
-  height: calc(var(--photo-d) + var(--ring-w) * 2 + 0.3rem);
+  width: calc(var(--photo-d) + var(--ring-w) * 2 - 0.2rem);
+  height: calc(var(--photo-d) + var(--ring-w) * 2 - 0.2rem);
   transform: translateX(-50%);
   pointer-events: none;
 }
