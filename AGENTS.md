@@ -136,25 +136,23 @@ npm test
 
 ## 8. Masalah yang diketahui (status 24 Okt 2026, hasil review)
 
-1. **BUG AKTIF di `overlay/js/machine.js` fungsi `feed()`** - belum diperbaiki.
-   Gejala terbukti uji jalan: umpan kertas pertama benar (slot baris 2,1,0),
-   tapi mulai umpan kedua dua baris penuh bertumpuk di slot yang sama
-   (`--slot` ganda, slot tengah kosong) dan foto tidak masuk gulungan tepat
-   waktu (sesudah 6 foto selesai, mini di roll masih 0, harusnya 3).
-   Akar masalah: setelah rotasi array baris, `--slot` hanya dipasang untuk
-   `rows[0]` dan `rows[1]` (`rows[0]` pasca-`unshift` adalah baris keluar itu
-   sendiri sehingga nilainya tertimpa), `rows[2]` tidak pernah diperbarui, dan
-   `_snapshotToDrum()` selalu kena baris yang masih kosong.
-   Perilaku yang diharapkan: setelah setiap umpan, ketiga baris punya `--slot`
-   unik 0/1/2 sesuai urutan tampilnya (ada `_syncSlots()` untuk itu), dan baris
-   penuh yang meninggalkan area tampil langsung ter-snapshot ke gulungan.
-   Jangan merge ke `main` sebelum bug ini beres dan terverifikasi seperti
-   langkah di bagian 7.
+1. **BUG `feed()` di `overlay/js/machine.js` - SUDAH DIPERBAIKI (24 Okt 2026).**
+   Dulu: mulai umpan kertas kedua, dua baris penuh bertumpuk di `--slot` yang
+   sama (slot tengah kosong) dan `_snapshotToDrum()` selalu kena baris kosong
+   sehingga foto tidak masuk gulungan tepat waktu. Akarnya: setelah rotasi
+   array baris, `--slot` hanya dipasang untuk `rows[0]`/`rows[1]`, dan
+   `rows[0]` pasca-`unshift` adalah baris keluar itu sendiri.
+   Invariant yang sekarang wajib dijaga: sesudah setiap umpan, ketiga baris
+   punya `--slot` unik 0/1/2 sesuai urutan tampilnya (baris keluar meluncur ke
+   slot 3 lalu didaur ulang ke slot 0), dan baris terbawah yang keluar adalah
+   yang ter-snapshot ke gulungan. Dijaga oleh test regresi
+   `tests/machine.test.mjs`; jangan ubah `feed()` tanpa menjalankan test itu.
 2. `maxActivePhotos` di `config/game.json` saat ini **tidak dipakai** kode;
    grid hardcoded 3x3 di `machine.js` (`COLS`/`ROWS`). Samakan salah satu.
 3. `PHASES.liftFeed` / `liftFeedMs` di `machine.js` adalah kode mati.
-4. Belum ada test otomatis untuk `machine.js`. Menambahkannya sangat dianjurkan
-   (assert keunikan slot dan pertambahan mini roll seperti pola uji di atas).
+4. Test DOM untuk `machine.js` sudah ada (`tests/machine.test.mjs`, stub DOM
+   tanpa dependensi baru). Perilaku visual lain (animasi CSS di `styles/`)
+   tetap diverifikasi manual lewat mode mock.
 
 ## 9. Alur git
 

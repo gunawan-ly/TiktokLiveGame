@@ -153,8 +153,8 @@ export class PrintMachine {
     this.rows.unshift(exiting);
     this._slideRows(feedMs, this.rows.concat(exiting));
     exiting.style.setProperty("--slot", "3");
-    this.rows[0].style.setProperty("--slot", "1");
-    this.rows[1].style.setProperty("--slot", "2");
+    this.rows[1].style.setProperty("--slot", "1");
+    this.rows[2].style.setProperty("--slot", "2");
 
     this.top.classList.add("is-feeding");
     this.roller.classList.add("is-feeding");
