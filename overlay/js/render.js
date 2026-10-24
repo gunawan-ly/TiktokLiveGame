@@ -30,6 +30,7 @@ export class OverlayRenderer {
       config,
       tiers,
       avatarKnownBad: (url) => this._avatarKnownBad(url),
+      onEvent: (type, detail) => this._onMachineEvent(type, detail),
     });
 
     this.setTitle(config.title, config.subtitle);
@@ -135,11 +136,24 @@ export class OverlayRenderer {
     this.el.queueCount.textContent = String(this.queueLength);
   }
 
-  async printGift(item, tier) {
-    if (this.sound) {
-      this.sound.play(tier);
+  _onMachineEvent(type, detail = {}) {
+    if (!this.sound) {
+      return;
     }
+    if (type === "print-start") {
+      this.sound.playPrint(detail.durationMs);
+    } else if (type === "feed") {
+      this.sound.playFeed();
+    } else if (type === "roll") {
+      this.sound.playRoll();
+    }
+  }
+
+  async printGift(item, tier) {
     await this.machine.print(item, tier);
+    if (this.sound) {
+      this.sound.playComplete(tier);
+    }
     this.printedPhotos += 1;
     this.sessionCoins += item.totalCoins;
     this.updateHud();

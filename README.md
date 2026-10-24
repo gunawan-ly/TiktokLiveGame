@@ -114,13 +114,16 @@ Tambahkan **Browser Source** dengan:
 
 - URL: `http://127.0.0.1:5173/overlay/`
 - Width: `1080`
-- Height: `1920`
+- Height: `1080` (persegi, target utama live; `1920` potret tetap didukung)
 - FPS: `30` atau `60`
 - Centang **Shutdown source when not visible** dan **Refresh browser when scene becomes active**
   agar overlay selalu memuat snapshot terbaru saat scene dibuka.
 
 Pastikan server overlay dan connector berjalan sebelum scene diaktifkan. Overlay
-tidak memerlukan audio; sound effect nonaktif secara default.
+tidak memerlukan audio; sound effect nonaktif secara default. Bila diaktifkan,
+suaranya berlapis mengikuti mesin: bunyi proses selama kartu dicetak, desis kertas
+saat kertas maju, bunyi lembut saat kartu pindah ke gulungan, dan nada selesai yang
+makin meriah per tingkat bingkai. Semuanya disintesis WebAudio, tanpa file audio.
 
 ## Konfigurasi
 
