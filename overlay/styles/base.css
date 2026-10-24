@@ -664,3 +664,21 @@ body {
     width: 24rem;
   }
 }
+
+/*
+ * Rasio 3:4: toast memakai posisi potret (bottom 15.2rem) akan mendarat
+ * menempel di bawah kertas persis di samping gulungan. Geser ke celah
+ * antara HUD dan tepi bawah kertas, pola yang sama seperti persegi:
+ * maksimal dua toast tampil, lebar dibatasi.
+ */
+@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 99/100) {
+  .toast-stack {
+    bottom: 9.4rem;
+    max-width: 26rem;
+    gap: 0.35rem;
+  }
+
+  .toast-stack .toast:not(:nth-last-child(-n + 2)) {
+    display: none;
+  }
+}

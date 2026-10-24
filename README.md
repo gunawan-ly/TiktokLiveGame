@@ -142,11 +142,11 @@ dengan `?ticker=0` dan `?tickerCredits=0`.
 
 Cetak Zamrud adalah reward tap-tap: profil penonton dicetak dengan
 bingkai zamrud saat total like-nya dalam satu sesi mencapai
-`engagement.likeThreshold` (default 1.000, diatur di `config/game.json`;
+`engagement.likeThreshold` (default 500, diatur di `config/game.json`;
 connector juga menerima override env `LIKE_THRESHOLD`, berguna untuk uji
 live dengan ambang kecil). Maksimal satu kali per penonton per sesi
 connector, menambah hitungan tercetak tanpa menambah koin. Tombol
-"Zamrud · Tap 1.000" di panel debug (`?debug=1`) mensimulasikannya tanpa
+"Zamrud · Tap 500" di panel debug (`?debug=1`) mensimulasikannya tanpa
 connector.
 
 ## Konfigurasi

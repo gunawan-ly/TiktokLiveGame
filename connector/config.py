@@ -8,7 +8,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-DEFAULT_LIKE_THRESHOLD = 1000
+DEFAULT_LIKE_THRESHOLD = 500
 
 
 def _game_json_like_threshold() -> int | None:

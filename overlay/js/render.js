@@ -179,6 +179,7 @@ export class OverlayRenderer {
     avatar.append(fallback);
     if (item.avatarUrl && !this._avatarKnownBad(item.avatarUrl)) {
       const image = document.createElement("img");
+      image.className = "avatar-img";
       image.alt = "";
       image.referrerPolicy = "no-referrer";
       image.decoding = "async";

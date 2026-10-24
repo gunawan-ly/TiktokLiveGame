@@ -30,7 +30,7 @@ export const DEFAULT_CONFIG = {
     speed: 55,
     messages: [
       "Gift Mawar = cetak foto profilmu di Studio Photo",
-      "Tap-tap 1.000 like = cetak foto bingkai Zamrud",
+      "Tap-tap 500 like = cetak foto bingkai Zamrud",
       "Gift lain juga bisa, makin besar gift makin mewah bingkainya: Perak, Emas, Berlian",
       "Follow biar tidak ketinggalan live Studio Photo berikutnya",
     ],

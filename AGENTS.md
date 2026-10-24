@@ -109,7 +109,7 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
   `tierForCoins`. Label: PERUNGGU, PERAK, EMAS, BERLIAN.
 - **Zamrud (label ZAMRUD) adalah tier engagement tap-tap, bukan gift:**
   profil penonton dicetak berbinkai zamrud saat total like-nya dalam satu
-  sesi connector mencapai `engagement.likeThreshold` (default **1.000**,
+  sesi connector mencapai `engagement.likeThreshold` (default **500**,
   bisa dioverride env `LIKE_THRESHOLD` di connector). Maksimal satu cetak
   Zamrud per user per sesi; menambah hitungan TERCETAK, tidak menambah
   koin; lewat antrean, cooldown, dan dedupe yang sama seperti gift.

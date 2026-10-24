@@ -22,7 +22,7 @@ class LikeTracker:
     """Aggregate likes per user and award one Zamrud print per session.
 
     tap-tap is the engagement engine of the live, so the reward must stay
-    exclusive: the threshold is high (default 1.000) and each user can
+    exclusive: the threshold is high (default 500) and each user can
     earn it only once per connector session. A connector restart starts
     a new session with fresh totals, which is intentional: a new live
     means a new chance.
