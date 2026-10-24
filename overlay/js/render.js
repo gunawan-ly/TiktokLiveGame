@@ -11,11 +11,12 @@ const CONNECTION_LABELS = {
 };
 
 export class OverlayRenderer {
-  constructor({ config, tiers, elements, sound }) {
+  constructor({ config, tiers, elements, sound, goldFrameSvg = null }) {
     this.config = config;
     this.tiers = tiers;
     this.el = elements;
     this.sound = sound;
+    this.goldFrameSvg = goldFrameSvg;
     this.printedPhotos = 0;
     this.sessionCoins = 0;
     this.queueLength = 0;
@@ -31,6 +32,7 @@ export class OverlayRenderer {
       tiers,
       avatarKnownBad: (url) => this._avatarKnownBad(url),
       onEvent: (type, detail) => this._onMachineEvent(type, detail),
+      goldFrameSvg: this.goldFrameSvg,
     });
 
     this.setTitle(config.title, config.subtitle);

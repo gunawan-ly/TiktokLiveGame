@@ -7,6 +7,7 @@ import { startSimulation } from "./simulate.js";
 import { PrintSound } from "./sound.js";
 import { normalizeTiers, tierForCoins } from "./tiers.js";
 import { StudioSocket } from "./ws.js";
+import { loadGoldFrameSvg } from "./frames.js";
 
 const elements = {
   studioTitle: document.getElementById("studioTitle"),
@@ -87,7 +88,9 @@ async function bootstrap() {
   const config = await loadGameConfig();
   const tiers = normalizeTiers(config.tiers);
   const sound = new PrintSound(config.sound);
-  renderer = new OverlayRenderer({ config, tiers, elements, sound });
+  // Bingkai SVG emas dimuat sekali; null = ring CSS (fallback) untuk emas.
+  const goldFrameSvg = await loadGoldFrameSvg();
+  renderer = new OverlayRenderer({ config, tiers, elements, sound, goldFrameSvg });
   queue = new PrintQueue(config.maxQueueItems, config.senderGapMs);
 
   const updateQueue = () => {

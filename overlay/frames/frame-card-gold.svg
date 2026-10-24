@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 300">
+  <defs>
+    <linearGradient id="card-gold-metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff4bd"/>
+      <stop offset=".22" stop-color="#e8a83e"/>
+      <stop offset=".42" stop-color="#fff0a0"/>
+      <stop offset=".65" stop-color="#b96a21"/>
+      <stop offset=".83" stop-color="#ffe9a0"/>
+      <stop offset="1" stop-color="#8f4719"/>
+    </linearGradient>
+    <linearGradient id="card-gold-light" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#fffde0"/>
+      <stop offset=".45" stop-color="#f6ca66"/>
+      <stop offset="1" stop-color="#c27a29"/>
+    </linearGradient>
+    <linearGradient id="card-gold-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#485fe6"/>
+      <stop offset=".48" stop-color="#2833a0"/>
+      <stop offset="1" stop-color="#11164c"/>
+    </linearGradient>
+    <linearGradient id="card-gold-heart" x1="0" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#fff0fa"/>
+      <stop offset=".28" stop-color="#ff8bc4"/>
+      <stop offset=".62" stop-color="#e82f83"/>
+      <stop offset="1" stop-color="#85174e"/>
+    </linearGradient>
+    <linearGradient id="card-gold-gem" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".28" stop-color="#9df6ff"/>
+      <stop offset=".56" stop-color="#5288ff"/>
+      <stop offset=".8" stop-color="#6442cf"/>
+      <stop offset="1" stop-color="#f6b8ff"/>
+    </linearGradient>
+    <filter id="card-gold-glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2.3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Outer ornamental silhouette; photo aperture is untouched. -->
+  <path d="M130 8
+    L139 22 Q154 13 164 29
+    Q183 23 193 42 Q211 39 220 58
+    Q237 61 239 80
+    Q253 94 245 110
+    Q253 128 241 144
+    Q248 163 232 176
+    L222 202 L205 222
+    L55 222 L38 202 L28 176
+    Q12 163 19 144
+    Q7 128 15 110
+    Q7 94 21 80
+    Q23 61 40 58
+    Q49 39 67 42
+    Q77 23 96 29 Q106 13 121 22 Z M42 128 a88 88 0 1 0 176 0 a88 88 0 1 0 -176 0"
+    fill="#4a1d20" opacity=".92" fill-rule="evenodd"/>
+
+  <path d="M130 13
+    C117 28 99 20 89 39
+    C73 34 57 48 53 64
+    C35 71 30 88 30 105
+    C20 124 27 145 35 158
+    C34 179 46 193 59 207
+    L201 207 C214 193 226 179 225 158
+    C233 145 240 124 230 105
+    C230 88 225 71 207 64
+    C203 48 187 34 171 39
+    C161 20 143 28 130 13 Z"
+    fill="none" stroke="url(#card-gold-metal)" stroke-width="5"/>
+
+  <path d="M130 20
+    C115 35 100 29 91 46
+    C72 42 63 55 59 72
+    C43 79 40 95 39 109
+    M130 20
+    C145 35 160 29 169 46
+    C188 42 197 55 201 72
+    C217 79 220 95 221 109"
+    fill="none" stroke="#fff0b0" stroke-width="1.6"/>
+
+  <!-- Filigree curls kept outside the avatar aperture. -->
+  <g fill="none" stroke="url(#card-gold-light)" stroke-width="2.5"
+     stroke-linecap="round">
+    <path d="M82 36 C59 26 42 39 49 53 C55 63 68 53 62 46
+             C58 42 53 47 57 50"/>
+    <path d="M178 36 C201 26 218 39 211 53 C205 63 192 53 198 46
+             C202 42 207 47 203 50"/>
+    <path d="M32 91 C13 77 13 99 27 103 C34 105 38 98 32 95"/>
+    <path d="M228 91 C247 77 247 99 233 103 C226 105 222 98 228 95"/>
+    <path d="M43 171 Q21 156 27 140 Q32 131 39 140
+             M217 171 Q239 156 233 140 Q228 131 221 140"/>
+    <path d="M46 188 Q25 182 29 165 M214 188 Q235 182 231 165"/>
+  </g>
+
+  <!-- Crown -->
+  <path d="M103 31 L96 16 L115 25 L130 5 L145 25 L164 16 L157 31
+           Q130 43 103 31 Z"
+    fill="url(#card-gold-metal)" stroke="#fff0b4" stroke-width="1.5"/>
+  <!-- panel merah mahkota dihapus: tertutup hati yang dipindah ke atas -->
+  <circle cx="130" cy="11" r="4" fill="url(#card-gold-gem)"
+    stroke="#fff5d0" stroke-width="2"/>
+  <!-- berlian putih mahkota dihapus: tertutup hati yang dipindah ke atas -->
+
+  <!-- Heart jewel above the opening, never over the photo. -->
+  <g transform="translate(130,27) scale(0.45) translate(-130,-71.5)">
+    <path d="M130 63
+    C119 51 103 46 96 56
+    C88 68 105 82 130 97
+    C155 82 172 68 164 56
+    C157 46 141 51 130 63 Z"
+    fill="#8e321d" stroke="url(#card-gold-metal)" stroke-width="5"/>
+
+  </g>
+
+  <!-- Side star gemstones. -->
+  <g stroke="url(#card-gold-metal)" stroke-width="3">
+    <g transform="translate(-1.5,16.24) scale(0.86)">
+      <path d="M28 96 L36 107 L49 111 L39 122 L38 136
+               L27 129 L15 136 L16 122 L6 111 L20 107 Z"
+        fill="url(#card-gold-gem)"/>
+    </g>
+    <g transform="translate(38,16.24) scale(0.86)">
+      <path d="M232 96 L240 107 L254 111 L244 122 L245 136
+               L233 129 L222 136 L221 122 L211 111 L224 107 Z"
+        fill="url(#card-gold-gem)"/>
+    </g>
+  </g>
+  <g fill="#fff">
+    <g transform="translate(-1.5,16.24) scale(0.86)">
+      <path d="M28 108 L31 116 L39 119 L31 122 L28 130 L25 122 L17 119 L25 116 Z"/>
+    </g>
+    <g transform="translate(38,16.24) scale(0.86)">
+      <path d="M232 108 L235 116 L243 119 L235 122 L232 130 L229 122 L221 119 L229 116 Z"/>
+    </g>
+  </g>
+
+  <!-- Feather flourishes around the lower outer edge. -->
+  <g stroke="url(#card-gold-metal)" stroke-width="1.8"
+     stroke-linejoin="round">
+    <path d="M24 171 Q3 163 9 145 Q22 154 24 171 Z"
+      fill="#fff8e9"/>
+    <path d="M24 180 Q2 179 6 160 Q20 164 24 180 Z"
+      fill="#d6dcff"/>
+    <path d="M27 190 Q8 194 10 175 Q24 176 27 190 Z"
+      fill="#ffffff"/>
+    <path d="M236 171 Q257 163 251 145 Q238 154 236 171 Z"
+      fill="#fff8e9"/>
+    <path d="M236 180 Q258 179 254 160 Q240 164 236 180 Z"
+      fill="#d6dcff"/>
+    <path d="M233 190 Q252 194 250 175 Q236 176 233 190 Z"
+      fill="#ffffff"/>
+  </g>
+  <g fill="none" stroke="#fff0bd" stroke-width="1.2">
+    <path d="M12 151 L24 171 M10 166 L24 180 M15 181 L27 190"/>
+    <path d="M248 151 L236 171 M250 166 L236 180 M245 181 L233 190"/>
+  </g>
+
+  <!-- Nameplate is below the avatar aperture. -->
+  <path d="M57 225
+    L77 232 L183 232 L203 225
+    L211 240 L204 252 L211 265
+    L193 276 L67 276 L49 265 L56 252 L49 240 Z"
+    fill="#4b201a" stroke="url(#card-gold-metal)" stroke-width="4"/>
+  <path d="M61 235 L199 235 L204 246 L198 257
+    L204 264 L190 269 L70 269 L56 264 L62 257 L56 246 Z"
+    fill="url(#card-gold-blue)" stroke="#ffe9a0" stroke-width="2"/>
+  <path d="M72 240 L188 240" stroke="#8c9cff" stroke-width="1.2"
+    opacity=".8"/>
+  <path d="M130 222 L138 233 L130 242 L122 233 Z"
+    fill="url(#card-gold-metal)" stroke="#fff3c5" stroke-width="1.5"/>
+  <path d="M130 226 L134 233 L130 237 L126 233 Z"
+    fill="url(#card-gold-gem)"/>
+  <path d="M51 246 L59 240 L64 246 L59 252 Z
+           M209 246 L201 240 L196 246 L201 252 Z"
+    fill="url(#card-gold-metal)" stroke="#fff2c0" stroke-width="1"/>
+  <circle cx="58" cy="261" r="5" fill="url(#card-gold-gem)"
+    stroke="#fff3c5" stroke-width="1.5"/>
+  <circle cx="202" cy="261" r="5" fill="url(#card-gold-gem)"
+    stroke="#fff3c5" stroke-width="1.5"/>
+
+  <!-- Tiny sparkle accents. -->
+  <g fill="#fff9df" filter="url(#card-gold-glow)">
+    <path d="M39 69 L41 76 L48 78 L41 80 L39 87 L37 80 L30 78 L37 76 Z"/>
+    <path d="M221 69 L223 76 L230 78 L223 80 L221 87 L219 80 L212 78 L219 76 Z"/>
+    <path d="M45 207 L47 212 L52 214 L47 216 L45 221 L43 216 L38 214 L43 212 Z"/>
+    <path d="M215 207 L217 212 L222 214 L217 216 L215 221 L213 216 L208 214 L213 212 Z"/>
+  </g>
+
+  <!-- Transparent photo opening: center (130,128), radius 88.
+       No decorative elements are drawn inside this circle. -->
+  <!-- ring r=88 dihapus sesuai catatan koreksi; garis luar r=92 dipertahankan -->
+  <circle cx="130" cy="128" r="92" fill="none"
+    stroke="#fff1ba" stroke-width="1.2" opacity=".9"/>
+
+  <text id="nickname" x="130" y="257"
+    text-anchor="middle"
+    font-family="Baloo 2, sans-serif"
+    font-size="22" font-weight="700"
+    textLength="156" lengthAdjust="spacingAndGlyphs"
+    fill="#fff1b5" stroke="#332064" stroke-width=".7"
+    paint-order="stroke">Awan</text>
+</svg>

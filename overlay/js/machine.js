@@ -1,5 +1,6 @@
 import { avatarHueFor, initialsFor } from "./normalize.js";
 import { tierAccent, tierLabel } from "./tiers.js";
+import { createGoldFrameElement } from "./frames.js";
 
 const COLS = 3;
 const ROWS = 3;
@@ -20,12 +21,16 @@ const PHASES = {
 const SPARKLE_COUNT = { standard: 0, bronze: 0, silver: 2, gold: 4, diamond: 6 };
 
 export class PrintMachine {
-  constructor({ root, config, tiers, avatarKnownBad = null, onEvent = null }) {
+  constructor({ root, config, tiers, avatarKnownBad = null, onEvent = null,
+    goldFrameSvg = null, goldFrameBuilder = createGoldFrameElement }) {
     this.root = root;
     this.config = config;
     this.tiers = tiers;
     this.avatarKnownBad = avatarKnownBad || (() => false);
     this.onEvent = onEvent || (() => {});
+    this.goldFrameSvg = goldFrameSvg;
+    this.goldFrameBuilder = goldFrameBuilder;
+    this._goldFrameSeq = 0;
     this.top = root.querySelector("#machineTop");
     this.sheet = root.querySelector("#paperSheet");
     this.feedShade = root.querySelector("#feedShade");
@@ -248,7 +253,15 @@ export class PrintMachine {
     cell.replaceChildren();
     cell.className = `print-cell tier-${tier} is-busy is-printing`;
     cell.dataset.printed = "1";
-    cell.append(this._buildFrame(tier));
+    // Tier emas memakai bingkai SVG (mahkota, hati, nameplate) bila teks
+    // SVG berhasil dimuat; kalau tidak, jatuh kembali ke ring CSS.
+    const svgFrame = tier === "gold" ? this._buildGoldFrame(item.displayName) : null;
+    if (svgFrame) {
+      cell.classList.add("has-svg-frame");
+      cell.append(svgFrame);
+    } else {
+      cell.append(this._buildFrame(tier));
+    }
     cell.append(this._buildPhoto(item));
     cell.append(this._buildName(item.displayName));
     if (tier !== "standard") {
@@ -258,6 +271,30 @@ export class PrintMachine {
     if (sparkles) {
       cell.append(sparkles);
     }
+  }
+
+  _buildGoldFrame(displayName) {
+    if (!this.goldFrameSvg) {
+      return null;
+    }
+    this._goldFrameSeq += 1;
+    let svg;
+    try {
+      svg = this.goldFrameBuilder(
+        this.goldFrameSvg,
+        displayName,
+        `g${this._goldFrameSeq}`,
+      );
+    } catch {
+      return null;
+    }
+    if (!svg) {
+      return null;
+    }
+    const wrap = document.createElement("span");
+    wrap.className = "cell-svg-frame";
+    wrap.append(svg);
+    return wrap;
   }
 
   _buildFrame(tier) {

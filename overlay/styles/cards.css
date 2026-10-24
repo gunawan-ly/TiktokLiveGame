@@ -109,6 +109,54 @@
   display: none;
 }
 
+/*
+ * Bingkai SVG tier emas (overlay/frames/frame-card-gold.svg).
+ * Lapisan ini disejajarkan dengan lingkaran foto, bukan dengan sel:
+ * lingkaran foto SVG (pusat 130,128, r=88 dari viewBox 260x300) harus
+ * tepat menutupi .photo-circle. Karena itu ukurannya diturunkan dari
+ * --photo-d: lebar = photo-d x 260/176, tinggi = photo-d x 300/176,
+ * dan atasnya = row-pad - (40/176) x photo-d (jarak tepi atas SVG ke
+ * tepi atas lingkaran foto). Akibatnya mahkota menjulur ~1.9rem di atas
+ * sel; baris di atasnya mengecat di atasnya (aturan z-index .sheet-row),
+ * jadi mahkota kartu emas di baris 1-2 sebagian tertutup nama baris
+ * atasnya. Lihat AGENTS.md bagian 8 nomor 5.
+ */
+.cell-svg-frame {
+  position: absolute;
+  z-index: 4;
+  top: calc(var(--row-pad, 0.85rem) - 0.2273 * var(--photo-d));
+  left: 50%;
+  width: calc(var(--photo-d) * 1.4773);
+  height: calc(var(--photo-d) * 1.7045);
+  transform: translateX(-50%);
+  pointer-events: none;
+  clip-path: inset(0 0 calc((1 - var(--draw, 1)) * 100%) 0);
+}
+
+.cell-svg-frame svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.print-cell.is-done .cell-svg-frame,
+.print-cell:not(.is-printing) .cell-svg-frame {
+  clip-path: inset(0 0 0 0);
+}
+
+.print-cell:not(.is-busy) .cell-svg-frame {
+  display: none;
+}
+
+/*
+ * Nameplate sudah ada di dalam SVG emas, jadi label HTML disembunyikan
+ * (visibility, bukan display) supaya tinggi baris dan logika _cellName
+ * tetap utuh.
+ */
+.print-cell.tier-gold.has-svg-frame .card-name {
+  visibility: hidden;
+}
+
 .frame-glow {
   position: absolute;
   inset: -1.3rem;
