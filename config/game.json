@@ -30,6 +30,14 @@
   },
   "sound": {
     "enabled": false,
-    "volume": 0.25
+    "volume": 0.4
+  },
+  "music": {
+    "enabled": false,
+    "volume": 0.15,
+    "tracks": [
+      "./assets/music/calm-lofi.mp3",
+      "./assets/music/haru-lofi.mp3"
+    ]
   }
 }

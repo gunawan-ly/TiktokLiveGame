@@ -1,5 +1,6 @@
 import { loadGameConfig } from "./config.js";
 import { setupDebugPanel } from "./debug.js";
+import { MusicPlayer } from "./music.js";
 import { normalizeGiftMessage } from "./normalize.js";
 import { PrintQueue } from "./queue.js";
 import { OverlayRenderer } from "./render.js";
@@ -87,6 +88,10 @@ async function bootstrap() {
   const config = await loadGameConfig();
   const tiers = normalizeTiers(config.tiers);
   const sound = new PrintSound(config.sound);
+  const music = new MusicPlayer({ audio: new Audio(), ...config.music });
+  music.start();
+  // HP mengunci audio sampai ada gestur: ketukan pertama membuka musik.
+  window.addEventListener("pointerdown", () => music.unlock(), { once: true });
   renderer = new OverlayRenderer({ config, tiers, elements, sound });
   queue = new PrintQueue(config.maxQueueItems, config.senderGapMs);
 
@@ -203,6 +208,7 @@ async function bootstrap() {
 
   window.addEventListener("beforeunload", () => {
     clearRetryTimer();
+    music.stop();
     socket?.close();
     simulation?.stop();
   });

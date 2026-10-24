@@ -18,7 +18,12 @@ export const DEFAULT_CONFIG = {
   },
   sound: {
     enabled: false,
-    volume: 0.25,
+    volume: 0.4,
+  },
+  music: {
+    enabled: false,
+    volume: 0.15,
+    tracks: ["./assets/music/calm-lofi.mp3", "./assets/music/haru-lofi.mp3"],
   },
 };
 
@@ -55,6 +60,7 @@ export async function loadGameConfig() {
     ...DEFAULT_CONFIG,
     ...fileConfig,
     sound: { ...DEFAULT_CONFIG.sound, ...(fileConfig.sound || {}) },
+    music: { ...DEFAULT_CONFIG.music, ...(fileConfig.music || {}) },
     tiers: { ...DEFAULT_CONFIG.tiers, ...(fileConfig.tiers || {}) },
   };
 
@@ -86,6 +92,9 @@ export async function loadGameConfig() {
   if (params.has("sound")) {
     merged.sound.enabled = flagEnabled(params.get("sound"));
   }
+  if (params.has("music")) {
+    merged.music.enabled = flagEnabled(params.get("music"));
+  }
 
   merged.targetCoins = Math.round(clamp(merged.targetCoins, 1, 1_000_000_000, 500));
   merged.maxActivePhotos = Math.round(clamp(merged.maxActivePhotos, 1, 9, 9));
@@ -97,7 +106,8 @@ export async function loadGameConfig() {
   merged.diamondToastExtraMs = Math.round(
     clamp(merged.diamondToastExtraMs, 0, 6000, 2000),
   );
-  merged.sound.volume = clamp(merged.sound.volume, 0, 1, 0.25);
+  merged.sound.volume = clamp(merged.sound.volume, 0, 1, 0.4);
+  merged.music.volume = clamp(merged.music.volume, 0, 1, 0.15);
   merged.debug = params.has("debug") && flagEnabled(params.get("debug"));
   merged.simulate = params.has("sim") && flagEnabled(params.get("sim"));
 

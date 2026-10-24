@@ -30,8 +30,9 @@ ditandatangani; di sinilah Euler Stream dipakai (free tier, API key di `.env`).
 connector/       Connector Python: main, bridge, combo, normalizer, config,
                  mock_feed, session_log, requirements.txt
 overlay/         Overlay web: index.html, js/ (app, config, debug, machine,
-                 normalize, queue, render, simulate, sound, tiers, ws),
-                 styles/ (base, cards, effects, scene), assets/
+                 music, normalize, queue, render, simulate, sound, tiers, ws),
+                 styles/ (base, cards, effects, scene), assets/ (music lo-fi,
+                 font, avatar)
 config/game.json Sumber kebenaran konfigurasi game (tier, target, antrean)
 tests/           Test Node (*.test.mjs) dan test Python (test_*.py)
 logs/            Log sesi JSONL. Jangan commit. Tidak boleh berisi URL avatar.

@@ -126,6 +126,12 @@ suaranya berlapis mengikuti mesin: bunyi proses selama kartu dicetak, desis kert
 saat kertas maju, bunyi lembut saat kartu pindah ke gulungan, dan nada selesai yang
 makin meriah per tingkat bingkai. Semuanya disintesis WebAudio, tanpa file audio.
 
+Backsound live memakai playlist lo-fi (2 lagu, loop berurutan) yang juga
+nonaktif secara default; aktifkan dengan `?music=1`. Volumenya sengaja kecil
+(0.15) sementara master bunyi aksi 0.4, supaya bunyi aksi selalu lebih
+terdengar daripada musik. Daftar lagu, lisensi CC BY, dan teks kredit untuk
+deskripsi live ada di `overlay/assets/music/README.md`.
+
 ## Konfigurasi
 
 Edit `config/game.json`:
@@ -179,8 +185,9 @@ oleh overlay. Target yang tampil di HUD berasal dari `config/game.json` atau par
 | `title` | `?title=NAMA%20STUDIO` | Override judul |
 | `subtitle` | `?subtitle=LIVE%20PHOTO%20BOOTH` | Override subjudul |
 | `sound` | `?sound=1` | Aktifkan sound effect |
+| `music` | `?music=1` | Aktifkan backsound lo-fi (playlist loop) |
 
-Gunakan `?sim=1&sound=1` untuk demo audio. Browser dapat meminta interaksi pengguna
+Gunakan `?sim=1&sound=1&music=1` untuk demo audio lengkap. Browser dapat meminta interaksi pengguna
 sebelum audio diputar.
 
 ### API Debug
