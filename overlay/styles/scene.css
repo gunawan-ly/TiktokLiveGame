@@ -646,6 +646,19 @@
 }
 
 /*
+ * Rasio 3:4 (1080x1440): mesin memakai lebar persegi (50rem) dan duduk
+ * lebih ke tengah kanvas 90rem, jadi kertas punya ruang napas di atas
+ * dan di bawah tanpa jadi potret penuh. Sisanya mengikuti aturan dasar
+ * (header di bawah ticker atas, HUD di atas ticker bawah).
+ */
+@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 99/100) {
+  .machine {
+    top: 13rem;
+    width: 50rem;
+  }
+}
+
+/*
  * Square live canvas (1080x1080). The rem base is 68rem tall (see
  * base.css), so the machine can be wider and the paper fills the frame
  * instead of sitting in the top half of a 120rem portrait canvas.

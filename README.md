@@ -115,7 +115,7 @@ Tambahkan **Browser Source** dengan:
 
 - URL: `http://127.0.0.1:5173/overlay/`
 - Width: `1080`
-- Height: `1080` (persegi, target utama live; `1920` potret tetap didukung)
+- Height: `1440` (rasio 3:4, target utama live; `1080` persegi dan `1920` potret tetap didukung)
 - FPS: `30` atau `60`
 - Centang **Shutdown source when not visible** dan **Refresh browser when scene becomes active**
   agar overlay selalu memuat snapshot terbaru saat scene dibuka.

@@ -36,6 +36,17 @@ html {
 }
 
 /*
+ * Rasio 3:4 (1080x1440), kanvas live utama: lebih tinggi dari persegi
+ * supaya komposisi tidak mepet, tapi bukan potret penuh. Kanvas
+ * rancangan 67.5rem x 90rem; lebar tetap jadi jangkar skala.
+ */
+@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 99/100) {
+  html {
+    font-size: min(calc(100vw / 67.5), calc(100vh / 90));
+  }
+}
+
+/*
  * Square live canvas (1080x1080) and landscape: use a shorter design canvas
  * so the scene is framed close to the machine instead of leaving the bottom
  * half of a portrait frame as empty desk. The width budget stays 67.5rem so
