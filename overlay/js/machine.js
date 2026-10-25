@@ -25,6 +25,7 @@ const GEM_COUNT = { amethyst: 8, diamond: 10 };
 // disamakan dengan tier gift (keputusan Awan 25 Okt 2026); yang
 // membedakan jalur berbayar dan gratis adalah warnanya.
 const EMERALD_SPARKLE_COUNT = { 1: 0, 2: 2, 3: 4, 4: 6 };
+const RUBY_SPARKLE_COUNT = { 1: 4, 2: 6 };
 
 export class PrintMachine {
   constructor({ root, config, tiers, avatarKnownBad = null, onEvent = null }) {
@@ -254,7 +255,11 @@ export class PrintMachine {
   _prepareCell(cell, item, tier) {
     cell.replaceChildren();
     const levelClass =
-      tier === "emerald" && item.likeLevel > 1 ? ` lv-${item.likeLevel}` : "";
+      tier === "emerald" && item.likeLevel > 1
+        ? ` lv-${item.likeLevel}`
+        : tier === "ruby" && item.rubyLevel > 1
+          ? ` lv-${item.rubyLevel}`
+          : "";
     cell.className = `print-cell tier-${tier}${levelClass} is-busy is-printing`;
     cell.dataset.printed = "1";
     cell.append(this._buildFrame(tier));
@@ -352,7 +357,9 @@ export class PrintMachine {
     const count =
       tier === "emerald"
         ? EMERALD_SPARKLE_COUNT[item?.likeLevel] || 0
-        : SPARKLE_COUNT[tier] || 0;
+        : tier === "ruby"
+          ? RUBY_SPARKLE_COUNT[item?.rubyLevel] || 0
+          : SPARKLE_COUNT[tier] || 0;
     if (!count) {
       return null;
     }

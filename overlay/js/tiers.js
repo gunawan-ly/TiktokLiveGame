@@ -21,6 +21,7 @@ export const TIER_LABEL = {
   amethyst: "AMETHYST",
   diamond: "DIAMOND",
   emerald: "EMERALD",
+  ruby: "RUBY",
 };
 
 export const TIER_ACCENT = {
@@ -31,6 +32,7 @@ export const TIER_ACCENT = {
   amethyst: "#a78bfa",
   diamond: "#8be9ff",
   emerald: "#34d399",
+  ruby: "#e0115f",
 };
 
 function normalizeOneTier(key, input) {
@@ -122,6 +124,11 @@ export function pillTextFor(item, tier, tiers) {
     if (likes) {
       return `${likes} like`;
     }
+  } else if (tier === "ruby") {
+    const shares = formatCountID(item?.shareTotal);
+    if (shares) {
+      return `${shares} share`;
+    }
   } else {
     const coins = formatCountID(item?.totalCoins);
     if (coins) {
@@ -147,4 +154,13 @@ export function emeraldLevelFor(likeTotal, threshold) {
   if (multiple >= 6) return 3;
   if (multiple >= 3) return 2;
   return 1;
+}
+
+// Level Ruby (jalur share): dua tingkat saja (keputusan Awan 25 Okt
+// 2026). Kelipatan pertama ambang (5 share) = Lv1, kelipatan kedua dan
+// seterusnya (10+) = Lv2 bingkai maksimal.
+export function rubyLevelFor(shareTotal, threshold) {
+  const base = Math.max(1, Math.floor(Number(threshold) || 5));
+  const multiple = Math.floor(Math.max(0, Number(shareTotal) || 0) / base);
+  return multiple >= 2 ? 2 : 1;
 }

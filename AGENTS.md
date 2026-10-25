@@ -101,6 +101,15 @@ per run connector + user + kelipatan (`emerald-<run>-<userId>-<kelipatan>`);
 restart connector = sesi baru = kesempatan baru. Skema normalizernya
 `normalizeEmeraldMessage`.
 
+Pesan `ruby_print` adalah perintah cetak Ruby dari jalur share:
+connector menghitung `ShareEvent` per user (`connector/shares.py`, satu
+event = satu share, semua jenis bagikan sama; field proto `share_type`
+dan `share_count` TIDAK dipakai) dan mengirim pesan ini SETIAP KALI
+total share user menyentuh kelipatan ambang sesi (5, 10, 15, ...).
+`eventId` deterministik (`ruby-<run>-<userId>-<kelipatan>`); skema
+normalizernya `normalizeRubyMessage`. Level Ruby dua tingkat dari
+kelipatan: 1x ambang = Lv1, 2x+ = Lv2 (`rubyLevelFor` di `tiers.js`).
+
 Pesan `join` adalah popup sambutan penonton masuk (dari `JoinEvent`
 TikTokLive): bridge menerbitkannya MAKSIMAL SEKALI per user per sesi
 connector (`join-<run>-<userId>`), tidak menyentuh statistik cetakan/koin
@@ -139,8 +148,6 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
   Silver 2, Gold 6, Amethyst 7, Diamond 9. Amethyst dan Diamond
   bertabur permata keliling (8 dan 10, `GEM_COUNT` di machine.js);
   Diamond ditambah api prisma tipis berputar dan cincin 1.08rem.
-  **Ruby dicadangkan untuk tier jalur share** (belum dibangun; jangan
-  dipakai untuk hal lain).
 - **Emerald (label EMERALD) adalah tier engagement tap-tap, bukan gift:**
   profil penonton dicetak berbinkai zamrud saat total like-nya dalam satu
   sesi connector mencapai `engagement.likeThreshold` (default **500**,
@@ -160,6 +167,17 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
   kemewahan yang ditahan. Ini merevisi aturan "Emerald selalu statis"
   tanggal 24 Okt 2026. Semua level Emerald berdenyut halo (animasi
   polos, keputusan Awan 25 Okt 2026); Lv1 tanpa sparkles dan putaran.
+- **Ruby (label RUBY) adalah tier engagement jalur share, bukan gift:**
+  profil penonton dicetak berbinkai merah rubi saat total share-nya
+  dalam satu sesi connector mencapai `engagement.shareThreshold`
+  (default **5**, override env `SHARE_THRESHOLD`). Cetak di SETIAP
+  kelipatan ambang per user per sesi; menambah TERCETAK, tidak menambah
+  koin. Dua level (keputusan Awan 25 Okt 2026): Lv1 di kelipatan 1
+  (5 share, setara Emerald Lv3: cincin 1rem, halo berdenyut, sparkles 4,
+  chip nama), Lv2 di kelipatan 2+ (10 share, bingkai maksimal setara
+  Emerald Lv4: palet paling terang, cincin berputar, sparkles 6).
+  Pil info Ruby = total share + "share". `tierForCoins` tidak pernah
+  menghasilkan ruby.
 - Target koin per sesi: 500. Slot foto aktif 9 (grid 3x3), gulungan foto 7.
 - Antrean cetak FIFO, kapasitas **100** item (`maxQueueItems`); penuh = gift
   ditolak dengan indikator "ANTREAN PENUH", bukan ditumpuk tanpa batas.

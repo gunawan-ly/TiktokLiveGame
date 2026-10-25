@@ -9,6 +9,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 DEFAULT_LIKE_THRESHOLD = 500
+DEFAULT_SHARE_THRESHOLD = 5
 
 
 def _game_json_like_threshold() -> int | None:
@@ -25,6 +26,23 @@ def _game_json_like_threshold() -> int | None:
             (PROJECT_ROOT / "config" / "game.json").read_text(encoding="utf-8")
         )
         value = int(data.get("engagement", {}).get("likeThreshold"))
+    except Exception:
+        return None
+    return value if value >= 1 else None
+
+
+def _game_json_share_threshold() -> int | None:
+    """Read engagement.shareThreshold from config/game.json, tolerantly.
+
+    Same contract as the like threshold: a broken or missing value must
+    not kill the connector; env SHARE_THRESHOLD wins over the file.
+    """
+
+    try:
+        data = json.loads(
+            (PROJECT_ROOT / "config" / "game.json").read_text(encoding="utf-8")
+        )
+        value = int(data.get("engagement", {}).get("shareThreshold"))
     except Exception:
         return None
     return value if value >= 1 else None
@@ -58,6 +76,7 @@ class ConnectorConfig:
     ws_port: int
     target_coins: int
     like_threshold: int
+    share_threshold: int
     log_dir: Path
     reconnect_base_seconds: int
     reconnect_max_seconds: int
@@ -87,6 +106,10 @@ class ConnectorConfig:
             "LIKE_THRESHOLD",
             _game_json_like_threshold() or DEFAULT_LIKE_THRESHOLD,
         )
+        share_threshold = _int_env(
+            "SHARE_THRESHOLD",
+            _game_json_share_threshold() or DEFAULT_SHARE_THRESHOLD,
+        )
 
         return cls(
             username=username,
@@ -95,6 +118,7 @@ class ConnectorConfig:
             ws_port=_int_env("WS_PORT", 8080),
             target_coins=_int_env("TARGET_COINS", 500),
             like_threshold=like_threshold,
+            share_threshold=share_threshold,
             log_dir=log_dir,
             reconnect_base_seconds=_int_env("RECONNECT_BASE_SECONDS", 5),
             reconnect_max_seconds=_int_env("RECONNECT_MAX_SECONDS", 30),

@@ -7,6 +7,7 @@ import {
   normalizeEmeraldMessage,
   normalizeGiftMessage,
   normalizeJoinMessage,
+  normalizeRubyMessage,
 } from "../overlay/js/normalize.js";
 
 function message(overrides = {}) {
@@ -114,4 +115,32 @@ test("emerald normalizer rejects other message types", () => {
   assert.equal(normalizeEmeraldMessage(message()), null);
   assert.equal(normalizeEmeraldMessage(null), null);
   assert.equal(normalizeGiftMessage({ type: "emerald_print" }), null);
+});
+
+test("normalizes a ruby print message", () => {
+  const item = normalizeRubyMessage({
+    type: "ruby_print",
+    eventId: "ruby-run1-777-2",
+    user: {
+      username: "sinta.share",
+      displayName: "Sinta",
+      avatarUrl: "https://cdn.example.com/s.webp",
+    },
+    shareTotal: 10,
+    threshold: 5,
+    timestamp: "2026-10-25T03:00:00+08:00",
+  });
+  assert.equal(item.displayName, "Sinta");
+  assert.equal(item.tierOverride, "ruby");
+  assert.equal(item.shareTotal, 10);
+  // Ruby tidak pernah membawa koin: bukan gift.
+  assert.equal(item.totalCoins, 0);
+  assert.equal(item.repeat, 1);
+  assert.equal(item.giftName, "Share");
+});
+
+test("ruby normalizer rejects other message types", () => {
+  assert.equal(normalizeRubyMessage(message()), null);
+  assert.equal(normalizeRubyMessage(null), null);
+  assert.equal(normalizeRubyMessage({ type: "emerald_print" }), null);
 });

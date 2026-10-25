@@ -222,6 +222,34 @@ test("emerald prints carry their like-level class, gifts do not", async () => {
   assert.doesNotMatch(printedCells()[2].className, /lv-/);
 });
 
+test("ruby prints carry their share-level class and pill", async () => {
+  const machine = buildMachine();
+  const printedCells = () =>
+    [...machine.sheet.children].flatMap((row) =>
+      [...row.children].filter((cell) => cell.dataset.printed === "1"),
+    );
+  const pillOf = (cell) => cell.querySelector(".tier-pill");
+  const sparkleCount = (cell) =>
+    cell.querySelector(".card-sparkles")?.children.length ?? 0;
+
+  await machine.print(
+    { displayName: "Pembagi", avatarUrl: "", shareTotal: 5, rubyLevel: 1 },
+    "ruby",
+  );
+  assert.match(printedCells()[0].className, /tier-ruby/);
+  assert.doesNotMatch(printedCells()[0].className, /lv-/);
+  assert.equal(pillOf(printedCells()[0]).textContent, "5 share");
+  assert.equal(sparkleCount(printedCells()[0]), 4);
+
+  await machine.print(
+    { displayName: "PembagiRaja", avatarUrl: "", shareTotal: 10, rubyLevel: 2 },
+    "ruby",
+  );
+  assert.match(printedCells()[1].className, /lv-2/);
+  assert.equal(pillOf(printedCells()[1]).textContent, "10 share");
+  assert.equal(sparkleCount(printedCells()[1]), 6);
+});
+
 test("print pills show session totals, long text shrinks", async () => {
   const machine = buildMachine();
   const printedCells = () =>

@@ -264,6 +264,19 @@ Tombol "Emerald · Tap 500" di panel debug (`?debug=1`) mensimulasikannya
 tanpa connector; klik berulang menaiki tangga levelnya (500, 1.500,
 3.000, 5.000, lalu mengulang).
 
+Cetak Ruby adalah reward membagikan live: profil penonton dicetak
+dengan bingkai Ruby (merah rubi) saat total bagikannya dalam satu sesi
+mencapai `engagement.shareThreshold` (default 5, diatur di
+`config/game.json`; override env connector `SHARE_THRESHOLD`). Cetakan
+diberikan di setiap kelipatan ambang (5, 10, 15, ...) per penonton per
+sesi, menambah hitungan tercetak tanpa menambah koin. Ruby punya dua
+level: 5 share setara Emerald Lv3 (cincin penuh, halo berdenyut,
+sparkles, chip nama), 10 share bingkai maksimalnya (cincin berputar,
+palet paling terang, setara Emerald Lv4). Semua jenis bagikan dihitung
+sama, salin tautan maupun bagikan ke teman. Tombol "Ruby · Share 5" di
+panel debug mensimulasikannya; klik berulang bergantian 5 dan 10 share.
+Mode mock connector juga menerbitkan Ruby berkala dari persona pembagi.
+
 Popup sambutan orang masuk: setiap penonton yang bergabung ke live
 muncul sekali per sesi sebagai notifikasi mini di pojok kanan bawah
 (foto profil + nama + "bergabung ke live"), dari `JoinEvent` TikTokLive.

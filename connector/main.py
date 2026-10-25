@@ -12,14 +12,15 @@ from dotenv import load_dotenv
 from TikTokLive import TikTokLiveClient
 from TikTokLive.client.errors import UserOfflineError
 from TikTokLive.client.web.web_settings import WebDefaults
-from TikTokLive.events import ConnectEvent, DisconnectEvent, GiftEvent, JoinEvent, LikeEvent
+from TikTokLive.events import ConnectEvent, DisconnectEvent, GiftEvent, JoinEvent, LikeEvent, ShareEvent
 
 from .bridge import Bridge
 from .combo import ComboAggregator
 from .config import PROJECT_ROOT, ConnectorConfig
 from .likes import LikeTracker
+from .shares import ShareTracker
 from .mock_feed import MockFeed
-from .normalizer import extract_gift_signal, extract_join_signal, extract_like_signal
+from .normalizer import extract_gift_signal, extract_join_signal, extract_like_signal, extract_share_signal
 from .session_log import SessionLog
 
 
@@ -93,6 +94,7 @@ async def live_forever(
     bridge: Bridge,
     aggregator: ComboAggregator,
     like_tracker: LikeTracker,
+    share_tracker: ShareTracker,
     run_id: str,
     stop: asyncio.Event,
 ) -> None:
@@ -175,6 +177,34 @@ async def live_forever(
                 await bridge.publish_join(signal, run_id)
             except Exception:
                 LOGGER.exception("Gagal memproses event join")
+
+        @client.on(ShareEvent)
+        async def on_share(event: ShareEvent) -> None:
+            try:
+                signal = extract_share_signal(event)
+                if signal is None:
+                    return
+                awards = share_tracker.add(signal)
+                if awards:
+                    for award in awards:
+                        LOGGER.info(
+                            "Ruby diraih @%s dengan %d share "
+                            "(cetakan Ruby ke-%d untuknya sesi ini); "
+                            "menerbitkan cetakan.",
+                            award.username,
+                            award.share_total,
+                            award.multiple,
+                        )
+                        await bridge.publish_ruby(award, run_id)
+                else:
+                    LOGGER.info(
+                        "Progres share @%s: %d/%d",
+                        signal.username,
+                        share_tracker.total_for(signal.user_id),
+                        share_tracker.threshold,
+                    )
+            except Exception:
+                LOGGER.exception("Gagal memproses event share")
 
         connect_task = asyncio.create_task(
             client.connect(fetch_live_check=True),
@@ -277,6 +307,7 @@ async def async_main(args: argparse.Namespace) -> int:
     )
     aggregator = ComboAggregator()
     like_tracker = LikeTracker(config.like_threshold)
+    share_tracker = ShareTracker(config.share_threshold)
     run_id = uuid.uuid4().hex[:12]
     stop = asyncio.Event()
 
@@ -290,6 +321,11 @@ async def async_main(args: argparse.Namespace) -> int:
         LOGGER.info("Log sesi: %s", session_log.path)
     LOGGER.info("Target koin: %d", config.target_coins)
     LOGGER.info("Ambang Emerald (like per user per sesi): %d", config.like_threshold)
+    LOGGER.info(
+        "Ambang Ruby (share per user per sesi): %d, level 2 di %d",
+        config.share_threshold,
+        config.share_threshold * 2,
+    )
 
     tasks = [asyncio.create_task(flush_loop(aggregator, bridge, stop), name="flush")]
     if args.mock:
@@ -305,7 +341,7 @@ async def async_main(args: argparse.Namespace) -> int:
     else:
         tasks.append(
             asyncio.create_task(
-                live_forever(config, bridge, aggregator, like_tracker, run_id, stop),
+                live_forever(config, bridge, aggregator, like_tracker, share_tracker, run_id, stop),
                 name="tiktok-live",
             )
         )

@@ -33,6 +33,26 @@ function buildJoin(name, index) {
   };
 }
 
+let rubyStep = 0;
+
+function buildRuby(index) {
+  sequence += 1;
+  rubyStep += 1;
+  const shareTotal = rubyStep % 2 === 0 ? 10 : 5;
+  return {
+    type: "ruby_print",
+    eventId: `sim-ruby-${Date.now().toString(36)}-${sequence}`,
+    user: {
+      username: "pembagi_setia",
+      displayName: "Pembagi Setia",
+      avatarUrl: AVATAR_URLS[(index + 5) % AVATAR_URLS.length],
+    },
+    shareTotal,
+    threshold: 5,
+    timestamp: new Date().toISOString(),
+  };
+}
+
 function buildGift(scenario, index) {
   sequence += 1;
   return {
@@ -54,7 +74,7 @@ function buildGift(scenario, index) {
   };
 }
 
-export function startSimulation(pushGift, pushJoin) {
+export function startSimulation(pushGift, pushJoin, pushRuby) {
   let stopped = false;
   let timer = null;
   let index = 0;
@@ -76,6 +96,11 @@ export function startSimulation(pushGift, pushJoin) {
       }
       const scenario = SCENARIOS[index % SCENARIOS.length];
       pushGift(buildGift(scenario, index));
+      // Sesekali penonton setia membagikan live: cetakan Ruby muncul
+      // bergantian Lv1 (5 share) dan Lv2 (10 share).
+      if (pushRuby && index % 4 === 3) {
+        pushRuby(buildRuby(index));
+      }
       index += 1;
 
       if (index % 5 === 0) {

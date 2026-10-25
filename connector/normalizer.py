@@ -216,6 +216,14 @@ class JoinSignal:
     avatar_url: str
 
 
+@dataclass(slots=True)
+class ShareSignal:
+    user_id: str
+    username: str
+    display_name: str
+    avatar_url: str
+
+
 def extract_join_signal(event: Any) -> JoinSignal | None:
     """Convert a TikTokLive JoinEvent into a join signal.
 
@@ -244,6 +252,46 @@ def extract_join_signal(event: Any) -> JoinSignal | None:
     )
 
     return JoinSignal(
+        user_id=user_id,
+        username=username,
+        display_name=display_name,
+        avatar_url=_avatar_url(user),
+    )
+
+
+def extract_share_signal(event: Any) -> ShareSignal | None:
+    """Convert a TikTokLive ShareEvent into a per-user share signal.
+
+    ShareEvent adalah SocialEvent (WebcastSocialMessage) dengan field
+    `user` yang sama seperti LikeEvent/JoinEvent (terverifikasi dari
+    source TikTokLive 7.0.1). Satu event dihitung SATU share untuk
+    penonton itu. Proto membawa `share_type`/`share_target`, tapi makna
+    nilainya tidak terdokumentasi, dan `share_count` kemungkinan total
+    ruangan/user (jebakan yang sama seperti total like ruangan): dua-
+    duanya TIDAK dipakai. Semua jenis bagikan (salin tautan maupun ke
+    teman) dihitung sama, sesuai keputusan Awan 25 Okt 2026.
+    """
+
+    user = _read(event, "user")
+    if user is None:
+        return None
+
+    username = _clean_text(
+        _read(user, "display_id", _read(user, "unique_id", "")),
+        "viewer",
+        40,
+    )
+    display_name = _clean_text(
+        _read(user, "nickname", username),
+        username,
+    )
+    user_id = _clean_text(
+        _read(user, "id", _read(user, "user_id", username)),
+        username,
+        40,
+    )
+
+    return ShareSignal(
         user_id=user_id,
         username=username,
         display_name=display_name,

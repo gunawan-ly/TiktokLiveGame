@@ -199,7 +199,9 @@ export class OverlayRenderer {
     gift.className = "toast-gift";
     gift.textContent = item.likeTotal
       ? `${item.giftName} ${Number(item.likeTotal).toLocaleString("id-ID")} like`
-      : `${item.giftName} x ${item.repeat}`;
+      : item.shareTotal
+        ? `${item.giftName} ${Number(item.shareTotal).toLocaleString("id-ID")} share`
+        : `${item.giftName} x ${item.repeat}`;
     copy.append(name, gift);
 
     if (tier !== "standard") {

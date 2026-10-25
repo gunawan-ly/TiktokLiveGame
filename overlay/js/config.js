@@ -36,6 +36,7 @@ export const DEFAULT_CONFIG = {
       "Gift Mawar = cetak foto profilmu di Studio Photo",
       "Tap-tap 500 like = cetak foto bingkai Emerald, makin banyak like bingkainya makin mewah",
       "Total gift 10 koin = Silver, 50 koin = Gold, 100 koin = Amethyst, 200 koin = Diamond",
+      "Share live ini 5x = cetak foto bingkai Ruby, 10x = Ruby maksimal",
       "Follow biar tidak ketinggalan live Studio Photo berikutnya",
     ],
   },
@@ -48,6 +49,7 @@ export const DEFAULT_CONFIG = {
   // meneruskannya supaya satu file tetap jadi sumber kebenaran bersama.
   engagement: {
     likeThreshold: 500,
+    shareThreshold: 5,
   },
 };
 
@@ -159,6 +161,9 @@ export async function loadGameConfig() {
   );
   merged.engagement.likeThreshold = Math.round(
     clamp(merged.engagement.likeThreshold, 1, 1_000_000, 500),
+  );
+  merged.engagement.shareThreshold = Math.round(
+    clamp(merged.engagement.shareThreshold, 1, 1_000_000, 5),
   );
   merged.debug = params.has("debug") && flagEnabled(params.get("debug"));
   merged.simulate = params.has("sim") && flagEnabled(params.get("sim"));

@@ -7,7 +7,8 @@ from dataclasses import dataclass
 
 from .bridge import Bridge
 from .combo import ComboAggregator
-from .normalizer import GiftSignal, JoinSignal
+from .normalizer import GiftSignal, JoinSignal, ShareSignal
+from .shares import ShareTracker
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,6 +54,10 @@ class MockFeed:
         self.interval = max(0.8, interval)
         self.run_id = run_id
         self._group_id = 1000
+        # Persona pembagi setia untuk demo Ruby: satu share per siklus,
+        # jadi cetakan Ruby muncul di kelipatan 5 dan 10 secara alami.
+        self._share_tracker = ShareTracker(5)
+        self._sharer = MockScenario("sinta.share", "Sinta", "Mawar", 5655, 1, 1, 3)
 
     def _avatar_url(self, index: int | None) -> str:
         if index is None:
@@ -128,6 +133,20 @@ class MockFeed:
                 await self._emit(scenario)
             except Exception:
                 self.logger.exception("Mock feed gagal mengirim gift")
+
+            try:
+                awards = self._share_tracker.add(
+                    ShareSignal(
+                        user_id=self._sharer.username,
+                        username=self._sharer.username,
+                        display_name=self._sharer.display_name,
+                        avatar_url=self._avatar_url(self._sharer.avatar),
+                    )
+                )
+                for award in awards:
+                    await self.bridge.publish_ruby(award, self.run_id)
+            except Exception:
+                self.logger.exception("Mock feed gagal mengirim Ruby")
 
             if index % 5 == 0:
                 burst = random.sample(SCENARIOS[:6], k=2)

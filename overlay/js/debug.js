@@ -8,7 +8,7 @@ const TEST_GIFTS = {
 
 let debugSequence = 0;
 
-export function setupDebugPanel({ enabled, pushGift, pushEmerald, pushJoin, clearQueue }) {
+export function setupDebugPanel({ enabled, pushGift, pushEmerald, pushRuby, pushJoin, clearQueue }) {
   const panel = document.getElementById("debugPanel");
   if (!panel) {
     return;
@@ -30,6 +30,10 @@ export function setupDebugPanel({ enabled, pushGift, pushEmerald, pushJoin, clea
     }
     if (test === "emerald") {
       pushEmerald?.(makeEmerald("pengetuk setia"));
+      return;
+    }
+    if (test === "ruby") {
+      pushRuby?.(makeRuby("pembagi setia"));
       return;
     }
     if (test === "join") {
@@ -74,6 +78,29 @@ function makeEmerald(displayName) {
     },
     likeTotal,
     threshold: 500,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+// Klik tombol Ruby di panel debug bergantian dua levelnya:
+// 5 share (Lv1) -> 10 share (Lv2) -> ulang.
+const DEBUG_RUBY_STEPS = [5, 10];
+let debugRubyStep = 0;
+
+function makeRuby(displayName) {
+  debugSequence += 1;
+  const shareTotal = DEBUG_RUBY_STEPS[debugRubyStep % DEBUG_RUBY_STEPS.length];
+  debugRubyStep += 1;
+  return {
+    type: "ruby_print",
+    eventId: `debug-ruby-${Date.now().toString(36)}-${debugSequence}`,
+    user: {
+      username: `debug_share_${debugSequence}`,
+      displayName,
+      avatarUrl: "",
+    },
+    shareTotal,
+    threshold: 5,
     timestamp: new Date().toISOString(),
   };
 }

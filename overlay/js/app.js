@@ -1,13 +1,13 @@
 import { loadGameConfig } from "./config.js";
 import { setupDebugPanel } from "./debug.js";
 import { MusicPlayer } from "./music.js";
-import { normalizeEmeraldMessage, normalizeGiftMessage, normalizeJoinMessage } from "./normalize.js";
+import { normalizeEmeraldMessage, normalizeGiftMessage, normalizeJoinMessage, normalizeRubyMessage } from "./normalize.js";
 import { PrintQueue } from "./queue.js";
 import { OverlayRenderer } from "./render.js";
 import { startSimulation } from "./simulate.js";
 import { PrintSound } from "./sound.js";
 import { Ticker } from "./ticker.js";
-import { normalizeTiers, tierForCoins, emeraldLevelFor } from "./tiers.js";
+import { normalizeTiers, tierForCoins, emeraldLevelFor, rubyLevelFor } from "./tiers.js";
 import { StudioSocket } from "./ws.js";
 
 const elements = {
@@ -178,6 +178,28 @@ async function bootstrap() {
     return true;
   };
 
+  const acceptRuby = (message) => {
+    const item = normalizeRubyMessage(message);
+    if (!item) {
+      console.warn("Cetak Ruby diabaikan karena payload tidak valid.");
+      return false;
+    }
+    item.rubyLevel = rubyLevelFor(item.shareTotal, config.engagement?.shareThreshold);
+    pokeAudio();
+    renderer.prefetchAvatar(item.avatarUrl);
+    const result = queue.push(item);
+    if (!result.ok) {
+      if (result.reason === "full") {
+        renderer.flashQueueFull();
+        console.warn("Cetak Ruby ditolak karena antrean penuh.");
+      }
+      return false;
+    }
+    updateQueue();
+    pump();
+    return true;
+  };
+
   const pushGift = (data) => acceptGift(coercePayload(data));
 
   // Popup orang masuk tidak lewat antrean cetak; cukup saring payload,
@@ -250,6 +272,7 @@ async function bootstrap() {
     enabled: Boolean(config.debug),
     pushGift,
     pushEmerald: acceptEmerald,
+    pushRuby: acceptRuby,
     pushJoin: acceptJoin,
     clearQueue,
   });
@@ -262,6 +285,7 @@ async function bootstrap() {
     socket = new StudioSocket(config.wsUrl, {
       onGift: acceptGift,
       onEmerald: acceptEmerald,
+      onRuby: acceptRuby,
       onJoin: acceptJoin,
       onStatus: (state, detail) => renderer.setConnection(state, detail),
       onSnapshot: (snapshot) => renderer.applySnapshot(snapshot),
@@ -270,12 +294,13 @@ async function bootstrap() {
   }
 
   if (config.simulate) {
-    simulation = startSimulation(pushGift, acceptJoin);
+    simulation = startSimulation(pushGift, acceptJoin, acceptRuby);
   }
 
   window.StudioPhoto = {
     pushGift,
     pushEmerald: acceptEmerald,
+    pushRuby: acceptRuby,
     pushJoin: acceptJoin,
     clearQueue,
     getState: () => ({

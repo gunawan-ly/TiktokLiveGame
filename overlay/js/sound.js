@@ -19,6 +19,7 @@ const COMPLETION_NOTES = {
   amethyst: [784, 988, 1175, 1397, 1568],
   diamond: [880, 1108, 1318, 1568, 1760],
   emerald: [659, 784, 988, 1319],
+  ruby: [698, 880, 1046, 1319, 1568],
 };
 
 export class PrintSound {

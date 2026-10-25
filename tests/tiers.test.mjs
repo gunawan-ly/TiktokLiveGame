@@ -6,6 +6,7 @@ import {
   formatCountID,
   normalizeTiers,
   pillTextFor,
+  rubyLevelFor,
   tierAccent,
   tierForCoins,
   tierLabel,
@@ -132,8 +133,32 @@ test("pillTextFor: angka kedudukan sesi, fallback label tier", () => {
   assert.equal(pillTextFor({ totalCoins: 29999 }, "diamond", tiers), "29,9 rb koin");
   assert.equal(pillTextFor({ likeTotal: 5000 }, "emerald", tiers), "5.000 like");
   assert.equal(pillTextFor({ likeTotal: 10500 }, "emerald", tiers), "10,5 rb like");
+  assert.equal(pillTextFor({ shareTotal: 5 }, "ruby", tiers), "5 share");
+  assert.equal(pillTextFor({ shareTotal: 10 }, "ruby", tiers), "10 share");
   // Payload tanpa angka valid: jatuh ke label, bukan angka nol.
   assert.equal(pillTextFor({}, "standard", tiers), "PLATINUM");
   assert.equal(pillTextFor({}, "emerald", tiers), "EMERALD");
+  assert.equal(pillTextFor({}, "ruby", tiers), "RUBY");
   assert.equal(pillTextFor({ totalCoins: "abc" }, "gold", tiers), "GOLD");
+});
+
+test("ruby level: two tiers at the 5 and 10 share marks", () => {
+  const cases = [
+    [0, 1],
+    [4, 1],
+    [5, 1],
+    [9, 1],
+    [10, 2],
+    [15, 2],
+    [500, 2],
+  ];
+  for (const [shares, expected] of cases) {
+    assert.equal(rubyLevelFor(shares, 5), expected, `shares=${shares}`);
+  }
+  // Ambang custom diskalakan dari kelipatan.
+  assert.equal(rubyLevelFor(3, 3), 1);
+  assert.equal(rubyLevelFor(6, 3), 2);
+  assert.equal(rubyLevelFor(undefined, undefined), 1);
+  assert.equal(tierLabel("ruby", tiers), "RUBY");
+  assert.equal(tierAccent("ruby"), "#e0115f");
 });

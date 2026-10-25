@@ -160,6 +160,42 @@
   animation: ringSpin 9s linear infinite;
 }
 
+/* Ruby: tier engagement jalur share, bukan gift. Dua level (keputusan
+ * Awan 25 Okt 2026): Lv1 (5 share) setara Emerald Lv3, Lv2 (10 share)
+ * bingkai maksimal keluarga engagement setara Emerald Lv4. Pembeda
+ * jalur gratis dan berbayar tetap warna, di sini merah rubi. */
+.print-cell.tier-ruby {
+  --ring-w: 1rem;
+  --metal-a: #4c0519;
+  --metal-b: #fda4af;
+  --metal-c: #e11d48;
+  --metal-d: #9f1239;
+  --metal-e: #ffe4e6;
+  --chip-bg: linear-gradient(180deg, #fb7185, #be123c);
+  --chip-text: #fff1f2;
+  --glow-color: rgba(225, 29, 72, 0.8);
+  --glow-opacity: 0.85;
+}
+
+.print-cell.tier-ruby .frame-glow {
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
+
+.print-cell.tier-ruby .tier-pill {
+  background: linear-gradient(180deg, #fff1f2, #fda4af);
+  color: #881337;
+}
+
+.print-cell.tier-ruby.lv-2 {
+  --metal-b: #fecdd3;
+  --metal-c: #f43f5e;
+  --glow-opacity: 1;
+}
+
+.print-cell.tier-ruby.lv-2.is-done .frame-wrap {
+  animation: ringSpin 9s linear infinite;
+}
+
 .print-cell.is-done {
   --draw: 1;
 }
@@ -587,7 +623,8 @@
 .print-cell.tier-diamond .card-name,
 .print-cell.tier-emerald.lv-2 .card-name,
 .print-cell.tier-emerald.lv-3 .card-name,
-.print-cell.tier-emerald.lv-4 .card-name {
+.print-cell.tier-emerald.lv-4 .card-name,
+.print-cell.tier-ruby .card-name {
   width: fit-content;
   margin-inline: auto;
   padding: 0.1rem 0.7rem 0.14rem;
@@ -619,6 +656,14 @@
   background: linear-gradient(180deg, rgba(167, 243, 208, 0.95), rgba(16, 185, 129, 0.95));
   color: #04362a;
   box-shadow: 0 0.15rem 0.5rem rgba(6, 60, 44, 0.5);
+}
+
+/* Chip nama Ruby: tampil di kedua level (Lv1-nya saja sudah setara
+ * Emerald Lv3 yang ber-chip). */
+.print-cell.tier-ruby .card-name {
+  background: linear-gradient(180deg, rgba(254, 205, 211, 0.95), rgba(225, 29, 72, 0.95));
+  color: #fff1f2;
+  box-shadow: 0 0.15rem 0.5rem rgba(80, 7, 30, 0.5);
 }
 
 .tier-pill {

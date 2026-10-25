@@ -234,6 +234,49 @@ class Bridge:
         )
         await self._broadcast(message)
 
+    async def publish_ruby(self, award, run_id: str) -> None:
+        """Broadcast a Ruby print a viewer earned by sharing the live.
+
+        Sama seperti Emerald: counts as a print in the session stats but
+        never as coins. The event id is deterministic per connector run
+        + user + share multiple, so the overlay dedupes replays while
+        every new multiple prints as its own event.
+        """
+
+        event_id = f"ruby-{run_id}-{award.user_id}-{award.multiple}"
+        timestamp = datetime.now().astimezone().isoformat(timespec="seconds")
+        message = {
+            "type": "ruby_print",
+            "eventId": event_id,
+            "user": {
+                "username": award.username,
+                "displayName": award.display_name,
+                "avatarUrl": award.avatar_url,
+            },
+            "shareTotal": award.share_total,
+            "threshold": award.threshold,
+            "timestamp": timestamp,
+        }
+        self._stats["printed"] += 1
+        if self.session_log:
+            self.session_log.write(
+                "ruby",
+                {
+                    "eventId": event_id,
+                    "username": award.username,
+                    "displayName": award.display_name,
+                    "shareTotal": award.share_total,
+                    "threshold": award.threshold,
+                },
+            )
+        self.logger.info(
+            "Ruby -> %s | %d share (ambang %d)",
+            award.display_name,
+            award.share_total,
+            award.threshold,
+        )
+        await self._broadcast(message)
+
     @property
     def stats(self) -> dict[str, Any]:
         return dict(self._stats)

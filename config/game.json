@@ -54,6 +54,7 @@
       "Gift Mawar = cetak foto profilmu di Studio Photo",
       "Tap-tap 500 like = cetak foto bingkai Emerald, makin banyak like bingkainya makin mewah",
       "Total gift 10 koin = Silver, 50 koin = Gold, 100 koin = Amethyst, 200 koin = Diamond",
+      "Share live ini 5x = cetak foto bingkai Ruby, 10x = Ruby maksimal",
       "Follow biar tidak ketinggalan live Studio Photo berikutnya"
     ]
   },
@@ -65,6 +66,7 @@
     ]
   },
   "engagement": {
-    "likeThreshold": 500
+    "likeThreshold": 500,
+    "shareThreshold": 5
   }
 }

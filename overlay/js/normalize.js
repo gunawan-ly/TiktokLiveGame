@@ -92,6 +92,46 @@ export function normalizeEmeraldMessage(message) {
   };
 }
 
+// Cetak Ruby dari jalur share: profil penonton dicetak saat total
+// share-nya dalam satu sesi mencapai kelipatan ambang (default 5).
+// Bukan gift: tidak membawa koin, menambah hitungan tercetak saja.
+export function normalizeRubyMessage(message) {
+  if (!message || message.type !== "ruby_print") {
+    return null;
+  }
+
+  const user = message.user && typeof message.user === "object" ? message.user : {};
+
+  const username = cleanText(
+    user.username ?? user.displayName,
+    "viewer",
+    40,
+  );
+  const displayName = cleanText(user.displayName ?? username, username, 80);
+  const shareTotal = clampInteger(message.shareTotal, 0, 0, 1_000_000_000);
+
+  const eventId = cleanText(
+    message.eventId,
+    `local-ruby-${Date.now().toString(36)}-${++localSequence}`,
+    120,
+  );
+
+  return {
+    eventId,
+    username,
+    displayName,
+    avatarUrl: isSafeAvatarUrl(user.avatarUrl),
+    giftId: 0,
+    giftName: "Share",
+    repeat: 1,
+    coinsPerItem: 0,
+    totalCoins: 0,
+    shareTotal,
+    tierOverride: "ruby",
+    timestamp: cleanText(message.timestamp, new Date().toISOString(), 40),
+  };
+}
+
 // Popup sambutan penonton masuk: bukan cetakan, tidak lewat antrean
 // cetak dan tidak membawa koin. Cukup identitas untuk notifikasi kecil
 // di pojok kanan bawah.
