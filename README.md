@@ -56,17 +56,7 @@ logs/               Log sesi JSONL (tidak berisi URL avatar)
 Prasyarat: Python 3.10+ dan Node.js 20+. Implementasi ini diuji dengan Python 3.15
 dan Node 24.
 
-```bash
-git clone https://github.com/gunawan-ly/TiktokLiveGame.git
-cd TiktokLiveGame
-
-python3 -m venv .venv
-.venv/bin/pip install -r connector/requirements.txt
-
-cp .env.example .env
-```
-
-Di Windows (PowerShell), urutan yang sama menjadi:
+Di Windows (PowerShell):
 
 ```powershell
 git clone https://github.com/gunawan-ly/TiktokLiveGame.git
@@ -80,14 +70,14 @@ cp .env.example .env
 
 Jalankan server overlay di terminal pertama:
 
-```bash
-python3 -m http.server 5173 --bind 127.0.0.1
+```powershell
+py -m http.server 5173 --bind 127.0.0.1
 ```
 
 Jalankan connector mock di terminal kedua:
 
-```bash
-.venv/bin/python -m connector.main --mock --mock-interval 1.5
+```powershell
+.\.venv\Scripts\python -m connector.main --mock --mock-interval 1.5
 ```
 
 Buka:
@@ -126,13 +116,6 @@ py -m venv .venv
 .venv\Scripts\pip install -r connector\requirements.txt
 ```
 
-Di macOS/Linux:
-
-```bash
-python3 -m venv .venv
-.venv/bin/pip install -r connector/requirements.txt
-```
-
 **3. Siapkan `.env` (sekali saja)**
 
 ```dotenv
@@ -158,12 +141,12 @@ jatuh ke konfigurasi default.
 
 **5. Terminal 2: jalankan connector**
 
-```bash
-.venv/bin/python -m connector.main
+```powershell
+.\.venv\Scripts\python -m connector.main
 ```
 
-Di Windows: `.\.venv\Scripts\python -m connector.main` (awalan `.\`
-wajib di PowerShell, dan jalurnya memakai `\Scripts\`, bukan `/bin/`).
+Awalan `.\` wajib di PowerShell, dan jalur venv Windows memakai
+`\Scripts\`, bukan `/bin/`.
 
 Periksa log awalnya: `WebSocket bridge aktif di ws://127.0.0.1:8080`,
 `Target koin: 500`, dan `Ambang Emerald (like per user per sesi): 500`.
@@ -171,8 +154,8 @@ Kalau room belum live, connector menampilkan status `waiting` dan mencoba
 lagi sendiri; saat koneksi terputus, backoff mulai dari 5 detik sampai
 maksimum 30 detik. Override username tanpa mengubah `.env`:
 
-```bash
-.venv/bin/python -m connector.main --username @akun_lain --verbose
+```powershell
+.\.venv\Scripts\python -m connector.main --username @akun_lain --verbose
 ```
 
 **6. OBS: pasang Browser Source produksi**
@@ -462,7 +445,8 @@ Tiga penyebab yang sudah terbukti: (1) connector belum direstart setelah
 `Ambang Emerald ... : 500` saat connector start); (2) like berasal dari akun
 host sendiri, yang tidak dihitung TikTok sebagai like penonton; (3) ambang
 belum tercapai **per penonton** (bukan total room). Untuk uji cepat, restart
-connector dengan `LIKE_THRESHOLD=10` lalu tap-tap dari akun kedua sampai
+connector dengan ambang kecil lewat PowerShell (`$env:LIKE_THRESHOLD="10"`,
+lalu jalankan connector seperti biasa), lalu tap-tap dari akun kedua sampai
 log `Progres like` mencapai ambang dan cetakan keluar.
 
 **Kelas bingkai penonton tiba-tiba kembali ke awal**
