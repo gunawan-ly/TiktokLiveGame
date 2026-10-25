@@ -3,7 +3,9 @@ import test from "node:test";
 
 import {
   emeraldLevelFor,
+  formatCountID,
   normalizeTiers,
+  pillTextFor,
   tierAccent,
   tierForCoins,
   tierLabel,
@@ -39,7 +41,7 @@ test("tier labels are available", () => {
   assert.equal(tierLabel("gold", tiers), "GOLD");
   assert.equal(tierLabel("amethyst", tiers), "AMETHYST");
   assert.equal(tierLabel("diamond", tiers), "DIAMOND");
-  assert.equal(tierLabel("standard", tiers), "");
+  assert.equal(tierLabel("standard", tiers), "PLATINUM");
   assert.equal(tierAccent("amethyst"), "#a78bfa");
 });
 
@@ -106,4 +108,32 @@ test("gift thresholds stay ordered, bronze stays independent", () => {
   assert.equal(custom.diamond.minCoins, 1000);
   assert.ok(custom.silver.minCoins < custom.gold.minCoins);
   assert.ok(custom.gold.minCoins < custom.diamond.minCoins);
+});
+
+test("formatCountID: penuh di bawah 10rb, padat di atasnya", () => {
+  assert.equal(formatCountID(0), "0");
+  assert.equal(formatCountID(500), "500");
+  assert.equal(formatCountID(5000), "5.000");
+  assert.equal(formatCountID(9999), "9.999");
+  assert.equal(formatCountID(10000), "10 rb");
+  assert.equal(formatCountID(10500), "10,5 rb");
+  assert.equal(formatCountID(100000), "100 rb");
+  assert.equal(formatCountID(29999), "29,9 rb");
+  assert.equal(formatCountID(999999), "999,9 rb");
+  assert.equal(formatCountID(1500000), "1,5 jt");
+  assert.equal(formatCountID(-5), null);
+  assert.equal(formatCountID("abc"), null);
+  assert.equal(formatCountID(undefined), null);
+});
+
+test("pillTextFor: angka kedudukan sesi, fallback label tier", () => {
+  assert.equal(pillTextFor({ totalCoins: 3 }, "standard", tiers), "3 koin");
+  assert.equal(pillTextFor({ totalCoins: 200 }, "diamond", tiers), "200 koin");
+  assert.equal(pillTextFor({ totalCoins: 29999 }, "diamond", tiers), "29,9 rb koin");
+  assert.equal(pillTextFor({ likeTotal: 5000 }, "emerald", tiers), "5.000 like");
+  assert.equal(pillTextFor({ likeTotal: 10500 }, "emerald", tiers), "10,5 rb like");
+  // Payload tanpa angka valid: jatuh ke label, bukan angka nol.
+  assert.equal(pillTextFor({}, "standard", tiers), "PLATINUM");
+  assert.equal(pillTextFor({}, "emerald", tiers), "EMERALD");
+  assert.equal(pillTextFor({ totalCoins: "abc" }, "gold", tiers), "GOLD");
 });

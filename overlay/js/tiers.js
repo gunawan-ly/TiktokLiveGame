@@ -14,6 +14,7 @@ export const DEFAULT_TIER_MIN = {
 };
 
 export const TIER_LABEL = {
+  standard: "PLATINUM",
   bronze: "BRONZE",
   silver: "SILVER",
   gold: "GOLD",
@@ -76,10 +77,58 @@ export function tierForCoins(totalCoins, tiers) {
 }
 
 export function tierLabel(tier, tiers) {
-  if (tier === "standard") {
-    return "";
-  }
+  // Standar kini bernama Platinum (keputusan Awan 25 Okt 2026): tier
+  // polos tanpa kemewahan, tapi tetap punya nama supaya identitasnya
+  // nyambung dengan tangga tier lain.
   return tiers?.[tier]?.label || TIER_LABEL[tier] || "";
+}
+
+// Format angka gaya Indonesia untuk teks info pil. Di bawah 10.000
+// tampil penuh dengan pemisah titik; di atasnya dipadatkan gaya
+// TikTok ("10 rb", "10,5 rb", "1 jt") supaya pil tidak meluber.
+export function formatCountID(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 0) {
+    return null;
+  }
+  const whole = Math.floor(number);
+  if (whole < 10_000) {
+    return String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+  const compact = (divisor, suffix) => {
+    // Potong ke 1 desimal seperti tampilan angka TikTok (29.999 -> "29,9
+    // rb"), bukan dibulatkan ke atas supaya kedudukan tidak terlihat
+    // lebih besar dari aslinya.
+    const scaled = Math.floor((whole / divisor) * 10) / 10;
+    const text = Number.isInteger(scaled)
+      ? String(scaled)
+      : String(scaled).replace(".", ",");
+    return `${text} ${suffix}`;
+  };
+  if (whole >= 1_000_000) {
+    return compact(1_000_000, "jt");
+  }
+  return compact(1_000, "rb");
+}
+
+// Teks pil info di kartu cetak (keputusan Awan 25 Okt 2026): bukan nama
+// tier, melainkan kedudukan pengirim sesi ini. Angkanya field yang sama
+// persis dengan penentu kelas bingkai (gift: totalCoins akumulasi;
+// Emerald: likeTotal), jadi pil dan bingkai tidak bisa bertengkar.
+// Payload tanpa angka valid jatuh ke label tier, bukan "0 koin".
+export function pillTextFor(item, tier, tiers) {
+  if (tier === "emerald") {
+    const likes = formatCountID(item?.likeTotal);
+    if (likes) {
+      return `${likes} like`;
+    }
+  } else {
+    const coins = formatCountID(item?.totalCoins);
+    if (coins) {
+      return `${coins} koin`;
+    }
+  }
+  return tierLabel(tier, tiers);
 }
 
 export function tierAccent(tier) {

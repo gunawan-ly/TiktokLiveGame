@@ -30,8 +30,11 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
 
 - Target koin default: **500**
 - Tier gift (dari total akumulasi koin per penonton dalam satu sesi):
-  Standar <10, Silver 10+, Gold 50+, Amethyst 100+, Diamond 200+; Bronze
-  khusus like (frame avatar strip Top Tap-Tap, bukan dari gift)
+  Platinum <10, Silver 10+, Gold 50+, Amethyst 100+, Diamond 200+; Bronze
+  khusus like (frame avatar strip Top Tap-Tap, bukan dari gift). Platinum
+  adalah nama tier standar: cincin polos tanpa kemewahan. Pil di kartu
+  menampilkan kedudukan pengirim ("200 koin", "5.000 like"), bukan nama
+  tier; format angka dipadatkan gaya TikTok mulai 10 rb.
 - Slot foto aktif: **9** (kertas mesin), gulungan: **7**
 - Overlay: `http://127.0.0.1:5173/overlay/`
 - WebSocket: `ws://127.0.0.1:8080`
@@ -93,7 +96,7 @@ Buka:
 http://127.0.0.1:5173/overlay/
 ```
 
-Connector mock mengirim combo, tier Standar sampai Diamond, avatar rusak, dan burst
+Connector mock mengirim combo, tier Platinum sampai Diamond, avatar rusak, dan burst
 gift tanpa API key. Hentikan connector dengan `Ctrl+C`; log sesi dan statistik akhir
 tetap ditulis ke `logs/`.
 

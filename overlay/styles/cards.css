@@ -505,17 +505,32 @@
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  white-space: nowrap;
   opacity: 0;
   transform: scale(0.6);
   transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.2, 1.4, 0.4, 1);
   transition-delay: 0.45s;
 }
 
+/* Teks info yang panjang (mis. "10,5 rb koin") menyusut supaya pil
+   tidak meluber ke kartu tetangga. */
+.tier-pill.is-long {
+  font-size: 0.62rem;
+}
+
 .print-cell.is-done .tier-pill {
   opacity: 1;
   transform: scale(1);
+}
+
+/* Platinum (tier standar): sengaja polos tanpa kilau, pilnya pun
+   pucat dan datar supaya jelas berada di bawah Silver. */
+.print-cell.tier-standard .tier-pill {
+  background: linear-gradient(180deg, #efece5, #cfc8ba);
+  color: #5b564d;
+  box-shadow: 0 0.1rem 0.3rem rgba(80, 74, 64, 0.35);
 }
 
 .print-cell.tier-bronze .tier-pill {

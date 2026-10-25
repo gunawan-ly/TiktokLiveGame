@@ -1,5 +1,5 @@
 import { avatarHueFor, initialsFor } from "./normalize.js";
-import { tierAccent, tierLabel } from "./tiers.js";
+import { pillTextFor, tierAccent } from "./tiers.js";
 
 const COLS = 3;
 const ROWS = 3;
@@ -253,8 +253,9 @@ export class PrintMachine {
     cell.append(this._buildFrame(tier));
     cell.append(this._buildPhoto(item));
     cell.append(this._buildName(item.displayName));
-    if (tier !== "standard") {
-      cell.append(this._buildPill(tier));
+    const pill = this._buildPill(item, tier);
+    if (pill) {
+      cell.append(pill);
     }
     const sparkles = this._buildSparkles(tier);
     if (sparkles) {
@@ -325,10 +326,14 @@ export class PrintMachine {
     return label;
   }
 
-  _buildPill(tier) {
+  _buildPill(item, tier) {
+    const text = pillTextFor(item, tier, this.tiers);
+    if (!text) {
+      return null;
+    }
     const pill = document.createElement("span");
-    pill.className = "tier-pill";
-    pill.textContent = tierLabel(tier, this.tiers);
+    pill.className = text.length > 11 ? "tier-pill is-long" : "tier-pill";
+    pill.textContent = text;
     return pill;
   }
 

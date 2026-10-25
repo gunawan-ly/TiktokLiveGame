@@ -115,12 +115,23 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
 
 - Tier gift dari **total akumulasi koin per user dalam satu sesi
   connector** (termasuk combo yang baru selesai; keputusan Awan 24 Okt
-  2026): standar di bawah 10, **Silver 10+, Gold 50+, Amethyst 100+,
-  Diamond 200+**.
+  2026): **Platinum (kunci internal `standard`) di bawah 10, Silver 10+,
+  Gold 50+, Amethyst 100+, Diamond 200+**. Platinum tetap polos tanpa
+  kemewahan (cincin tertipis, tanpa chip nama); namanya hanya identitas
+  supaya tangga tiernya utuh (keputusan Awan 25 Okt 2026).
   Combo tetap pemicu cetak (satu combo selesai = satu cetakan); kelas
   bingkainya yang mengikuti akumulasi, dibawa field `cumulativeCoins`. **Bronze khusus jalur like** (frame avatar
   strip Top Tap-Tap, bukan dari gift) dan tidak pernah dihasilkan
-  `tierForCoins`. Label: BRONZE, SILVER, GOLD, AMETHYST, DIAMOND, EMERALD.
+  `tierForCoins`. Label: PLATINUM, BRONZE, SILVER, GOLD, AMETHYST,
+  DIAMOND, EMERALD.
+  **Pil kartu = teks info kedudukan, bukan nama tier** (keputusan Awan
+  25 Okt 2026): gift menampilkan total koin akumulasi sesi + "koin",
+  Emerald total like + "like" (`pillTextFor` di `tiers.js`); angka
+  diformat `formatCountID` (penuh di bawah 10.000, padat "rb"/"jt"
+  dipotong 1 desimal di atasnya). Pil tampil untuk SEMUA cetakan
+  termasuk Platinum; payload tanpa angka valid jatuh ke label tier.
+  Nama tier tetap tampil di tag toast (kecuali Platinum) dan dari
+  warna/material bingkai.
   **Ruby dicadangkan untuk tier jalur share** (belum dibangun; jangan
   dipakai untuk hal lain).
 - **Emerald (label EMERALD) adalah tier engagement tap-tap, bukan gift:**

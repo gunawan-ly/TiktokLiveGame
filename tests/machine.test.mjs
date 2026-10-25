@@ -221,3 +221,32 @@ test("emerald prints carry their like-level class, gifts do not", async () => {
   );
   assert.doesNotMatch(printedCells()[2].className, /lv-/);
 });
+
+test("print pills show session totals, long text shrinks", async () => {
+  const machine = buildMachine();
+  const printedCells = () =>
+    [...machine.sheet.children].flatMap((row) =>
+      [...row.children].filter((cell) => cell.dataset.printed === "1"),
+    );
+  const pillOf = (cell) => cell.querySelector(".tier-pill");
+
+  await machine.print(
+    { displayName: "Mawar", avatarUrl: "", totalCoins: 3 },
+    "standard",
+  );
+  assert.equal(pillOf(printedCells()[0]).textContent, "3 koin");
+
+  await machine.print(
+    { displayName: "Sultan", avatarUrl: "", totalCoins: 29999 },
+    "diamond",
+  );
+  assert.equal(pillOf(printedCells()[1]).textContent, "29,9 rb koin");
+
+  await machine.print(
+    { displayName: "Pengetuk", avatarUrl: "", likeTotal: 10500 },
+    "emerald",
+  );
+  const emeraldPill = pillOf(printedCells()[2]);
+  assert.equal(emeraldPill.textContent, "10,5 rb like");
+  assert.match(emeraldPill.className, /is-long/);
+});
