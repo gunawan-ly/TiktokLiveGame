@@ -179,8 +179,14 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
   Pil info Ruby = total share + "share". `tierForCoins` tidak pernah
   menghasilkan ruby.
 - Target koin per sesi: 500. Slot foto aktif 9 (grid 3x3), gulungan foto 7.
-- Antrean cetak FIFO, kapasitas **100** item (`maxQueueItems`); penuh = gift
-  ditolak dengan indikator "ANTREAN PENUH", bukan ditumpuk tanpa batas.
+- Antrean cetak DUA JALUR dengan prioritas kaku (keputusan Awan 25 Okt
+  2026): jalur gift kapasitas **100** (`maxQueueItems`), jalur engagement
+  (Emerald/Ruby) kapasitas **30** (`maxEngagementQueueItems`). Mesin
+  selalu mencetak gift yang siap lebih dulu; engagement hanya jalan saat
+  tidak ada gift yang siap (tanpa katup anti-lapar). Jalur engagement
+  penuh = cetakan gratis dibuang diam-diam (alasan `engagement_full`,
+  tanpa indikator layar); jalur gift penuh = gift ditolak dengan
+  indikator "ANTREAN PENUH". Di dalam tiap jalur urutannya FIFO.
 - Cooldown per pengirim **4.000 ms** (`senderGapMs`) dengan **skip-ahead**:
   selama satu pengirim cooldown, gift pengirim lain tetap dicetak duluan;
   kalau semua antrean cooldown, mesin menunggu (timer), bukan membuang gift.

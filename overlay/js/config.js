@@ -6,6 +6,7 @@ export const DEFAULT_CONFIG = {
   maxActivePhotos: 9,
   maxRollPhotos: 7,
   maxQueueItems: 100,
+  maxEngagementQueueItems: 30,
   senderGapMs: 4000,
   printDurationMs: 2000,
   toastDurationMs: 5000,
@@ -144,6 +145,9 @@ export async function loadGameConfig() {
   merged.maxActivePhotos = Math.round(clamp(merged.maxActivePhotos, 1, 9, 9));
   merged.maxRollPhotos = Math.round(clamp(merged.maxRollPhotos, 1, 12, 7));
   merged.maxQueueItems = Math.round(clamp(merged.maxQueueItems, 1, 1000, 100));
+  merged.maxEngagementQueueItems = Math.round(
+    clamp(merged.maxEngagementQueueItems, 0, 1000, 30),
+  );
   merged.senderGapMs = Math.round(clamp(merged.senderGapMs, 0, 60000, 4000));
   merged.printDurationMs = Math.round(clamp(merged.printDurationMs, 1200, 4000, 2000));
   merged.toastDurationMs = Math.round(clamp(merged.toastDurationMs, 3000, 12000, 5000));

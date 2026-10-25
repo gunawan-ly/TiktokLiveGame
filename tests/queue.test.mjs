@@ -130,3 +130,48 @@ test("cooldown does not cause dedupe collisions between items", () => {
   assert.equal(queue.push(gift("b", { username: "satu" })).ok, true);
   assert.equal(queue.length, 2);
 });
+
+test("gift prints jump ahead of earlier engagement prints (strict priority)", () => {
+  const queue = new PrintQueue();
+  queue.push(gift("e1", { tierOverride: "emerald" }));
+  queue.push(gift("r1", { tierOverride: "ruby" }));
+  queue.push(gift("g1"));
+  assert.equal(queue.beginNext().eventId, "g1");
+  queue.finishPrint();
+  queue.markIdle();
+  // Jalur gift kosong: engagement jalan, FIFO di dalam jalurnya.
+  assert.equal(queue.beginNext().eventId, "e1");
+  queue.finishPrint();
+  queue.markIdle();
+  assert.equal(queue.beginNext().eventId, "r1");
+});
+
+test("engagement lane capacity is separate and never blocks gifts", () => {
+  const queue = new PrintQueue(2, 0, 2);
+  assert.equal(queue.push(gift("e1", { tierOverride: "emerald" })).ok, true);
+  assert.equal(queue.push(gift("e2", { tierOverride: "emerald" })).ok, true);
+  const dropped = queue.push(gift("e3", { tierOverride: "emerald" }));
+  assert.equal(dropped.ok, false);
+  assert.equal(dropped.reason, "engagement_full");
+  // Gift tetap diterima walau jalur engagement penuh.
+  assert.equal(queue.push(gift("g1")).ok, true);
+  assert.equal(queue.push(gift("g2")).ok, true);
+  const full = queue.push(gift("g3"));
+  assert.equal(full.ok, false);
+  assert.equal(full.reason, "full");
+  assert.equal(queue.length, 4);
+});
+
+test("a cooling-down gift does not idle the machine when engagement is ready", () => {
+  const queue = new PrintQueue(100, 60_000);
+  queue.push(gift("g1", { username: "pengirim" }));
+  assert.equal(queue.beginNext().eventId, "g1");
+  queue.finishPrint();
+  queue.markIdle();
+  // Gift kedua dari pengirim yang sama masih cooldown; Emerald dari
+  // penonton lain sudah siap, jadi mesin mencetak Emerald lebih dulu
+  // daripada menganggur (prioritas berlaku di antara yang SIAP cetak).
+  queue.push(gift("g2", { username: "pengirim" }));
+  queue.push(gift("e1", { username: "pengetuk", tierOverride: "emerald" }));
+  assert.equal(queue.beginNext().eventId, "e1");
+});

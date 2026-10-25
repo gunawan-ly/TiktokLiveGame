@@ -325,6 +325,11 @@ oleh overlay. Target yang tampil di HUD berasal dari `config/game.json` atau par
   datang saat antrean penuh ditolak dan HUD menampilkan **ANTREAN PENUH** selama
   3 detik. Gift yang ditolak tidak dapat dikembalikan; besarkan `maxQueueItems`
   atau jalankan sesi yang rapi jika volume gift sangat tinggi.
+- Antrean punya dua jalur dengan prioritas kaku untuk gift: cetakan
+  engagement (Emerald dan Ruby) hanya dicetak saat tidak ada gift yang
+  siap, dan jalurnya dibatasi terpisah oleh `maxEngagementQueueItems`
+  (default 30). Jalur engagement yang penuh membuat cetakan gratis
+  dibuang diam-diam; gift tidak pernah tertolak gara-gara cetakan gratis.
 
 ### Parameter URL
 

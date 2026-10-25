@@ -129,7 +129,7 @@ async function bootstrap() {
   });
   tickerCredits.start();
   renderer = new OverlayRenderer({ config, tiers, elements, sound });
-  queue = new PrintQueue(config.maxQueueItems, config.senderGapMs);
+  queue = new PrintQueue(config.maxQueueItems, config.senderGapMs, config.maxEngagementQueueItems);
 
   const updateQueue = () => {
     renderer.setQueueLength(queue.length);
@@ -167,7 +167,11 @@ async function bootstrap() {
     renderer.prefetchAvatar(item.avatarUrl);
     const result = queue.push(item);
     if (!result.ok) {
-      if (result.reason === "full") {
+      if (result.reason === "engagement_full") {
+        // Jalur engagement penuh: cetakan gratis dibuang diam-diam,
+        // indikator ANTREAN PENUH di layar khusus untuk gift.
+        console.warn("Cetak Emerald dibuang: jalur engagement penuh.");
+      } else if (result.reason === "full") {
         renderer.flashQueueFull();
         console.warn("Cetak Emerald ditolak karena antrean penuh.");
       }
@@ -189,7 +193,10 @@ async function bootstrap() {
     renderer.prefetchAvatar(item.avatarUrl);
     const result = queue.push(item);
     if (!result.ok) {
-      if (result.reason === "full") {
+      if (result.reason === "engagement_full") {
+        // Sama seperti Emerald: dibuang diam-diam, tanpa indikator layar.
+        console.warn("Cetak Ruby dibuang: jalur engagement penuh.");
+      } else if (result.reason === "full") {
         renderer.flashQueueFull();
         console.warn("Cetak Ruby ditolak karena antrean penuh.");
       }
