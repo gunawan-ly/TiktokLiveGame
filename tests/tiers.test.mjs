@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  emeraldLevelFor,
   normalizeTiers,
   tierAccent,
   tierForCoins,
@@ -33,21 +34,45 @@ test("gift tier boundaries (bronze is likes-only)", () => {
 });
 
 test("tier labels are available", () => {
-  assert.equal(tierLabel("bronze", tiers), "PERUNGGU");
-  assert.equal(tierLabel("silver", tiers), "PERAK");
-  assert.equal(tierLabel("gold", tiers), "EMAS");
-  assert.equal(tierLabel("amethyst", tiers), "KECUBUNG");
-  assert.equal(tierLabel("diamond", tiers), "BERLIAN");
+  assert.equal(tierLabel("bronze", tiers), "BRONZE");
+  assert.equal(tierLabel("silver", tiers), "SILVER");
+  assert.equal(tierLabel("gold", tiers), "GOLD");
+  assert.equal(tierLabel("amethyst", tiers), "AMETHYST");
+  assert.equal(tierLabel("diamond", tiers), "DIAMOND");
   assert.equal(tierLabel("standard", tiers), "");
   assert.equal(tierAccent("amethyst"), "#a78bfa");
 });
 
 test("emerald is engagement-only: label exists, coins never produce it", () => {
-  assert.equal(tierLabel("emerald", tiers), "ZAMRUD");
+  assert.equal(tierLabel("emerald", tiers), "EMERALD");
   assert.equal(tierAccent("emerald"), "#34d399");
   for (const coins of [0, 10, 200, 29999, 1_000_000]) {
     assert.notEqual(tierForCoins(coins, tiers), "emerald", `coins=${coins}`);
   }
+});
+
+test("emerald level naik di kelipatan ambang 3, 6, 10", () => {
+  const cases = [
+    [0, 1],
+    [499, 1],
+    [500, 1],
+    [1000, 1],
+    [1499, 1],
+    [1500, 2],
+    [2500, 2],
+    [2999, 2],
+    [3000, 3],
+    [4999, 3],
+    [5000, 4],
+    [50000, 4],
+  ];
+  for (const [likes, expected] of cases) {
+    assert.equal(emeraldLevelFor(likes, 500), expected, `likes=${likes}`);
+  }
+  // Ambang custom (tes) diskalakan dari kelipatan, bukan angka mutlak.
+  assert.equal(emeraldLevelFor(30, 10), 2);
+  assert.equal(emeraldLevelFor(100, 10), 4);
+  assert.equal(emeraldLevelFor(undefined, undefined), 1);
 });
 
 test("custom thresholds override defaults", () => {

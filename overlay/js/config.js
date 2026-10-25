@@ -14,11 +14,11 @@ export const DEFAULT_CONFIG = {
   joinDurationMs: 3800,
   joinMaxVisible: 2,
   tiers: {
-    bronze: { minCoins: 10, label: "PERUNGGU" },
-    silver: { minCoins: 10, label: "PERAK" },
-    gold: { minCoins: 50, label: "EMAS" },
-    amethyst: { minCoins: 100, label: "KECUBUNG" },
-    diamond: { minCoins: 200, label: "BERLIAN" },
+    bronze: { minCoins: 10, label: "BRONZE" },
+    silver: { minCoins: 10, label: "SILVER" },
+    gold: { minCoins: 50, label: "GOLD" },
+    amethyst: { minCoins: 100, label: "AMETHYST" },
+    diamond: { minCoins: 200, label: "DIAMOND" },
   },
   sound: {
     enabled: false,
@@ -34,8 +34,8 @@ export const DEFAULT_CONFIG = {
     speed: 55,
     messages: [
       "Gift Mawar = cetak foto profilmu di Studio Photo",
-      "Tap-tap 500 like = cetak foto bingkai Zamrud",
-      "Total gift 10 koin = Perak, 50 koin = Emas, 100 koin = Kecubung, 200 koin = Berlian",
+      "Tap-tap 500 like = cetak foto bingkai Emerald, makin banyak like bingkainya makin mewah",
+      "Total gift 10 koin = Silver, 50 koin = Gold, 100 koin = Amethyst, 200 koin = Diamond",
       "Follow biar tidak ketinggalan live Studio Photo berikutnya",
     ],
   },
@@ -44,7 +44,7 @@ export const DEFAULT_CONFIG = {
     speed: 55,
     messages: ["♫ Backsound: Calm (Alex-Productions) • Haru (Roa Music) • CC BY"],
   },
-  // Ambang Zamrud dibaca connector dari config/game.json; overlay hanya
+  // Ambang Emerald dibaca connector dari config/game.json; overlay hanya
   // meneruskannya supaya satu file tetap jadi sumber kebenaran bersama.
   engagement: {
     likeThreshold: 500,

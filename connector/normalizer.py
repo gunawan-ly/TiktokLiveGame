@@ -170,7 +170,7 @@ def extract_like_signal(event: Any) -> LikeSignal | None:
 
     `count` is the number of likes this event carries for this user.
     `total_like_count` is the ROOM total and must never be used here:
-    the Zamrud threshold counts likes per user, not per room.
+    the Emerald threshold counts likes per user, not per room.
     """
 
     user = _read(event, "user")

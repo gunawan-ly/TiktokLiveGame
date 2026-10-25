@@ -194,3 +194,30 @@ test("feed keeps row slots unique and rotates printed rows to the drum", async (
   assert.equal(machine.minis.length, 3);
   assert.equal(machine.fedPhotos, 3);
 });
+
+test("emerald prints carry their like-level class, gifts do not", async () => {
+  const machine = buildMachine();
+  const printedCells = () =>
+    [...machine.sheet.children].flatMap((row) =>
+      [...row.children].filter((cell) => cell.dataset.printed === "1"),
+    );
+
+  await machine.print(
+    { displayName: "Pengetuk", avatarUrl: "", likeLevel: 3 },
+    "emerald",
+  );
+  assert.match(printedCells()[0].className, /tier-emerald/);
+  assert.match(printedCells()[0].className, /lv-3/);
+
+  await machine.print(
+    { displayName: "PengetukAwal", avatarUrl: "", likeLevel: 1 },
+    "emerald",
+  );
+  assert.doesNotMatch(printedCells()[1].className, /lv-/);
+
+  await machine.print(
+    { displayName: "Penggift", avatarUrl: "", likeLevel: 4 },
+    "gold",
+  );
+  assert.doesNotMatch(printedCells()[2].className, /lv-/);
+});

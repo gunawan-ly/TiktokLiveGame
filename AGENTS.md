@@ -92,7 +92,7 @@ Setiap gift wajib punya `eventId` unik; overlay menolak duplikat berdasar itu.
 Skema gift ter-normalisasi ada di `overlay/js/normalize.js` dan
 `connector/normalizer.py`; ubah keduanya bersamaan atau jangan sama sekali.
 
-Pesan `emerald_print` adalah perintah cetak Zamrud dari jalur tap-tap:
+Pesan `emerald_print` adalah perintah cetak Emerald dari jalur tap-tap:
 connector mengagregasi `LikeEvent` per user (`connector/likes.py`) dan
 mengirim pesan ini SETIAP KALI total like user menyentuh kelipatan ambang
 sesi (500, 1000, 1500, ...).
@@ -115,13 +115,15 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
 
 - Tier gift dari **total akumulasi koin per user dalam satu sesi
   connector** (termasuk combo yang baru selesai; keputusan Awan 24 Okt
-  2026): standar di bawah 10, **Perak 10+, Emas 50+, Kecubung 100+,
-  Berlian 200+**.
+  2026): standar di bawah 10, **Silver 10+, Gold 50+, Amethyst 100+,
+  Diamond 200+**.
   Combo tetap pemicu cetak (satu combo selesai = satu cetakan); kelas
-  bingkainya yang mengikuti akumulasi, dibawa field `cumulativeCoins`. **Perunggu khusus jalur like** (frame avatar
+  bingkainya yang mengikuti akumulasi, dibawa field `cumulativeCoins`. **Bronze khusus jalur like** (frame avatar
   strip Top Tap-Tap, bukan dari gift) dan tidak pernah dihasilkan
-  `tierForCoins`. Label: PERUNGGU, PERAK, EMAS, BERLIAN.
-- **Zamrud (label ZAMRUD) adalah tier engagement tap-tap, bukan gift:**
+  `tierForCoins`. Label: BRONZE, SILVER, GOLD, AMETHYST, DIAMOND, EMERALD.
+  **Ruby dicadangkan untuk tier jalur share** (belum dibangun; jangan
+  dipakai untuk hal lain).
+- **Emerald (label EMERALD) adalah tier engagement tap-tap, bukan gift:**
   profil penonton dicetak berbinkai zamrud saat total like-nya dalam satu
   sesi connector mencapai `engagement.likeThreshold` (default **500**,
   bisa dioverride env `LIKE_THRESHOLD` di connector). Cetak diberikan di
@@ -130,6 +132,13 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
   hitungan TERCETAK, tidak menambah koin; lewat antrean, cooldown, dan
   dedupe yang sama seperti gift (eventId unik per kelipatan).
   `tierForCoins` tidak pernah menghasilkan emerald.
+  **Progres kemewahan Emerald** (keputusan Awan 25 Okt 2026): bingkai
+  Emerald punya 4 level dari kelipatan ambang yang dicapai user:
+  Lv1 kelipatan 1-2, Lv2 kelipatan 3+, Lv3 kelipatan 6+, Lv4 kelipatan
+  10+ (dihitung `emeraldLevelFor` di `overlay/js/tiers.js` dari
+  `likeTotal`). Level menaikkan kekayaan bingkai saja (cincin lebih
+  lebar/dalam, chip nama dari Lv2, faset permata di Lv3-4); animasi
+  TIDAK bertambah, Emerald tetap statis di semua level.
 - Target koin per sesi: 500. Slot foto aktif 9 (grid 3x3), gulungan foto 7.
 - Antrean cetak FIFO, kapasitas **100** item (`maxQueueItems`); penuh = gift
   ditolak dengan indikator "ANTREAN PENUH", bukan ditumpuk tanpa batas.

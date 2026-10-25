@@ -8,7 +8,7 @@ from .normalizer import LikeSignal
 
 @dataclass(frozen=True, slots=True)
 class LikeAward:
-    """A viewer earned a Zamrud print by reaching a like multiple."""
+    """A viewer earned a Emerald print by reaching a like multiple."""
 
     user_id: str
     username: str
@@ -20,7 +20,7 @@ class LikeAward:
 
 
 class LikeTracker:
-    """Aggregate likes per user; award a Zamrud print at EVERY multiple.
+    """Aggregate likes per user; award a Emerald print at EVERY multiple.
 
     Keputusan Awan (24 Okt 2026): cetakan diberikan di kelipatan ambang
     (500, 1.000, 1.500, ...), bukan hanya sekali, supaya penonton tetap

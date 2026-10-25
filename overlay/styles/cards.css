@@ -105,7 +105,7 @@
   --glow-opacity: 1;
 }
 
-/* Zamrud: tier engagement tap-tap, bukan gift. SENGAJA statis: cincin
+/* Emerald: tier engagement tap-tap, bukan gift. SENGAJA statis: cincin
  * hijau tanpa denyut, tanpa putaran, tanpa sparkles, halo redup. Reward
  * gratis tidak boleh tampak lebih hidup dari bingkai gift berbayar
  * (keputusan Awan 24 Okt 2026 sesudah review screenshot). */
@@ -118,6 +118,57 @@
   --metal-e: #a7f3d0;
   --glow-color: rgba(52, 211, 153, 0.8);
   --glow-opacity: 0.55;
+}
+
+/* Progres kemewahan Emerald (aturan Awan 25 Okt 2026): level naik dari
+ * kelipatan like per sesi di kelipatan 3, 6, 10. Lv2 cincin lebih lebar
+ * dan dalam plus chip nama terbuka; Lv3 cincin berfaset seperti permata
+ * dipotong; Lv4 faset lebih halus dan palet paling terang. Semua tetap
+ * STATIS: kekayaannya yang naik, bukan animasinya. */
+.print-cell.tier-emerald.lv-2 {
+  --ring-w: 0.94rem;
+  --metal-a: #04241a;
+  --metal-b: #8ff5c8;
+  --metal-d: #065f46;
+  --metal-e: #bbf7d0;
+  --glow-opacity: 0.6;
+}
+
+.print-cell.tier-emerald.lv-3 {
+  --ring-w: 1rem;
+  --metal-a: #032117;
+  --metal-b: #a7f3d0;
+  --metal-d: #047857;
+  --metal-e: #d1fae5;
+  --glow-opacity: 0.65;
+}
+
+.print-cell.tier-emerald.lv-3 .frame-metal {
+  background: repeating-conic-gradient(
+    from 0deg,
+    var(--metal-c) 0deg 16deg,
+    var(--metal-b) 16deg 32deg,
+    var(--metal-d) 32deg 48deg
+  );
+}
+
+.print-cell.tier-emerald.lv-4 {
+  --ring-w: 1rem;
+  --metal-a: #021a12;
+  --metal-b: #bbf7d0;
+  --metal-c: #4ade80;
+  --metal-d: #059669;
+  --metal-e: #ecfdf5;
+  --glow-opacity: 0.7;
+}
+
+.print-cell.tier-emerald.lv-4 .frame-metal {
+  background: repeating-conic-gradient(
+    from 0deg,
+    var(--metal-c) 0deg 10deg,
+    var(--metal-b) 10deg 20deg,
+    var(--metal-d) 20deg 30deg
+  );
 }
 
 .print-cell.is-done {
@@ -176,9 +227,9 @@
   animation: ringSpin 9s linear infinite;
 }
 
-/* Emas menyusul Perak/Berlian (review Awan 24 Okt 2026: Emas satu-satunya
+/* Gold menyusul Silver/Diamond (review Awan 24 Okt 2026: Gold satu-satunya
  * tier gift berbayar yang diam). Denyut halo sama, putaran lebih lambat
- * (12 detik) supaya tetap terasa di atas Perak. */
+ * (12 detik) supaya tetap terasa di atas Silver. */
 .print-cell.tier-gold .frame-glow {
   animation: glowPulse 2.4s ease-in-out infinite;
 }
@@ -187,7 +238,7 @@
   animation: ringSpin 12s linear infinite;
 }
 
-/* Kecubung (100+): di antara Emas dan Berlian. Denyut halo sama, putaran
+/* Amethyst (100+): di antara Gold dan Diamond. Denyut halo sama, putaran
  * 10 detik, sparkles 5 (machine.js), chip nama + pil ungu. */
 .print-cell.tier-amethyst .frame-glow {
   animation: glowPulse 2.4s ease-in-out infinite;
@@ -401,13 +452,16 @@
   transform: translateY(0);
 }
 
-/* Nama ber-chip untuk Emas ke atas (permintaan Awan 24 Okt 2026):
+/* Nama ber-chip untuk Gold ke atas (permintaan Awan 24 Okt 2026):
  * teks nama duduk di atas pil sewarna tiernya, sekeluarga dengan pil
  * tier, supaya nama tier tinggi terasa lebih eksklusif dan tetap terbaca
  * walau dekat cincin baris tetangga. */
 .print-cell.tier-gold .card-name,
 .print-cell.tier-amethyst .card-name,
-.print-cell.tier-diamond .card-name {
+.print-cell.tier-diamond .card-name,
+.print-cell.tier-emerald.lv-2 .card-name,
+.print-cell.tier-emerald.lv-3 .card-name,
+.print-cell.tier-emerald.lv-4 .card-name {
   width: fit-content;
   margin-inline: auto;
   padding: 0.1rem 0.7rem 0.14rem;
@@ -430,6 +484,15 @@
   background: linear-gradient(180deg, rgba(215, 246, 255, 0.95), rgba(139, 233, 255, 0.92));
   color: #0c4a5e;
   box-shadow: 0 0.15rem 0.5rem rgba(80, 170, 205, 0.45);
+}
+
+/* Chip nama Emerald terbuka dari Lv2 ke atas (progres like). */
+.print-cell.tier-emerald.lv-2 .card-name,
+.print-cell.tier-emerald.lv-3 .card-name,
+.print-cell.tier-emerald.lv-4 .card-name {
+  background: linear-gradient(180deg, rgba(167, 243, 208, 0.95), rgba(16, 185, 129, 0.95));
+  color: #04362a;
+  box-shadow: 0 0.15rem 0.5rem rgba(6, 60, 44, 0.5);
 }
 
 .tier-pill {

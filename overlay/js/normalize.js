@@ -51,7 +51,7 @@ export function avatarHueFor(name) {
   return 18 + (hash % 300);
 }
 
-// Tier emerald (Zamrud) hanya lahir dari jalur engagement tap-tap:
+// Tier emerald (Emerald) hanya lahir dari jalur engagement tap-tap:
 // tierForCoins tidak pernah menghasilkannya karena bukan tier gift.
 // Itemnya membawa tierOverride "emerald" dari normalizer pesan
 // emerald_print, memakai antrean cetak yang sama, tanpa koin.

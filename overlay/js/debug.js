@@ -55,8 +55,15 @@ export function setupDebugPanel({ enabled, pushGift, pushEmerald, pushJoin, clea
   });
 }
 
+// Klik tombol Emerald di panel debug menaiki tangga progres:
+// 500 (Lv1) -> 1500 (Lv2) -> 3000 (Lv3) -> 5000 (Lv4) -> ulang.
+const DEBUG_EMERALD_STEPS = [500, 1500, 3000, 5000];
+let debugEmeraldStep = 0;
+
 function makeEmerald(displayName) {
   debugSequence += 1;
+  const likeTotal = DEBUG_EMERALD_STEPS[debugEmeraldStep % DEBUG_EMERALD_STEPS.length];
+  debugEmeraldStep += 1;
   return {
     type: "emerald_print",
     eventId: `debug-emerald-${Date.now().toString(36)}-${debugSequence}`,
@@ -65,7 +72,7 @@ function makeEmerald(displayName) {
       displayName,
       avatarUrl: "",
     },
-    likeTotal: 500,
+    likeTotal,
     threshold: 500,
     timestamp: new Date().toISOString(),
   };

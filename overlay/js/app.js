@@ -7,7 +7,7 @@ import { OverlayRenderer } from "./render.js";
 import { startSimulation } from "./simulate.js";
 import { PrintSound } from "./sound.js";
 import { Ticker } from "./ticker.js";
-import { normalizeTiers, tierForCoins } from "./tiers.js";
+import { normalizeTiers, tierForCoins, emeraldLevelFor } from "./tiers.js";
 import { StudioSocket } from "./ws.js";
 
 const elements = {
@@ -159,16 +159,17 @@ async function bootstrap() {
   const acceptEmerald = (message) => {
     const item = normalizeEmeraldMessage(message);
     if (!item) {
-      console.warn("Cetak Zamrud diabaikan karena payload tidak valid.");
+      console.warn("Cetak Emerald diabaikan karena payload tidak valid.");
       return false;
     }
+    item.likeLevel = emeraldLevelFor(item.likeTotal, config.engagement?.likeThreshold);
     pokeAudio();
     renderer.prefetchAvatar(item.avatarUrl);
     const result = queue.push(item);
     if (!result.ok) {
       if (result.reason === "full") {
         renderer.flashQueueFull();
-        console.warn("Cetak Zamrud ditolak karena antrean penuh.");
+        console.warn("Cetak Emerald ditolak karena antrean penuh.");
       }
       return false;
     }

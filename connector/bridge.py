@@ -191,7 +191,7 @@ class Bridge:
         return True
 
     async def publish_emerald(self, award, run_id: str) -> None:
-        """Broadcast a Zamrud print a viewer earned via tap-tap.
+        """Broadcast a Emerald print a viewer earned via tap-tap.
 
         Counts as a print in the session stats but never as coins: it is
         an engagement reward, not a gift. The event id is deterministic
@@ -227,7 +227,7 @@ class Bridge:
                 },
             )
         self.logger.info(
-            "Zamrud -> %s | %d like (ambang %d)",
+            "Emerald -> %s | %d like (ambang %d)",
             award.display_name,
             award.like_total,
             award.threshold,

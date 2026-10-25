@@ -16,11 +16,11 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
 - **Kertas cetak** bergaya vintage, 3 baris × 3 kolom. Baris yang turun ke roller
   bawah, snapshot salinan mini ke **drum** di atas gulungan (maks 7, `maxRollPhotos`).
 - **Bingkai tier mewah** dalam bentuk **cincin perhiasan di keliling foto**:
-  - **Perunggu**: cincin copper dengan sheen facet (khusus jalur like).
-  - **Perak**: cincin satin putih-biru dan multitint.
-  - **Emas**: cincin kuning berkilau multi-stop + kilat.
-  - **Kecubung**: cincin ungu violet dengan denyut halo + putaran 10 detik.
-  - **Berlian**: cincin ice dengan rotasi perlahan + luster glow.
+  - **Bronze**: cincin copper dengan sheen facet (khusus jalur like).
+  - **Silver**: cincin satin putih-biru dan multitint.
+  - **Gold**: cincin kuning berkilau multi-stop + kilat.
+  - **Amethyst**: cincin ungu violet dengan denyut halo + putaran 10 detik.
+  - **Diamond**: cincin ice dengan rotasi perlahan + luster glow.
   - Cincin menggambar setengah putaran mulai dari atas (`--draw`) setiap cetakan,
     lalu sweep kilau sekali ketika selesai.
 - **Nama pengirim** digambar ketik per huruf mengikuti fase drawing; tier
@@ -30,7 +30,7 @@ Overlay memakai mesin cetak kinetik ala plotter/printer 3D:
 
 - Target koin default: **500**
 - Tier gift (dari total akumulasi koin per penonton dalam satu sesi):
-  Standar <10, Perak 10+, Emas 50+, Kecubung 100+, Berlian 200+; Perunggu
+  Standar <10, Silver 10+, Gold 50+, Amethyst 100+, Diamond 200+; Bronze
   khusus like (frame avatar strip Top Tap-Tap, bukan dari gift)
 - Slot foto aktif: **9** (kertas mesin), gulungan: **7**
 - Overlay: `http://127.0.0.1:5173/overlay/`
@@ -93,7 +93,7 @@ Buka:
 http://127.0.0.1:5173/overlay/
 ```
 
-Connector mock mengirim combo, tier Standar sampai Berlian, avatar rusak, dan burst
+Connector mock mengirim combo, tier Standar sampai Diamond, avatar rusak, dan burst
 gift tanpa API key. Hentikan connector dengan `Ctrl+C`; log sesi dan statistik akhir
 tetap ditulis ke `logs/`.
 
@@ -163,7 +163,7 @@ Di Windows: `.\.venv\Scripts\python -m connector.main` (awalan `.\`
 wajib di PowerShell, dan jalurnya memakai `\Scripts\`, bukan `/bin/`).
 
 Periksa log awalnya: `WebSocket bridge aktif di ws://127.0.0.1:8080`,
-`Target koin: 500`, dan `Ambang Zamrud (like per user per sesi): 500`.
+`Target koin: 500`, dan `Ambang Emerald (like per user per sesi): 500`.
 Kalau room belum live, connector menampilkan status `waiting` dan mencoba
 lagi sendiri; saat koneksi terputus, backoff mulai dari 5 detik sampai
 maksimum 30 detik. Override username tanpa mengubah `.env`:
@@ -194,8 +194,8 @@ sendiri begitu musik berputar. Pastikan source tidak di-mute di mixer.
 **9. Selama live: semua hitungan per sesi connector**
 
 - Kelas bingkai gift mengikuti **akumulasi koin per penonton** sesi ini
-  (Perak 10+, Emas 50+, Kecubung 100+, Berlian 200+), bukan per gift.
-- Cetak Zamrud keluar di **setiap kelipatan 500 like per penonton**,
+  (Silver 10+, Gold 50+, Amethyst 100+, Diamond 200+), bukan per gift.
+- Cetak Emerald keluar di **setiap kelipatan 500 like per penonton**,
   dengan log `Progres like @user: X/500` di terminal connector.
 - Popup orang masuk tampil sekali per penonton per sesi.
 - **Restart connector = sesi baru**: akumulasi koin, hitungan like, dan
@@ -244,15 +244,21 @@ kolom komentar TikTok yang menutupi area bawah layar); pesannya dari
 pesannya dari `tickerCredits.messages`. Keduanya bisa dimatikan terpisah
 dengan `?ticker=0` dan `?tickerCredits=0`.
 
-Cetak Zamrud adalah reward tap-tap: profil penonton dicetak dengan
-bingkai zamrud saat total like-nya dalam satu sesi mencapai
+Cetak Emerald adalah reward tap-tap: profil penonton dicetak dengan
+bingkai Emerald saat total like-nya dalam satu sesi mencapai
 `engagement.likeThreshold` (default 500, diatur di `config/game.json`;
 connector juga menerima override env `LIKE_THRESHOLD`, berguna untuk uji
 live dengan ambang kecil). Cetakan diberikan di setiap kelipatan ambang
 (500, 1.000, 1.500, ...) per penonton per sesi connector, menambah
-hitungan tercetak tanpa menambah koin. Tombol
-"Zamrud · Tap 500" di panel debug (`?debug=1`) mensimulasikannya tanpa
-connector.
+hitungan tercetak tanpa menambah koin. Makin tinggi kelipatan yang
+dicapai, makin mewah bingkainya: level naik di kelipatan 3 (1.500 like,
+cincin lebih lebar + chip nama), kelipatan 6 (3.000 like, cincin
+berfaset), dan kelipatan 10 (5.000 like, faset halus + palet paling
+terang). Kemewahan naik lewat kekayaan bingkai, bukan animasi; Emerald
+tetap statis di semua level supaya tidak menyaingi gift berbayar.
+Tombol "Emerald · Tap 500" di panel debug (`?debug=1`) mensimulasikannya
+tanpa connector; klik berulang menaiki tangga levelnya (500, 1.500,
+3.000, 5.000, lalu mengulang).
 
 Popup sambutan orang masuk: setiap penonton yang bergabung ke live
 muncul sekali per sesi sebagai notifikasi mini di pojok kanan bawah
@@ -278,11 +284,11 @@ Edit `config/game.json`:
   "joinDurationMs": 3800,
   "joinMaxVisible": 2,
   "tiers": {
-    "bronze": { "minCoins": 10, "label": "PERUNGGU" },
-    "silver": { "minCoins": 10, "label": "PERAK" },
-    "gold": { "minCoins": 50, "label": "EMAS" },
-    "amethyst": { "minCoins": 100, "label": "KECUBUNG" },
-    "diamond": { "minCoins": 200, "label": "BERLIAN" }
+    "bronze": { "minCoins": 10, "label": "BRONZE" },
+    "silver": { "minCoins": 10, "label": "SILVER" },
+    "gold": { "minCoins": 50, "label": "GOLD" },
+    "amethyst": { "minCoins": 100, "label": "AMETHYST" },
+    "diamond": { "minCoins": 200, "label": "DIAMOND" }
   }
 }
 ```
@@ -307,7 +313,7 @@ oleh overlay. Target yang tampil di HUD berasal dari `config/game.json` atau par
 
 | Parameter | Contoh | Fungsi |
 | --- | --- | --- |
-| `debug` | `?debug=1` | Panel tes: tier, Zamrud, orang masuk, avatar rusak, antrean, kosongkan antrean |
+| `debug` | `?debug=1` | Panel tes: tier, Emerald, orang masuk, avatar rusak, antrean, kosongkan antrean |
 | `sim` | `?sim=1` | Simulasi lokal tanpa connector/WebSocket |
 | `ws` | `?ws=ws://127.0.0.1:8080` | Override alamat WebSocket |
 | `target` | `?target=1000` | Override target koin |
@@ -362,7 +368,7 @@ Verifikasi visual yang sudah dilakukan:
 
 - Mesin cetak v3: fase move/press/draw/lift/feed berjalan; kepala cetak berpindah
   kolom 1 → 2 → 3; kertas bergulir tiap 3 foto dan baris lama melilit roller bawah.
-- Cincin tier Perunggu/Perak/Emas/Berlian tergambar, badge tier muncul, nama
+- Cincin tier Bronze/Silver/Gold/Diamond tergambar, badge tier muncul, nama
   pengirim diketik mengikuti fase drawing.
 - Snapshot gulungan: foto lebih lama muncul sebagai mini avatar ber-dot accent tier
   di drum, counter GULUNGAN akurat (maks 7).
@@ -428,10 +434,10 @@ Source, **Interact**, klik sekali di area overlay. Chip "Musik terkunci" di
 overlay adalah penandanya; chip hilang sendiri saat musik mulai berputar.
 Cek juga mixer (tidak mute, track audio tercentang).
 
-**Cetak Zamrud tidak kunjung muncul**
+**Cetak Emerald tidak kunjung muncul**
 Tiga penyebab yang sudah terbukti: (1) connector belum direstart setelah
 `git pull`, jadi ambang yang terbaca masih yang lama (cek baris log
-`Ambang Zamrud ... : 500` saat connector start); (2) like berasal dari akun
+`Ambang Emerald ... : 500` saat connector start); (2) like berasal dari akun
 host sendiri, yang tidak dihitung TikTok sebagai like penonton; (3) ambang
 belum tercapai **per penonton** (bukan total room). Untuk uji cepat, restart
 connector dengan `LIKE_THRESHOLD=10` lalu tap-tap dari akun kedua sampai
@@ -440,7 +446,7 @@ log `Progres like` mencapai ambang dan cetakan keluar.
 **Kelas bingkai penonton tiba-tiba kembali ke awal**
 Akumulasi koin per penonton hidup di connector; restart connector memulai
 sesi baru dan semua total kembali ke nol. Itu perilaku yang benar, bukan
-bug. Hal yang sama berlaku untuk hitungan like Zamrud dan sambutan popup
+bug. Hal yang sama berlaku untuk hitungan like Emerald dan sambutan popup
 orang masuk.
 
 ## Keamanan

@@ -145,8 +145,8 @@ async def live_forever(
                 if awards:
                     for award in awards:
                         LOGGER.info(
-                            "Zamrud diraih @%s dengan %d like "
-                            "(cetakan Zamrud ke-%d untuknya sesi ini); "
+                            "Emerald diraih @%s dengan %d like "
+                            "(cetakan Emerald ke-%d untuknya sesi ini); "
                             "menerbitkan cetakan.",
                             award.username,
                             award.like_total,
@@ -289,7 +289,7 @@ async def async_main(args: argparse.Namespace) -> int:
     if session_log:
         LOGGER.info("Log sesi: %s", session_log.path)
     LOGGER.info("Target koin: %d", config.target_coins)
-    LOGGER.info("Ambang Zamrud (like per user per sesi): %d", config.like_threshold)
+    LOGGER.info("Ambang Emerald (like per user per sesi): %d", config.like_threshold)
 
     tasks = [asyncio.create_task(flush_loop(aggregator, bridge, stop), name="flush")]
     if args.mock:

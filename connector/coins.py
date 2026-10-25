@@ -12,7 +12,7 @@ class CoinLedger:
     penonton setia. Combo tetap menjadi pemicu cetak (satu combo selesai
     = satu cetakan); ledger hanya menentukan kelas bingkainya, dihitung
     termasuk combo yang baru selesai. Restart connector = sesi baru,
-    semua total kembali ke nol, sama seperti hitungan like Zamrud.
+    semua total kembali ke nol, sama seperti hitungan like Emerald.
     """
 
     def __init__(self) -> None:

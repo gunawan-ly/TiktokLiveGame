@@ -104,7 +104,7 @@ test("normalizes an emerald print message", () => {
   assert.equal(item.displayName, "Pengetuk Setia");
   assert.equal(item.tierOverride, "emerald");
   assert.equal(item.likeTotal, 1000);
-  // Zamrud tidak pernah membawa koin: bukan gift.
+  // Emerald tidak pernah membawa koin: bukan gift.
   assert.equal(item.totalCoins, 0);
   assert.equal(item.repeat, 1);
   assert.equal(item.giftName, "Tap-Tap");

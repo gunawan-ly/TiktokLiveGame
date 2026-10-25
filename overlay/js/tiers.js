@@ -14,12 +14,12 @@ export const DEFAULT_TIER_MIN = {
 };
 
 export const TIER_LABEL = {
-  bronze: "PERUNGGU",
-  silver: "PERAK",
-  gold: "EMAS",
-  amethyst: "KECUBUNG",
-  diamond: "BERLIAN",
-  emerald: "ZAMRUD",
+  bronze: "BRONZE",
+  silver: "SILVER",
+  gold: "GOLD",
+  amethyst: "AMETHYST",
+  diamond: "DIAMOND",
+  emerald: "EMERALD",
 };
 
 export const TIER_ACCENT = {
@@ -84,4 +84,18 @@ export function tierLabel(tier, tiers) {
 
 export function tierAccent(tier) {
   return TIER_ACCENT[tier] || TIER_ACCENT.standard;
+}
+
+// Progres kemewahan Emerald (jalur like): level naik dari KELIPATAN
+// ambang yang dicapai penonton dalam satu sesi (kelipatan 3, 6, 10).
+// Kemewahan tumbuh lewat kekayaan bingkai (cincin lebih lebar dan
+// dalam, chip nama, faset permata), BUKAN animasi: jalur gratis tidak
+// boleh tampak lebih hidup dari gift berbayar (aturan Awan, 25 Okt 2026).
+export function emeraldLevelFor(likeTotal, threshold) {
+  const base = Math.max(1, Math.floor(Number(threshold) || 500));
+  const multiple = Math.floor(Math.max(0, Number(likeTotal) || 0) / base);
+  if (multiple >= 10) return 4;
+  if (multiple >= 6) return 3;
+  if (multiple >= 3) return 2;
+  return 1;
 }

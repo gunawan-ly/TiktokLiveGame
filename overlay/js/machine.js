@@ -246,7 +246,9 @@ export class PrintMachine {
 
   _prepareCell(cell, item, tier) {
     cell.replaceChildren();
-    cell.className = `print-cell tier-${tier} is-busy is-printing`;
+    const levelClass =
+      tier === "emerald" && item.likeLevel > 1 ? ` lv-${item.likeLevel}` : "";
+    cell.className = `print-cell tier-${tier}${levelClass} is-busy is-printing`;
     cell.dataset.printed = "1";
     cell.append(this._buildFrame(tier));
     cell.append(this._buildPhoto(item));
