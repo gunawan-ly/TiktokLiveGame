@@ -106,11 +106,11 @@
 }
 
 /* Emerald: tier engagement tap-tap, bukan gift. Gradasi conic halus
- * seperti tier lain. Lv1 tenang (tanpa animasi dan sparkles) sebagai
- * anak tangga pertama; level di atasnya makin hidup sampai setara
- * tier gift. Pembeda jalur gratis dan berbayar adalah WARNA hijaunya,
- * bukan kemewahan yang ditahan (keputusan Awan 25 Okt 2026, merevisi
- * aturan statis 24 Okt 2026). */
+ * seperti tier lain, dan semua levelnya berdenyut halo (animasi polos,
+ * keputusan Awan 25 Okt 2026); sparkles dan putaran tetap tangga
+ * kemewahan per level. Pembeda jalur gratis dan berbayar adalah WARNA
+ * hijaunya, bukan kemewahan yang ditahan (merevisi aturan statis
+ * 24 Okt 2026). */
 .print-cell.tier-emerald {
   --ring-w: 0.88rem;
   --metal-a: #064e3b;
@@ -134,7 +134,7 @@
   --metal-b: #8ff5c8;
   --metal-d: #065f46;
   --metal-e: #bbf7d0;
-  --glow-opacity: 0.7;
+  --glow-opacity: 0.8;
 }
 
 .print-cell.tier-emerald.lv-3 {
@@ -154,11 +154,6 @@
   --metal-d: #059669;
   --metal-e: #ecfdf5;
   --glow-opacity: 1;
-}
-
-.print-cell.tier-emerald.lv-3 .frame-glow,
-.print-cell.tier-emerald.lv-4 .frame-glow {
-  animation: glowPulse 2.4s ease-in-out infinite;
 }
 
 .print-cell.tier-emerald.lv-4.is-done .frame-wrap {
@@ -240,6 +235,13 @@
 
 .print-cell.tier-amethyst.is-done .frame-wrap {
   animation: ringSpin 10s linear infinite;
+}
+
+/* Emerald semua level: animasi polos berupa denyut halo saja
+ * (keputusan Awan 25 Okt 2026). Lv1/Lv2 berhenti di situ; kekayaan
+ * gerak di atasnya (sparkles, putaran) tetap tangga level. */
+.print-cell.tier-emerald .frame-glow {
+  animation: glowPulse 2.4s ease-in-out infinite;
 }
 
 .frame-wrap {
@@ -412,7 +414,7 @@
     rgba(160, 0, 255, 0.5),
     rgba(255, 0, 128, 0.5)
   );
-  opacity: 0.16;
+  opacity: 0.22;
   animation: ringSpin 10s linear infinite;
 }
 
@@ -448,10 +450,11 @@
 }
 
 .print-cell.tier-amethyst .frame-gem {
-  background: radial-gradient(circle at 35% 35%, #f5f3ff, #a78bfa 55%, #7c3aed);
+  width: 0.58rem;
+  background: radial-gradient(circle at 35% 35%, #ffffff, #c4b5fd 45%, #8b5cf6 75%, #7c3aed);
   box-shadow:
-    0 0 0.4rem rgba(139, 92, 246, 0.85),
-    inset 0 0 0.1rem rgba(255, 255, 255, 0.7);
+    0 0 0.5rem rgba(167, 139, 250, 0.95),
+    inset 0 0 0.12rem rgba(255, 255, 255, 0.85);
 }
 
 .print-cell.tier-diamond .frame-gem {
