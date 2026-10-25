@@ -62,6 +62,32 @@
   }
 }
 
+@keyframes rippleOut {
+  0% {
+    transform: scale(0.98);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1.38);
+    opacity: 0;
+  }
+}
+
+@keyframes gemTwinkle {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.18);
+    filter: brightness(1.35);
+  }
+}
+
 @keyframes rollerSpin {
   to {
     background-position-x: 4.4rem;

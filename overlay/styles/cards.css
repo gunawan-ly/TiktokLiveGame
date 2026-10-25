@@ -95,7 +95,7 @@
 }
 
 .print-cell.tier-diamond {
-  --ring-w: 1rem;
+  --ring-w: 1.08rem;
   --metal-a: #74d8f4;
   --metal-b: #ffffff;
   --metal-c: #b48dfd;
@@ -336,6 +336,135 @@
 
 .print-cell.tier-standard.is-done .frame-shine {
   animation: none;
+}
+
+/* Paket mewah Gold/Amethyst/Diamond (25 Okt 2026): bezel ganda dengan
+ * rim terang di tepi luar dan garis rim di tepi dalam cincin, tekstur
+ * logam brushed mikro di atas gradasi, kilau yang terus beredar sesudah
+ * cetak selesai, dan riak cahaya sekali tembak di momen selesai.
+ * Amethyst dan Diamond ditambah permata keliling; Diamond ditambah
+ * api prisma tipis dan cincin paling gemuk (1.08rem di blok varnya). */
+.print-cell.tier-gold {
+  --ripple-color: rgba(244, 209, 106, 0.8);
+}
+
+.print-cell.tier-amethyst {
+  --ripple-color: rgba(167, 139, 250, 0.8);
+}
+
+.print-cell.tier-diamond {
+  --ripple-color: rgba(139, 233, 255, 0.85);
+}
+
+.print-cell.tier-gold .frame-metal,
+.print-cell.tier-amethyst .frame-metal,
+.print-cell.tier-diamond .frame-metal {
+  background:
+    radial-gradient(
+      closest-side,
+      transparent calc(100% - var(--ring-w) + 0.05rem),
+      rgba(255, 255, 255, 0.85) calc(100% - var(--ring-w) + 0.1rem),
+      transparent calc(100% - var(--ring-w) + 0.17rem)
+    ),
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 255, 255, 0.055) 0deg 1deg,
+      rgba(0, 0, 0, 0.055) 1deg 2deg
+    ),
+    conic-gradient(
+      from 0deg,
+      var(--metal-a),
+      var(--metal-b) 20%,
+      var(--metal-c) 37%,
+      var(--metal-d) 50%,
+      var(--metal-e) 63%,
+      var(--metal-b) 79%,
+      var(--metal-a)
+    );
+  box-shadow:
+    inset 0 0 0 0.11rem rgba(255, 255, 255, 0.75),
+    inset 0 0 0 0.19rem rgba(0, 0, 0, 0.22),
+    inset 0 0 0.4rem rgba(0, 0, 0, 0.28);
+}
+
+/* Kilau beredar: pita cahaya shine mengorbit perlahan selama kartu
+ * tampil, lebih lambat dari putaran cincinnya supaya terasa parallaks. */
+.print-cell.tier-gold.is-done .frame-shine,
+.print-cell.tier-amethyst.is-done .frame-shine,
+.print-cell.tier-diamond.is-done .frame-shine {
+  opacity: 0.5;
+  animation: ringSpin 5.5s linear infinite;
+}
+
+/* Api prisma Diamond: lapisan pelangi sangat tipis yang berputar
+ * pelan di atas logam esnya. */
+.print-cell.tier-diamond .frame-metal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 0, 128, 0.5),
+    rgba(255, 200, 0, 0.5),
+    rgba(0, 255, 170, 0.5),
+    rgba(0, 140, 255, 0.5),
+    rgba(160, 0, 255, 0.5),
+    rgba(255, 0, 128, 0.5)
+  );
+  opacity: 0.16;
+  animation: ringSpin 10s linear infinite;
+}
+
+/* Riak selesai cetak: satu gelombang cincin mengembang dari bingkai
+ * lalu hilang, selaras dengan kemunculan pil (delay 0.5s). */
+.print-cell.tier-gold.is-done .cell-frame::after,
+.print-cell.tier-amethyst.is-done .cell-frame::after,
+.print-cell.tier-diamond.is-done .cell-frame::after {
+  content: "";
+  position: absolute;
+  inset: -0.1rem;
+  border-radius: 50%;
+  border: 0.14rem solid var(--ripple-color, rgba(255, 255, 255, 0.7));
+  opacity: 0;
+  pointer-events: none;
+  animation: rippleOut 1.1s ease-out 0.5s 1 both;
+}
+
+/* Permata keliling cincin (Amethyst 8, Diamond 10 dari machine.js). */
+.frame-gems {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.frame-gem {
+  position: absolute;
+  width: 0.52rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.print-cell.tier-amethyst .frame-gem {
+  background: radial-gradient(circle at 35% 35%, #f5f3ff, #a78bfa 55%, #7c3aed);
+  box-shadow:
+    0 0 0.4rem rgba(139, 92, 246, 0.85),
+    inset 0 0 0.1rem rgba(255, 255, 255, 0.7);
+}
+
+.print-cell.tier-diamond .frame-gem {
+  width: 0.58rem;
+  background: radial-gradient(circle at 35% 35%, #ffffff, #a5f3fc 55%, #38bdf8);
+  box-shadow:
+    0 0 0.45rem rgba(125, 211, 252, 0.95),
+    inset 0 0 0.1rem rgba(255, 255, 255, 0.8);
+}
+
+.print-cell.is-done .frame-gem {
+  animation: gemTwinkle 2.2s ease-in-out infinite;
+  animation-delay: var(--gem-delay, 0ms);
 }
 
 .photo-reveal {

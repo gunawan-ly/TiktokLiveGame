@@ -278,3 +278,22 @@ test("emerald sparkles follow the like level", async () => {
   );
   assert.equal(sparkleCount(printedCells()[2]), 6);
 });
+
+test("luxury gems ring amethyst and diamond only", async () => {
+  const machine = buildMachine();
+  const printedCells = () =>
+    [...machine.sheet.children].flatMap((row) =>
+      [...row.children].filter((cell) => cell.dataset.printed === "1"),
+    );
+  const gemCount = (cell) =>
+    cell.querySelector(".frame-gems")?.children.length ?? 0;
+
+  await machine.print({ displayName: "Emas", avatarUrl: "" }, "gold");
+  assert.equal(gemCount(printedCells()[0]), 0);
+
+  await machine.print({ displayName: "Ungu", avatarUrl: "" }, "amethyst");
+  assert.equal(gemCount(printedCells()[1]), 8);
+
+  await machine.print({ displayName: "Es", avatarUrl: "" }, "diamond");
+  assert.equal(gemCount(printedCells()[2]), 10);
+});

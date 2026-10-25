@@ -17,7 +17,10 @@ const PHASES = {
   feed: 0.23,
 };
 
-const SPARKLE_COUNT = { standard: 0, bronze: 0, silver: 2, gold: 4, amethyst: 5, diamond: 6, emerald: 0 };
+const SPARKLE_COUNT = { standard: 0, bronze: 0, silver: 2, gold: 6, amethyst: 7, diamond: 9, emerald: 0 };
+// Permata keliling cincin (paket mewah 25 Okt 2026): hanya Amethyst
+// dan Diamond yang cincinnya bertabur permata.
+const GEM_COUNT = { amethyst: 8, diamond: 10 };
 // Sparkles Emerald mengikuti level progres like: kemewahan jalur like
 // disamakan dengan tier gift (keputusan Awan 25 Okt 2026); yang
 // membedakan jalur berbayar dan gratis adalah warnanya.
@@ -265,6 +268,10 @@ export class PrintMachine {
     if (sparkles) {
       cell.append(sparkles);
     }
+    const gems = this._buildGems(tier);
+    if (gems) {
+      cell.append(gems);
+    }
   }
 
   _buildFrame(tier) {
@@ -360,6 +367,25 @@ export class PrintMachine {
       sparkle.style.setProperty("--sparkle-delay", `${index * 130}ms`);
       sparkle.style.setProperty("--sparkle-size", index % 2 ? "0.4rem" : "0.56rem");
       box.append(sparkle);
+    }
+    return box;
+  }
+
+  _buildGems(tier) {
+    const count = GEM_COUNT[tier] || 0;
+    if (!count) {
+      return null;
+    }
+    const box = document.createElement("span");
+    box.className = "frame-gems";
+    for (let index = 0; index < count; index += 1) {
+      const gem = document.createElement("i");
+      gem.className = "frame-gem";
+      const angle = (Math.PI * 2 * index) / count - Math.PI / 2;
+      gem.style.left = `${50 + 46 * Math.cos(angle)}%`;
+      gem.style.top = `${45 + 40 * Math.sin(angle)}%`;
+      gem.style.setProperty("--gem-delay", `${index * 170}ms`);
+      box.append(gem);
     }
     return box;
   }
