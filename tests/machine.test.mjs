@@ -250,3 +250,31 @@ test("print pills show session totals, long text shrinks", async () => {
   assert.equal(emeraldPill.textContent, "10,5 rb like");
   assert.match(emeraldPill.className, /is-long/);
 });
+
+test("emerald sparkles follow the like level", async () => {
+  const machine = buildMachine();
+  const printedCells = () =>
+    [...machine.sheet.children].flatMap((row) =>
+      [...row.children].filter((cell) => cell.dataset.printed === "1"),
+    );
+  const sparkleCount = (cell) =>
+    cell.querySelector(".card-sparkles")?.children.length ?? 0;
+
+  await machine.print(
+    { displayName: "Awal", avatarUrl: "", likeLevel: 1, likeTotal: 500 },
+    "emerald",
+  );
+  assert.equal(sparkleCount(printedCells()[0]), 0);
+
+  await machine.print(
+    { displayName: "Tengah", avatarUrl: "", likeLevel: 3, likeTotal: 3000 },
+    "emerald",
+  );
+  assert.equal(sparkleCount(printedCells()[1]), 4);
+
+  await machine.print(
+    { displayName: "Puncak", avatarUrl: "", likeLevel: 4, likeTotal: 5000 },
+    "emerald",
+  );
+  assert.equal(sparkleCount(printedCells()[2]), 6);
+});

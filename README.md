@@ -255,10 +255,11 @@ live dengan ambang kecil). Cetakan diberikan di setiap kelipatan ambang
 (500, 1.000, 1.500, ...) per penonton per sesi connector, menambah
 hitungan tercetak tanpa menambah koin. Makin tinggi kelipatan yang
 dicapai, makin mewah bingkainya: level naik di kelipatan 3 (1.500 like,
-cincin lebih lebar + chip nama), kelipatan 6 (3.000 like, cincin
-berfaset), dan kelipatan 10 (5.000 like, faset halus + palet paling
-terang). Kemewahan naik lewat kekayaan bingkai, bukan animasi; Emerald
-tetap statis di semua level supaya tidak menyaingi gift berbayar.
+cincin lebih lebar + chip nama + sparkles), kelipatan 6 (3.000 like,
+cincin penuh + halo berdenyut), dan kelipatan 10 (5.000 like, cincin
+berputar + palet paling terang, setara Diamond). Kemewahan jalur like
+disamakan dengan tier gift; yang membedakan jalur gratis dan berbayar
+adalah warna hijaunya.
 Tombol "Emerald · Tap 500" di panel debug (`?debug=1`) mensimulasikannya
 tanpa connector; klik berulang menaiki tangga levelnya (500, 1.500,
 3.000, 5.000, lalu mengulang).

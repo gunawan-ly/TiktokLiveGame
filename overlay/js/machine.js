@@ -18,6 +18,10 @@ const PHASES = {
 };
 
 const SPARKLE_COUNT = { standard: 0, bronze: 0, silver: 2, gold: 4, amethyst: 5, diamond: 6, emerald: 0 };
+// Sparkles Emerald mengikuti level progres like: kemewahan jalur like
+// disamakan dengan tier gift (keputusan Awan 25 Okt 2026); yang
+// membedakan jalur berbayar dan gratis adalah warnanya.
+const EMERALD_SPARKLE_COUNT = { 1: 0, 2: 2, 3: 4, 4: 6 };
 
 export class PrintMachine {
   constructor({ root, config, tiers, avatarKnownBad = null, onEvent = null }) {
@@ -257,7 +261,7 @@ export class PrintMachine {
     if (pill) {
       cell.append(pill);
     }
-    const sparkles = this._buildSparkles(tier);
+    const sparkles = this._buildSparkles(tier, item);
     if (sparkles) {
       cell.append(sparkles);
     }
@@ -337,8 +341,11 @@ export class PrintMachine {
     return pill;
   }
 
-  _buildSparkles(tier) {
-    const count = SPARKLE_COUNT[tier] || 0;
+  _buildSparkles(tier, item) {
+    const count =
+      tier === "emerald"
+        ? EMERALD_SPARKLE_COUNT[item?.likeLevel] || 0
+        : SPARKLE_COUNT[tier] || 0;
     if (!count) {
       return null;
     }

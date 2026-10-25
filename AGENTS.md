@@ -147,9 +147,12 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
   Emerald punya 4 level dari kelipatan ambang yang dicapai user:
   Lv1 kelipatan 1-2, Lv2 kelipatan 3+, Lv3 kelipatan 6+, Lv4 kelipatan
   10+ (dihitung `emeraldLevelFor` di `overlay/js/tiers.js` dari
-  `likeTotal`). Level menaikkan kekayaan bingkai saja (cincin lebih
-  lebar/dalam, chip nama dari Lv2, faset permata di Lv3-4); animasi
-  TIDAK bertambah, Emerald tetap statis di semua level.
+  `likeTotal`). Kemewahan jalur like DISAMAKAN dengan tier gift
+  (gradasi halus, sparkles 0/2/4/6 per level, halo berdenyut dari Lv3,
+  cincin berputar di Lv4): pembeda jalur gratis dan berbayar adalah
+  warna hijaunya, bukan kemewahan yang ditahan. Ini merevisi aturan
+  "Emerald selalu statis" tanggal 24 Okt 2026. Lv1 tetap tenang tanpa
+  animasi sebagai anak tangga pertama.
 - Target koin per sesi: 500. Slot foto aktif 9 (grid 3x3), gulungan foto 7.
 - Antrean cetak FIFO, kapasitas **100** item (`maxQueueItems`); penuh = gift
   ditolak dengan indikator "ANTREAN PENUH", bukan ditumpuk tanpa batas.

@@ -105,10 +105,12 @@
   --glow-opacity: 1;
 }
 
-/* Emerald: tier engagement tap-tap, bukan gift. SENGAJA statis: cincin
- * hijau tanpa denyut, tanpa putaran, tanpa sparkles, halo redup. Reward
- * gratis tidak boleh tampak lebih hidup dari bingkai gift berbayar
- * (keputusan Awan 24 Okt 2026 sesudah review screenshot). */
+/* Emerald: tier engagement tap-tap, bukan gift. Gradasi conic halus
+ * seperti tier lain. Lv1 tenang (tanpa animasi dan sparkles) sebagai
+ * anak tangga pertama; level di atasnya makin hidup sampai setara
+ * tier gift. Pembeda jalur gratis dan berbayar adalah WARNA hijaunya,
+ * bukan kemewahan yang ditahan (keputusan Awan 25 Okt 2026, merevisi
+ * aturan statis 24 Okt 2026). */
 .print-cell.tier-emerald {
   --ring-w: 0.88rem;
   --metal-a: #064e3b;
@@ -122,16 +124,17 @@
 
 /* Progres kemewahan Emerald (aturan Awan 25 Okt 2026): level naik dari
  * kelipatan like per sesi di kelipatan 3, 6, 10. Lv2 cincin lebih lebar
- * dan dalam plus chip nama terbuka; Lv3 cincin berfaset seperti permata
- * dipotong; Lv4 faset lebih halus dan palet paling terang. Semua tetap
- * STATIS: kekayaannya yang naik, bukan animasinya. */
+ * dan dalam, chip nama terbuka, sparkles 2; Lv3 cincin penuh, halo
+ * berdenyut, sparkles 4; Lv4 palet paling terang, halo berdenyut,
+ * cincin berputar 9 detik, sparkles 6: setara Diamond, hanya warnanya
+ * yang beda. */
 .print-cell.tier-emerald.lv-2 {
   --ring-w: 0.94rem;
   --metal-a: #04241a;
   --metal-b: #8ff5c8;
   --metal-d: #065f46;
   --metal-e: #bbf7d0;
-  --glow-opacity: 0.6;
+  --glow-opacity: 0.7;
 }
 
 .print-cell.tier-emerald.lv-3 {
@@ -140,16 +143,7 @@
   --metal-b: #a7f3d0;
   --metal-d: #047857;
   --metal-e: #d1fae5;
-  --glow-opacity: 0.65;
-}
-
-.print-cell.tier-emerald.lv-3 .frame-metal {
-  background: repeating-conic-gradient(
-    from 0deg,
-    var(--metal-c) 0deg 16deg,
-    var(--metal-b) 16deg 32deg,
-    var(--metal-d) 32deg 48deg
-  );
+  --glow-opacity: 0.85;
 }
 
 .print-cell.tier-emerald.lv-4 {
@@ -159,16 +153,16 @@
   --metal-c: #4ade80;
   --metal-d: #059669;
   --metal-e: #ecfdf5;
-  --glow-opacity: 0.7;
+  --glow-opacity: 1;
 }
 
-.print-cell.tier-emerald.lv-4 .frame-metal {
-  background: repeating-conic-gradient(
-    from 0deg,
-    var(--metal-c) 0deg 10deg,
-    var(--metal-b) 10deg 20deg,
-    var(--metal-d) 20deg 30deg
-  );
+.print-cell.tier-emerald.lv-3 .frame-glow,
+.print-cell.tier-emerald.lv-4 .frame-glow {
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
+
+.print-cell.tier-emerald.lv-4.is-done .frame-wrap {
+  animation: ringSpin 9s linear infinite;
 }
 
 .print-cell.is-done {
