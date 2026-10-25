@@ -132,6 +132,13 @@ Nilai berlaku ada di `config/game.json`, angka di bawah ini cerminannya:
   termasuk Platinum; payload tanpa angka valid jatuh ke label tier.
   Nama tier tetap tampil di tag toast (kecuali Platinum) dan dari
   warna/material bingkai.
+- **Paket mewah bingkai gift** (25 Okt 2026): Gold/Amethyst/Diamond
+  memakai bezel ganda (rim terang luar + garis rim dalam), tekstur
+  logam brushed mikro, kilau shine yang mengorbit sesudah cetak
+  selesai, dan riak cahaya sekali tembak di momen selesai. Sparkles:
+  Silver 2, Gold 6, Amethyst 7, Diamond 9. Amethyst dan Diamond
+  bertabur permata keliling (8 dan 10, `GEM_COUNT` di machine.js);
+  Diamond ditambah api prisma tipis berputar dan cincin 1.08rem.
   **Ruby dicadangkan untuk tier jalur share** (belum dibangun; jangan
   dipakai untuk hal lain).
 - **Emerald (label EMERALD) adalah tier engagement tap-tap, bukan gift:**
